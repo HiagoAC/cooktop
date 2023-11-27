@@ -28,10 +28,10 @@ This feature was the motivation for this application. Every week the app generat
 
 After a meal plan for the week is set, a shopping list is generated. The list can also be edited manually.
 
-{::comment}
+<!--
 ## Technologies Used
 
 ## Software Architecture and Design
 
 ## Author
-{:/comment}
+-->
