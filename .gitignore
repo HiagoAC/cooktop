@@ -160,4 +160,5 @@ cython_debug/
 #.idea/
 
 # Dev files
-commands.txt
+backend/commands.txt
+backend/technical_considerations.txt
