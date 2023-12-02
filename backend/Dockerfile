@@ -5,6 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./app /app
 WORKDIR /app
 EXPOSE 8000
@@ -15,8 +16,12 @@ RUN apk --no-cache add curl && \
     curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSfy | sh
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+ARG DEV=false
 RUN pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
+    if [ $DEV = "true" ]; \
+        then pip install -r /tmp/requirements.dev.txt ; \
+    fi && \
     adduser \
         --disabled-password \
         --no-create-home \
