@@ -30,6 +30,13 @@ After a meal plan for the week is set, a shopping list is generated. The list ca
 
 <!--
 ## Technologies Used
+- Backend:
+    - Programming Language: Python
+    - Web Framework: Django
+    - REST Framework: Django Ninja
+    - Linting: Flake8
+- Containerization: Docker
+- CI/CD: GitHub Actions 
 
 ## Software Architecture and Design
 
