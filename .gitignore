@@ -160,5 +160,6 @@ cython_debug/
 #.idea/
 
 # Dev files
-backend/commands.txt
-backend/technical_considerations.txt
+backend/.commands.txt
+backend/.technical_considerations.txt
+.github/workflows/.technical_considerations.txt
