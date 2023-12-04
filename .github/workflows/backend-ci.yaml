@@ -18,6 +18,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Test
-        run: docker-compose run --rm backend sh -c "python manage.py test"
+        run: docker-compose run --rm backend sh -c "wait-for-it --service db:5432 -- python manage.py test"
       - name: Lint
         run: docker-compose run --rm backend sh -c "flake8"
