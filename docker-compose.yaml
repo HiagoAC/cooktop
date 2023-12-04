@@ -14,7 +14,8 @@ services:
       sh -c " echo 'Waiting for db...' &&
               wait-for-it --service db:5432
               -- echo 'db is ready.' &&
-              python manage.py migrate
+              python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000
               "
     env_file:
       - ./env-dev/backend.env
