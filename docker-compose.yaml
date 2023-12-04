@@ -11,11 +11,15 @@ services:
     volumes:
       - ./backend/app:/app
     command:
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c " echo 'Waiting for db...' &&
+              wait-for-it --service db:5432
+              -- echo 'db is ready.' &&
+              python manage.py migrate
+              "
     env_file:
       - ./env-dev/backend.env
     depends_on:
-      - db
+      - "db"
 
   db:
     image: postgres:16.1-bookworm
