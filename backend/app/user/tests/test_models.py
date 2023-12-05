@@ -22,7 +22,7 @@ class ModelTests(TestCase):
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
-    
+
     def test_user_fields_defaults(self):
         """Test if user fields' defaults values are defined correctly."""
         email = 'test@example.com'
@@ -51,7 +51,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(user), f'{user.email}')
 
     def test_user_email_normalization(self):
-        """Test email addresses are converted to lowercase to avoid duplicates 
+        """Test email addresses are converted to lowercase to avoid duplicates
         of the same address."""
         email = 'tEst@EXAMPLE.com'
         password = 'password321'

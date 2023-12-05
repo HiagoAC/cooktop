@@ -12,7 +12,7 @@ from django.contrib.auth.models import (
 
 class UserManager(BaseUserManager):
     """Manager for users."""
-    
+
     def create_user(self, email, password=None, **extra_fields):
         """Create a new user, save and return it."""
         email = self.normalize_email(email)
@@ -22,11 +22,12 @@ class UserManager(BaseUserManager):
 
         return user
 
+
 class User(AbstractUser, PermissionsMixin):
     """User in the system."""
     # Required
     email = models.EmailField(max_length=255, unique=True)
-    
+
     # Optional fields with default values
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -36,6 +37,6 @@ class User(AbstractUser, PermissionsMixin):
     last_name = models.CharField(max_length=63)
 
     objects = UserManager()
-    
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['']
