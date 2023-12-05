@@ -37,7 +37,28 @@ class ModelTests(TestCase):
         self.assertFalse(user.is_staff)
         self.assertEqual(user.first_name, '')
         self.assertEqual(user.last_name, '')
-        
+
     def test_user_str_representation(self):
         """Test __str__ method of user."""
-        pass
+        email = 'test@example.com'
+        password = 'password321'
+
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=password,
+        )
+
+        self.assertEqual(str(user), f'{user.email}')
+
+    def test_user_email_normalization(self):
+        """Test email addresses are converted to lowercase to avoid duplicates 
+        of the same address."""
+        email = 'tEst@EXAMPLE.com'
+        password = 'password321'
+
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=password,
+        )
+
+        self.assertEqual(user.email, 'tEst@example.com')
