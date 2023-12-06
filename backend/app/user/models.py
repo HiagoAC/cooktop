@@ -12,6 +12,11 @@ from django.contrib.auth.models import (
 
 class UserManager(BaseUserManager):
     """Manager for users."""
+    def create_superuser(self, email, password=None, **extra_fields):
+        superuser = self.create_user(email, password, **extra_fields)
+        superuser.is_staff = True
+
+        return superuser
 
     def create_user(self, email, password=None, **extra_fields):
         """Create a new user, save and return it."""
