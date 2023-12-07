@@ -4,7 +4,7 @@ User app models.
 
 from django.db import models
 from django.contrib.auth.models import (
-    AbstractUser,
+    AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
@@ -15,6 +15,8 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         superuser = self.create_user(email, password, **extra_fields)
         superuser.is_staff = True
+        superuser.is_superuser = True
+        superuser.save(using=self._db)
 
         return superuser
 
@@ -30,9 +32,14 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractUser, PermissionsMixin):
-    """User in the system."""
-    # Required
+class User(AbstractBaseUser, PermissionsMixin):
+    """
+    User in the system.
+
+    Required fields: email, password
+    Other fields are optional.
+    """
+
     email = models.EmailField(max_length=255, unique=True)
 
     # Optional fields with default values
@@ -46,4 +53,3 @@ class User(AbstractUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['']
