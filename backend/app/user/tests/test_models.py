@@ -86,3 +86,33 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_active)
+
+    def test_get_fullname(self):
+        """Test getting a user full name."""
+        email = 'test@example.com'
+        first = 'John'
+        last = 'Doe'
+        user = get_user_model().objects.create_superuser(
+            email=email,
+            password='password321',
+        )
+
+        # User has no name
+        name = user.get_fullname()
+        self.assertEqual(name, email)
+
+        # User only has first name
+        user.first_name = first
+        name = user.get_fullname()
+        self.assertEqual(name, first)
+
+        # User only has last name
+        user.first_name = ''
+        user.last_name = last
+        name = user.get_fullname()
+        self.assertEqual(name, last)
+
+        # User has first and last name
+        user.first_name = first
+        name = user.get_fullname()
+        self.assertEqual(name, f'{first} {last}')

@@ -13,6 +13,7 @@ from django.contrib.auth.models import (
 class UserManager(BaseUserManager):
     """Manager for users."""
     def create_superuser(self, email, password=None, **extra_fields):
+        """Create a superuser, save and return it."""
         superuser = self.create_user(email, password, **extra_fields)
         superuser.is_staff = True
         superuser.is_superuser = True
@@ -53,3 +54,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+    def get_fullname(self):
+        """
+        Return a string with user's full name.
+
+        If both names are not set it returns the user's email.
+        """
+        if self.first_name == '' and self.last_name == '':
+            return self.email
+        elif self.first_name == '':
+            return self.last_name
+        elif self.last_name == '':
+            return self.first_name
+        else:
+            return f'{self.first_name} {self.last_name}'
+
+    def send_email(self):
+        """ Send an email to user."""
+        # TODO
+        pass
