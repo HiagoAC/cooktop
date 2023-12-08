@@ -8,6 +8,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+from django.contrib.auth.password_validation import validate_password
 
 
 class UserManager(BaseUserManager):
@@ -25,8 +26,16 @@ class UserManager(BaseUserManager):
         """Create a new user, save and return it."""
         if not email:
             raise ValueError('The Email field must be set')
+
+        # Normalizes address: email@EXAMPLE.com -> email@example.com
         email = self.normalize_email(email)
+
         user = self.model(email=email, **extra_fields)
+
+        # Raise ValidationError if password is invalid
+        # It uses AUTH_PASSWORD_VALIDATORS defined in settings
+        validate_password(password)
+
         user.set_password(password)
         user.save(using=self._db)
 
