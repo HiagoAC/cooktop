@@ -35,7 +35,7 @@ class UserModelTests(TestCase):
     def test_create_user_invalid_password(self):
         """Test setting invalid passwords raise ValidationError."""
         invalid_passwords = ['tooShort9',
-                             '987653420470928']
+                             '987653420470928', 'noNumbersIncluded']
 
         for password in invalid_passwords:
             with self.assertRaises(ValidationError):
