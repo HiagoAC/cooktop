@@ -52,13 +52,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(max_length=255, unique=True)
 
-    # Optional fields with default values
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
     # Optional fields
     first_name = models.CharField(max_length=63)
     last_name = models.CharField(max_length=63)
+
+    # Optional fields with default values
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
