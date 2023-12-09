@@ -6,14 +6,14 @@ import json
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client, TestCase
-# from django.urls import reverse
+from django.urls import reverse
 
 from http import HTTPStatus as status
 
 
-CREATE_USER_URL = '/api/users/'  # reverse('users')
-# TOKEN_URL = reverse('user:token')
-# ME_URL = reverse('user:me')
+CREATE_USER_URL = reverse('api:create_user')
+TOKEN_URL = 'api/token'
+# ME_URL = 'users'
 
 
 class PublicUserAPITests(TestCase):

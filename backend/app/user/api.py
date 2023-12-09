@@ -14,7 +14,7 @@ from user.schemas import UserSchemaIn, UserSchemaOut
 router = Router()
 
 
-@router.post('/', response={201: UserSchemaOut})
+@router.post('/', response={201: UserSchemaOut}, url_name='create_user')
 def create_user(request, payload: UserSchemaIn):
     """Create a user."""
     get_user_model().objects.create_user(**payload.dict())
