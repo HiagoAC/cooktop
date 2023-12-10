@@ -8,11 +8,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from http import HTTPStatus as status
-
 
 CREATE_USER_URL = reverse('api:create_user')
-TOKEN_URL = 'api/token'
+TOKEN_URL = reverse('api:get_token')
 # ME_URL = 'users'
 
 
@@ -35,7 +33,7 @@ class PublicUserAPITests(TestCase):
         )
 
         # 201 - CREATED
-        self.assertEqual(response.status_code, status.CREATED)
+        self.assertEqual(response.status_code, 201)
         self.assertTrue(b'password' not in response.content)
         try:
             get_user_model().objects.get(email=payload['email'])
@@ -48,11 +46,19 @@ class PublicUserAPITests(TestCase):
             'email': 'test@example.com',
             'password': 'password321',
         }
-        self.client.post(CREATE_USER_URL, payload)
-        response = self.client.post(CREATE_USER_URL, payload)
+        self.client.post(
+            CREATE_USER_URL,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = self.client.post(
+            CREATE_USER_URL,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
 
-        # 400 - BAD REQUEST
-        self.assertEqual(response.status_code, status.BAD_REQUEST)
+        # 409 - CONFLICT
+        self.assertEqual(response.status_code, 409)
 
     def test_create_user_with_invalid_password(self):
         """Test creating a user with invalid password returns an error."""
@@ -60,15 +66,48 @@ class PublicUserAPITests(TestCase):
                              '987653420470928', 'noNumbersIncluded']
         email = 'email@example.com'
         for password in invalid_passwords:
-            response = self.client.post(CREATE_USER_URL,
-                                        {'email': email, 'password': password})
-            # 400 - BAD REQUEST
-            self.assertEqual(response.status_code, status.BAD_REQUEST)
+            payload = {
+                'email': email,
+                'password': password,
+            }
+            response = self.client.post(
+                CREATE_USER_URL,
+                data=json.dumps(payload),
+                content_type='application/json',
+            )
+            # 422 - UNPROCESSABLE ENTITY
+            self.assertEqual(response.status_code, 422)
 
     def test_create_token_for_user(self):
         """Test generating a token with valid credentials."""
-        pass
+        payload = {
+            'email': 'test@example.com',
+            'password': 'password321',
+        }
+        get_user_model().objects.create_user(**payload)
+        response = self.client.post(
+                TOKEN_URL,
+                data=json.dumps(payload),
+                content_type='application/json',
+            )
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'token', response.content)
 
     def test_create_token_with_bad_credentials(self):
         """Test requesting a token with bad credentials returns an error."""
-        pass
+        email = 'test@example.com'
+        good_pass = 'goodpassword321'
+        bad_pass = 'badpassword321'
+
+        get_user_model().objects.create_user(
+            email=email,
+            password=good_pass,
+        )
+
+        response = self.client.post(TOKEN_URL, {
+            'email': email,
+            'password': bad_pass,
+            })
+
+        self.assertNotIn(b'token', response.content)
