@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 
 class ContainDigitPasswordValidatorTests(TestCase):
-    """Test ContainDigitPasswordValidator."""
+    """Tests for ContainDigitPasswordValidator."""
 
     def test_validate_success(self):
         """Test that no errors are raised if password contains a digit."""
