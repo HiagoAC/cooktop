@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     Required fields: email, password
     Other fields are optional.
     """
-
+    # Required field
     email = models.EmailField(max_length=255, unique=True)
 
     # Optional fields
@@ -83,3 +83,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         """ Send an email to user."""
         # TODO
         pass
+
+
+class RefreshToken(models.Model):
+    """Last refresh token of each user."""
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='refresh_token'
+    )
+    refresh_token = models.CharField(max_length=255, unique=True)
