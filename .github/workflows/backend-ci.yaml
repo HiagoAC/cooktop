@@ -17,6 +17,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Create backend/app/user/.env file
+        run: |
+          touch .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> backend/app/user/.env
+          echo JWT_ALGO=${{ secrets.JWT_ALGO }} >> backend/app/user/.env
+          cat .env
       - name: Test
         run: docker-compose run --rm backend sh -c "wait-for-it --service db:5432 -- python manage.py test"
       - name: Lint
