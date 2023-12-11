@@ -1,10 +1,19 @@
 """
 Tests for auth_handler.
 """
+import jwt
+import time
+
+from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 
-from user.auth_handler import AuthHandler, InvalidRefreshTokenError
+from user.auth_handler import (
+    AuthHandler,
+    InvalidRefreshTokenError,
+    JWT_SECRET,
+    JWT_ALGO
+)
 
 
 class AuthHandlerTests(TestCase):
@@ -19,6 +28,29 @@ class AuthHandlerTests(TestCase):
         )
         factory = RequestFactory()
         self.request = factory.get('/any-url/')
+
+    def test_authenticate_with_valid_token(self):
+        """Test authenticating user with a valid token."""
+        tokens = self.auth_handler.encode_tokens(email=self.email)
+        auth_user = self.auth_handler.authenticate(
+            self.request, tokens['access_token'])
+
+        self.assertIsInstance(auth_user, get_user_model())
+        self.assertEqual(auth_user, self.user)
+
+    def test_authenticate_as_user_that_doesnt_exist(self):
+        """
+        Test that None is return when attempting to authenticate
+        with a token with an email that does not belong to a user.
+        """
+        payload = {
+            'email': 'thisUserDoesNotExist@email.com',
+            'exp': time.time() + timedelta(minutes=10).total_seconds(),
+            'sub': 'access_token',
+        }
+        token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
+        auth_user = self.auth_handler.authenticate(self.request, token)
+        self.assertIsNone(auth_user)
 
     def test_endcode_tokens_returns_tokens(self):
         """
@@ -65,11 +97,11 @@ class AuthHandlerTests(TestCase):
                             old_tokens['access_token'])
         self.assertNotEqual(new_tokens['refresh_token'],
                             old_tokens['refresh_token'])
-        
+
     def test_refresh_tokens_with_wrong_token_type(self):
         """
-        Test that calling refresh_token with token of a type that is not refresh_token
-        raises InvalidTokenError.
+        Test that calling refresh_token with token of a type that is
+        not refresh_token raises InvalidTokenError.
         """
         tokens = self.auth_handler.encode_tokens(email=self.email)
         with self.assertRaises(InvalidRefreshTokenError):
@@ -84,4 +116,3 @@ class AuthHandlerTests(TestCase):
         self.auth_handler.encode_tokens(email=self.email)
         with self.assertRaises(InvalidRefreshTokenError):
             self.auth_handler.refresh_tokens(old_tokens['refresh_token'])
-

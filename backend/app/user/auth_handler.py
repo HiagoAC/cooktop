@@ -4,16 +4,18 @@ Authentication handling functionality.
 import jwt
 import time
 
-from django.contrib.auth import get_user_model
 from datetime import timedelta
 from decouple import AutoConfig
-from ninja.security import HttpBearer
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+# from ninja.security import HttpBearer
 
 from user.models import RefreshToken
 
 config = AutoConfig()
 JWT_SECRET = config('JWT_SECRET')
 JWT_ALGO = config('JWT_ALGO')
+
 
 class InvalidRefreshTokenError(Exception):
     """
@@ -28,7 +30,19 @@ class AuthHandler():  # class AuthHandler(HttpBearer):
     """Handle user authentication in the system."""
 
     def authenticate(self, request, token):
-        return None
+        """
+        Validates access token and returns the authenticated user object.
+        If the user in the token does not exist returns None.
+
+        Raise ExpiredSignatureError if token is expired.
+        Raise DecodeError if token cannot be decoded.
+        """
+        decoded_token = self.decode_token(token)
+        try:
+            user = get_user_model().objects.get(email=decoded_token['email'])
+            return user
+        except ObjectDoesNotExist:
+            return None
 
     def encode_tokens(self, email):
         """
@@ -94,7 +108,8 @@ class AuthHandler():  # class AuthHandler(HttpBearer):
         if decoded_refresh_token['sub'] != 'refresh_token':
             raise InvalidRefreshTokenError('Token is not a refresh token.')
         elif refresh_token != refresh_token_object.refresh_token:
-            raise InvalidRefreshTokenError('Refresh token is not the user\'s latest one.')
+            raise InvalidRefreshTokenError(
+                'Refresh token is not the user\'s latest one.')
         else:
             # Refresh token is valid.
             new_tokens = self.encode_tokens(
