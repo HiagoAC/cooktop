@@ -2,20 +2,25 @@
 Tests for the user API.
 """
 import json
+import jwt
+import time
 
+from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from user.auth_handler import JWT_SECRET, JWT_ALGO
+
 
 CREATE_USER_URL = reverse('api:create_user')
 TOKEN_URL = reverse('api:get_token')
-# ME_URL = 'users'
+ME_URL = reverse('api:user_me')
 
 
 class PublicUserAPITests(TestCase):
-    """Test unauthorized requests to user API."""
+    """Test unauthenticated requests to user API."""
 
     def setUp(self):
         self.client = Client()
@@ -111,3 +116,50 @@ class PublicUserAPITests(TestCase):
             })
 
         self.assertNotIn(b'token', response.content)
+
+    def test_retrieve_user_unauthorized(self):
+        """"
+        Test that retrieving user without authentication is unauthorized.
+        """
+        response = self.client.get(ME_URL)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+
+
+class PrivateUserAPITests(TestCase):
+    """Test authenticated requests for the user api."""
+
+    def setUp(self):
+        self.email = 'test@example.com'
+        self.first_name = 'John'
+        self.last_name = 'Doe'
+        get_user_model().objects.create(
+            email=self.email,
+            password='password321',
+            first_name=self.first_name,
+            last_name=self.last_name
+        )
+        token_data = {
+            'email': self.email,
+            'exp': time.time() + timedelta(minutes=10).total_seconds(),
+            'sub': 'access_token',
+        }
+        access_token = jwt.encode(token_data, JWT_SECRET, algorithm=JWT_ALGO)
+        self.client = Client()
+        self.headers = {'HTTP_AUTHORIZATION': f'Bearer {access_token}'}
+
+    def test_retrieve_user_authorized(self):
+        """Tests that retrieving own user data is successful."""
+        response = self.client.get(ME_URL, **self.headers)
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        # Parse content
+        content = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(content['email'], self.email)
+        self.assertEqual(content['first_name'], self.first_name)
+        self.assertEqual(content['last_name'], self.last_name)
+        self.assertNotIn('password', content)

@@ -23,14 +23,9 @@ user_router = Router()
 token_router = Router()
 
 
-@user_router.post(
-        '/',
-        response={
-            201: UserSchemaOut,
-            409: ErrorSchema,
-            422: ErrorSchema,
-        }, url_name='create_user',
-        auth=None)
+@user_router.post('/', response={
+    201: UserSchemaOut, 409: ErrorSchema, 422: ErrorSchema
+    }, url_name='create_user', auth=None)
 def create_user(request, payload: UserSchemaIn):
     """Create a user."""
     try:
@@ -45,13 +40,15 @@ def create_user(request, payload: UserSchemaIn):
     return 201, response
 
 
-@token_router.post(
-        '/',
-        response={
-            200: TokenSchema,
-            401: ErrorSchema,
-        }, url_name='get_token',
-        auth=None)
+@user_router.get('/me', response={200: UserSchemaOut}, url_name='user_me')
+def user_me(request):
+    """Retrieves user's data in User model."""
+    user = request.auth
+    return UserSchemaOut.from_orm(user)
+
+
+@token_router.post('/', response={200: TokenSchema, 401: ErrorSchema},
+                   url_name='get_token', auth=None)
 def get_token(request, payload: CredentialsSchema):
     """Get access and refresh tokens."""
     user = authenticate(
