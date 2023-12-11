@@ -12,10 +12,12 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from user.auth_handler import JWT_SECRET, JWT_ALGO
+from user.models import RefreshToken
 
 
 CREATE_USER_URL = reverse('api:create_user')
-TOKEN_URL = reverse('api:get_token')
+TOKEN_URL = reverse('api:get_tokens')
+REFRESH_URL = reverse('api:refresh_tokens')
 ME_URL = reverse('api:user_me')
 
 
@@ -39,7 +41,11 @@ class PublicUserAPITests(TestCase):
 
         # 201 - CREATED
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(b'password' not in response.content)
+
+        # Parse content
+        content = json.loads(response.content.decode('utf-8'))
+
+        self.assertNotIn('password', content)
         try:
             get_user_model().objects.get(email=payload['email'])
         except ObjectDoesNotExist:
@@ -83,6 +89,15 @@ class PublicUserAPITests(TestCase):
             # 422 - UNPROCESSABLE ENTITY
             self.assertEqual(response.status_code, 422)
 
+    def test_retrieve_user_unauthorized(self):
+        """"
+        Test that retrieving user without authentication is unauthorized.
+        """
+        response = self.client.get(ME_URL)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+
     def test_create_token_for_user(self):
         """Test generating a token with valid credentials."""
         payload = {
@@ -97,7 +112,12 @@ class PublicUserAPITests(TestCase):
             )
         # 200 - OK
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'token', response.content)
+
+        # Parse content
+        content = json.loads(response.content.decode('utf-8'))
+
+        self.assertIn('access_token', content)
+        self.assertIn('refresh_token', content)
 
     def test_create_token_with_bad_credentials(self):
         """Test requesting a token with bad credentials returns an error."""
@@ -110,21 +130,47 @@ class PublicUserAPITests(TestCase):
             password=good_pass,
         )
 
-        response = self.client.post(TOKEN_URL, {
+        payload = {
             'email': email,
             'password': bad_pass,
-            })
+        }
 
-        self.assertNotIn(b'token', response.content)
+        response = self.client.post(
+                        TOKEN_URL,
+                        data=json.dumps(payload),
+                        content_type='application/json',
+                    )
 
-    def test_retrieve_user_unauthorized(self):
-        """"
-        Test that retrieving user without authentication is unauthorized.
-        """
-        response = self.client.get(ME_URL)
+        # Parse content
+        content = json.loads(response.content.decode('utf-8'))
 
-        # 401 - UNAUTHORIZED
-        self.assertEqual(response.status_code, 401)
+        self.assertNotIn('token', content)
+
+    def test_refresh_tokens(self):
+        """Test refreshing tokens with a valid refresh token."""
+        email = 'test@example.com'
+        user = get_user_model().objects.create(email=email)
+        token_data = {
+            'email': email,
+            'exp':  time.time() + timedelta(days=7).total_seconds(),
+            'sub': 'refresh_token'
+        }
+        token = jwt.encode(token_data, JWT_SECRET, algorithm=JWT_ALGO)
+        RefreshToken.objects.create(user=user, refresh_token=token)
+        response = self.client.post(
+                        REFRESH_URL,
+                        data=json.dumps({'refresh_token': token}),
+                        content_type='application/json',
+                    )
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        # Parse content
+        content = json.loads(response.content.decode('utf-8'))
+
+        self.assertIn('access_token', content)
+        self.assertIn('refresh_token', content)
 
 
 class PrivateUserAPITests(TestCase):

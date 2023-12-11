@@ -16,6 +16,7 @@ from user.schemas import (
     UserSchemaOut,
     CredentialsSchema,
     TokenSchema,
+    RefreshSchema,
     ErrorSchema,
 )
 
@@ -47,8 +48,8 @@ def user_me(request):
     return UserSchemaOut.from_orm(user)
 
 
-@token_router.post('/', response={200: TokenSchema, 401: ErrorSchema},
-                   url_name='get_token', auth=None)
+@token_router.post('/', response={
+    200: TokenSchema, 401: ErrorSchema}, url_name='get_tokens', auth=None)
 def get_token(request, payload: CredentialsSchema):
     """Get access and refresh tokens."""
     user = authenticate(
@@ -60,3 +61,12 @@ def get_token(request, payload: CredentialsSchema):
     auth_handler = AuthHandler()
     tokens = auth_handler.encode_tokens(email=payload.email)
     return 200, tokens
+
+
+@token_router.post('/refresh', response={200: TokenSchema},
+                   url_name='refresh_tokens', auth=None)
+def refresh_tokens(request, payload: RefreshSchema):
+    """Get new access and refresh tokens with a valid refresh token."""
+    auth_handler = AuthHandler()
+    tokens = auth_handler.refresh_tokens(payload.refresh_token)
+    return tokens

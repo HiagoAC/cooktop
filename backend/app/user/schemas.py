@@ -31,6 +31,11 @@ class TokenSchema(Schema):
     refresh_token: str
 
 
+class RefreshSchema(Schema):
+    """Input Schema for refreshing tokens."""
+    refresh_token: str
+
+
 class ErrorSchema(Schema):
     """Output Schema for errors."""
     message: str
