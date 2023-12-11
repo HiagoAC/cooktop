@@ -5,10 +5,13 @@ Tests for user app models.
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
+
+from user.models import RefreshToken
 
 
 class UserModelTests(TestCase):
-    """Test user app models."""
+    """Tests for the User/UserManager models."""
 
     def test_create_user(self):
         """Test creating user with required fields (email, password) is
@@ -117,3 +120,17 @@ class UserModelTests(TestCase):
         user.first_name = first
         name = user.get_fullname()
         self.assertEqual(name, f'{first} {last}')
+
+
+class RefreshTokenModelTests(TestCase):
+    """Tests for the RefreshToken model."""
+
+    def test_users_are_unique(self):
+        """
+        Test creating two objects with same user raises IntegrityError.
+        """
+        user = get_user_model().objects.create(email='test@example.com')
+        RefreshToken.objects.create(user=user)
+
+        with self.assertRaises(IntegrityError):
+            RefreshToken.objects.create(user=user)
