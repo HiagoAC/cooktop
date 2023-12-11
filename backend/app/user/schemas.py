@@ -1,7 +1,9 @@
 """
 Schemas for the user API.
 """
-from ninja import Schema
+from django.contrib.auth import get_user_model
+from ninja import ModelSchema, Schema
+from typing import Optional
 
 
 class UserSchemaIn(Schema):
@@ -15,8 +17,16 @@ class UserSchemaIn(Schema):
 class UserSchemaOut(Schema):
     """Output Schema for user model."""
     email: str
-    first_name: str = ''
-    last_name: str = ''
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+
+class PatchUserSchema(ModelSchema):
+    """Input for updating user model."""
+    class Meta:
+        model = get_user_model()
+        fields = ['password', 'first_name', 'last_name']
+        fields_optional = ['password', 'first_name', 'last_name']
 
 
 class CredentialsSchema(Schema):

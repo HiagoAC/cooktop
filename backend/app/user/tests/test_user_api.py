@@ -180,7 +180,7 @@ class PrivateUserAPITests(TestCase):
         self.email = 'test@example.com'
         self.first_name = 'John'
         self.last_name = 'Doe'
-        get_user_model().objects.create(
+        self.user = get_user_model().objects.create(
             email=self.email,
             password='password321',
             first_name=self.first_name,
@@ -209,3 +209,24 @@ class PrivateUserAPITests(TestCase):
         self.assertEqual(content['first_name'], self.first_name)
         self.assertEqual(content['last_name'], self.last_name)
         self.assertNotIn('password', content)
+
+    def test_update_user(self):
+        """Test updating user fields."""
+        payload = {
+            'first_name': 'new_name',
+            'password': 'newPassword321',
+        }
+        response = self.client.patch(
+            ME_URL,
+            **self.headers,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.first_name, payload['first_name'])
+        self.assertTrue(self.user.check_password(payload['password']))

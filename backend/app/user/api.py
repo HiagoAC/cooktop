@@ -14,6 +14,7 @@ from user.auth_handler import AuthHandler
 from user.schemas import (
     UserSchemaIn,
     UserSchemaOut,
+    PatchUserSchema,
     CredentialsSchema,
     TokenSchema,
     RefreshSchema,
@@ -42,9 +43,22 @@ def create_user(request, payload: UserSchemaIn):
 
 
 @user_router.get('/me', response={200: UserSchemaOut}, url_name='user_me')
-def user_me(request):
+def get_user(request):
     """Retrieves user's data in User model."""
     user = request.auth
+    return UserSchemaOut.from_orm(user)
+
+
+@user_router.patch('/me', response={200: UserSchemaOut})
+def update_user(request, payload: PatchUserSchema):
+    """Updates user fields. Email cannot be updated."""
+    user = request.auth
+    for attr, value in payload.dict(exclude_unset=True).items():
+        if attr == 'password':
+            user.set_password(value)
+        else:
+            setattr(user, attr, value)
+    user.save()
     return UserSchemaOut.from_orm(user)
 
 
