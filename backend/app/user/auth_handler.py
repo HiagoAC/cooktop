@@ -12,8 +12,8 @@ from decouple import AutoConfig
 from user.models import RefreshToken
 
 config = AutoConfig()
-JWT_SECRET = config('secret')
-JWT_ALGO = config('algo')
+JWT_SECRET = config('JWT_SECRET')
+JWT_ALGO = config('JWT_ALGO')
 
 
 class AuthHandler():  # class AuthHandler(HttpBearer):
