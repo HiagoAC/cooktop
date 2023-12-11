@@ -8,7 +8,7 @@ from datetime import timedelta
 from decouple import AutoConfig
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-# from ninja.security import HttpBearer
+from ninja.security import HttpBearer
 
 from user.models import RefreshToken
 
@@ -26,7 +26,7 @@ class InvalidRefreshTokenError(Exception):
     pass
 
 
-class AuthHandler():  # class AuthHandler(HttpBearer):
+class AuthHandler(HttpBearer):
     """Handle user authentication in the system."""
 
     def authenticate(self, request, token):
