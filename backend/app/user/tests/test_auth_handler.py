@@ -2,9 +2,9 @@
 Tests for auth_handler.
 """
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
-from user.auth_handler import AuthHandler
+from user.auth_handler import AuthHandler, InvalidRefreshTokenError
 
 
 class AuthHandlerTests(TestCase):
@@ -17,6 +17,8 @@ class AuthHandlerTests(TestCase):
             email='test@example.com',
             password='password321'
         )
+        factory = RequestFactory()
+        self.request = factory.get('/any-url/')
 
     def test_endcode_tokens_returns_tokens(self):
         """
@@ -63,3 +65,23 @@ class AuthHandlerTests(TestCase):
                             old_tokens['access_token'])
         self.assertNotEqual(new_tokens['refresh_token'],
                             old_tokens['refresh_token'])
+        
+    def test_refresh_tokens_with_wrong_token_type(self):
+        """
+        Test that calling refresh_token with token of a type that is not refresh_token
+        raises InvalidTokenError.
+        """
+        tokens = self.auth_handler.encode_tokens(email=self.email)
+        with self.assertRaises(InvalidRefreshTokenError):
+            self.auth_handler.refresh_tokens(tokens['access_token'])
+
+    def test_refresh_tokens_with_not_latest_refresh_token(self):
+        """
+        Test that calling refresh_tokens with a token that is not the user's
+        latest refresh token raises InvalidRefreshTokenError.
+        """
+        old_tokens = self.auth_handler.encode_tokens(email=self.email)
+        self.auth_handler.encode_tokens(email=self.email)
+        with self.assertRaises(InvalidRefreshTokenError):
+            self.auth_handler.refresh_tokens(old_tokens['refresh_token'])
+
