@@ -1,24 +1,22 @@
 """
 Schemas for the user API.
 """
-from django.contrib.auth import get_user_model
-from ninja import ModelSchema, Schema
+from ninja import Schema
 
 
-class UserSchemaIn(ModelSchema):
+class UserSchemaIn(Schema):
     """Input Schema for user model."""
-    class Meta:
-        model = get_user_model()
-        fields = ['email', 'password']
-        optional_fields = ['first_name', 'last_name']
+    email: str
+    password: str
+    first_name: str = ''
+    last_name: str = ''
 
 
-class UserSchemaOut(ModelSchema):
+class UserSchemaOut(Schema):
     """Output Schema for user model."""
-    class Meta:
-        model = get_user_model()
-        fields = ['email']
-        optional_fields = ['first_name', 'last_name', ]
+    email: str
+    first_name: str = ''
+    last_name: str = ''
 
 
 class CredentialsSchema(Schema):
