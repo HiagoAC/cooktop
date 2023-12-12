@@ -10,6 +10,7 @@ from django.test import RequestFactory, TestCase
 
 from user.auth_handler import (
     AuthHandler,
+    InvalidAccessTokenError,
     InvalidRefreshTokenError,
     JWT_SECRET,
     JWT_ALGO
@@ -49,8 +50,8 @@ class AuthHandlerTests(TestCase):
             'sub': 'access_token',
         }
         token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
-        auth_user = self.auth_handler.authenticate(self.request, token)
-        self.assertIsNone(auth_user)
+        with self.assertRaises(InvalidAccessTokenError):
+            self.auth_handler.authenticate(self.request, token)
 
     def test_endcode_tokens_returns_tokens(self):
         """

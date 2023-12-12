@@ -1,5 +1,5 @@
 """
-/users/ API views.
+/users/ and /tokens API views.
 """
 from django.contrib.auth import (
     get_user_model,
@@ -7,10 +7,10 @@ from django.contrib.auth import (
 )
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.utils.translation import gettext as _ # noqa
 from ninja import Router
+from jwt import ExpiredSignatureError, DecodeError
 
-from user.auth_handler import AuthHandler
+from user.auth_handler import AuthHandler, InvalidRefreshTokenError
 from user.schemas import (
     UserSchemaIn,
     UserSchemaOut,
@@ -24,10 +24,15 @@ from user.schemas import (
 user_router = Router()
 token_router = Router()
 
+create_user_res = {201: UserSchemaOut, 409: ErrorSchema, 422: ErrorSchema}
+get_user_res = {200: UserSchemaOut}
+update_user_res = {200: UserSchemaOut}
+get_tokens_res = {200: TokenSchema, 401: ErrorSchema}
+refresh_tokens_res = {200: TokenSchema, 401: ErrorSchema}
 
-@user_router.post('/', response={
-    201: UserSchemaOut, 409: ErrorSchema, 422: ErrorSchema
-    }, url_name='create_user', auth=None)
+
+@user_router.post('/', response=create_user_res,
+                  url_name='create_user', auth=None)
 def create_user(request, payload: UserSchemaIn):
     """Create a user."""
     try:
@@ -42,14 +47,14 @@ def create_user(request, payload: UserSchemaIn):
     return 201, response
 
 
-@user_router.get('/me', response={200: UserSchemaOut}, url_name='user_me')
+@user_router.get('/me', response=get_user_res, url_name='user_me')
 def get_user(request):
     """Retrieves user's data in User model."""
     user = request.auth
     return UserSchemaOut.from_orm(user)
 
 
-@user_router.patch('/me', response={200: UserSchemaOut})
+@user_router.patch('/me', response=update_user_res)
 def update_user(request, payload: PatchUserSchema):
     """Updates user fields. Email cannot be updated."""
     user = request.auth
@@ -62,9 +67,9 @@ def update_user(request, payload: PatchUserSchema):
     return UserSchemaOut.from_orm(user)
 
 
-@token_router.post('/', response={
-    200: TokenSchema, 401: ErrorSchema}, url_name='get_tokens', auth=None)
-def get_token(request, payload: CredentialsSchema):
+@token_router.post('/', response=get_tokens_res,
+                   url_name='get_tokens', auth=None)
+def get_tokens(request, payload: CredentialsSchema):
     """Get access and refresh tokens."""
     user = authenticate(
         email=payload.email,
@@ -77,10 +82,13 @@ def get_token(request, payload: CredentialsSchema):
     return 200, tokens
 
 
-@token_router.post('/refresh', response={200: TokenSchema},
+@token_router.post('/refresh', response=refresh_tokens_res,
                    url_name='refresh_tokens', auth=None)
 def refresh_tokens(request, payload: RefreshSchema):
     """Get new access and refresh tokens with a valid refresh token."""
     auth_handler = AuthHandler()
-    tokens = auth_handler.refresh_tokens(payload.refresh_token)
-    return tokens
+    try:
+        tokens = auth_handler.refresh_tokens(payload.refresh_token)
+        return tokens
+    except (ExpiredSignatureError, DecodeError, InvalidRefreshTokenError):
+        return 401, {'message': 'Invalid token.'}

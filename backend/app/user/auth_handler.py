@@ -17,6 +17,17 @@ JWT_SECRET = config('JWT_SECRET')
 JWT_ALGO = config('JWT_ALGO')
 
 
+class InvalidAccessTokenError(Exception):
+    """
+    Raised when access is invalid for one of the following reasosn:
+    1. token's user does not exist.
+    2. token is expired.
+    3. token is not a valid JWT token.
+    4. token is not an access token.
+    """
+    pass
+
+
 class InvalidRefreshTokenError(Exception):
     """
     Raised when refresh_token is not valid for one of the following reasons:
@@ -32,17 +43,15 @@ class AuthHandler(HttpBearer):
     def authenticate(self, request, token):
         """
         Validates access token and returns the authenticated user object.
-        If the user in the token does not exist returns None.
-
-        Raise ExpiredSignatureError if token is expired.
-        Raise DecodeError if token cannot be decoded.
+        If token is invalid it raises InvalidAccessTokenError.
         """
-        decoded_token = self.decode_token(token)
         try:
+            decoded_token = self.decode_token(token)
             user = get_user_model().objects.get(email=decoded_token['email'])
             return user
-        except ObjectDoesNotExist:
-            return None
+        except (jwt.ExpiredSignatureError, jwt.DecodeError,
+                ObjectDoesNotExist):
+            raise InvalidAccessTokenError
 
     def encode_tokens(self, email):
         """
