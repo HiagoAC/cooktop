@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
-from ingredient.models import Ingredient, IngredientInPantry
-
+from ingredient.models import Ingredient
+from ingredient.tests import utils
 
 User = get_user_model()
 
@@ -44,25 +44,12 @@ class IngredientModelTests(TestCase):
 class IngredientInPantryModelTests(TestCase):
     """Tests for IngredientInPantry model."""
 
-    def get_ing_in_pantry(self, quantity=100, measurement_unit='ml'):
-        """Returns an instance of IngredientInPantry."""
-        user = User.objects.create_user(
-            email='email@example.com', password='password321')
-        ingredient = Ingredient.objects.create(name='food name')
-        ing_in_pantry = IngredientInPantry.objects.create(
-            user=user,
-            ingredient=ingredient,
-            quantity=quantity,
-            measurement_unit=measurement_unit
-        )
-        return ing_in_pantry
-
     def test_create_ing_in_pantry_same_user_and_ingredient(self):
         """
         Test that creating two IngredientInPantry objects with same user and
         ingredient raises IntegrityError.
         """
-        self.get_ing_in_pantry()
+        utils.get_ing_in_pantry()
         with self.assertRaises(IntegrityError):
             self.get_ing_in_pantry(200, 'g')
 
@@ -71,7 +58,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that subtract_quantity succeeds in subtracting from quantity.
         """
         original_quantity = 100
-        ing_in_pantry = self.get_ing_in_pantry(original_quantity)
+        ing_in_pantry = utils.get_ing_in_pantry(original_quantity)
         sub_quantity = 50
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
@@ -84,7 +71,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that calling subtract_quantity with a value superior to object's
         quantity sets quantity to 0.
         """
-        ing_in_pantry = self.get_ing_in_pantry()
+        ing_in_pantry = utils.get_ing_in_pantry()
         sub_quantity = ing_in_pantry.quantity + 1
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
@@ -96,6 +83,6 @@ class IngredientInPantryModelTests(TestCase):
         Test that calling subtract_quantity with a mismatched unit raises a
         ValueError.
         """
-        ing_in_pantry = self.get_ing_in_pantry(measurement_unit='g')
+        ing_in_pantry = utils.get_ing_in_pantry(measurement_unit='g')
         with self.assertRaises(ValueError):
             ing_in_pantry.subtract_quantity(50, 'ml')
