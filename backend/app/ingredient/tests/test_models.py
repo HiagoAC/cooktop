@@ -44,7 +44,7 @@ class IngredientModelTests(TestCase):
 class IngredientInPantryModelTests(TestCase):
     """Tests for IngredientInPantry model."""
 
-    def get_ing_in_pantry(self, quantity, measurement_unit):
+    def get_ing_in_pantry(self, quantity=100, measurement_unit='ml'):
         """Returns an instance of IngredientInPantry."""
         user = User.objects.create_user(
             email='email@example.com', password='password321')
@@ -59,10 +59,10 @@ class IngredientInPantryModelTests(TestCase):
 
     def test_create_ing_in_pantry_same_user_and_ingredient(self):
         """
-        Test that creating two ingredients with same user and ingredient
-        raises IntegrityError.
+        Test that creating two IngredientInPantry objects with same user and
+        ingredient raises IntegrityError.
         """
-        self.get_ing_in_pantry(100, 'ml')
+        self.get_ing_in_pantry()
         with self.assertRaises(IntegrityError):
             self.get_ing_in_pantry(200, 'g')
 
@@ -71,7 +71,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that subtract_quantity succeeds in subtracting from quantity.
         """
         original_quantity = 100
-        ing_in_pantry = self.get_ing_in_pantry(original_quantity, 'ml')
+        ing_in_pantry = self.get_ing_in_pantry(original_quantity)
         sub_quantity = 50
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
@@ -84,7 +84,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that calling subtract_quantity with a value superior to object's
         quantity sets quantity to 0.
         """
-        ing_in_pantry = self.get_ing_in_pantry(100, 'ml')
+        ing_in_pantry = self.get_ing_in_pantry()
         sub_quantity = ing_in_pantry.quantity + 1
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
@@ -96,6 +96,6 @@ class IngredientInPantryModelTests(TestCase):
         Test that calling subtract_quantity with a mismatched unit raises a
         ValueError.
         """
-        ing_in_pantry = self.get_ing_in_pantry(100, 'ml')
+        ing_in_pantry = self.get_ing_in_pantry(measurement_unit='g')
         with self.assertRaises(ValueError):
-            ing_in_pantry.subtract_quantity(50, 'g')
+            ing_in_pantry.subtract_quantity(50, 'ml')
