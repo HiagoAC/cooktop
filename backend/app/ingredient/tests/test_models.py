@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
 from ingredient.models import Ingredient
-from ingredient.tests import utils
+from ingredient.tests.utils import get_ing_in_pantry
 
 User = get_user_model()
 
@@ -49,7 +49,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that creating two IngredientInPantry objects with same user and
         ingredient raises IntegrityError.
         """
-        utils.get_ing_in_pantry()
+        get_ing_in_pantry()
         with self.assertRaises(IntegrityError):
             utils.get_ing_in_pantry(200, 'g')
 
@@ -71,7 +71,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that calling subtract_quantity with a value superior to object's
         quantity sets quantity to 0.
         """
-        ing_in_pantry = utils.get_ing_in_pantry()
+        ing_in_pantry = get_ing_in_pantry()
         sub_quantity = ing_in_pantry.quantity + 1
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
