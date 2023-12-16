@@ -51,7 +51,7 @@ class IngredientInPantryModelTests(TestCase):
         """
         utils.get_ing_in_pantry()
         with self.assertRaises(IntegrityError):
-            self.get_ing_in_pantry(200, 'g')
+            utils.get_ing_in_pantry(200, 'g')
 
     def test_subtract_quantity(self):
         """
