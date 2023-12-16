@@ -4,7 +4,7 @@ Tests for the apis in the ingredient app.
 import json
 import jwt
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -103,4 +103,28 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = [{'id': ing.pk, 'name': ing.ingredient.name},]
+        self.assertEqual(content, expected)
+
+    def test_get_pantry_detail(self):
+        """Test getting pantry ingredient detail."""
+        ing = get_ing_in_pantry(
+            name='a food',
+            quantity=100,
+            measurement_unit='ml',
+            expiration=datetime.now().date() + timedelta(days=5),
+            user=self.user
+        )
+        response = self.client.get(pantry_detail_url(ing.pk), **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        expected = {
+            'name': ing.ingredient.name,
+            'quantity': float(ing.quantity),
+            'measurement_unit': ing.measurement_unit,
+            'expiration': ing.expiration.isoformat()
+        }
+
         self.assertEqual(content, expected)

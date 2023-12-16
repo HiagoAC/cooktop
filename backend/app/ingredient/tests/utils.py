@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 def get_ing_in_pantry(name='food name', quantity=100, measurement_unit='ml',
-                      user=None, ingredient=None):
+                      expiration=None, user=None, ingredient=None):
     """Returns an instance of IngredientInPantry."""
     if not user:
         user = User.objects.create_user(
@@ -21,6 +21,7 @@ def get_ing_in_pantry(name='food name', quantity=100, measurement_unit='ml',
         user=user,
         ingredient=ingredient,
         quantity=quantity,
-        measurement_unit=measurement_unit
+        measurement_unit=measurement_unit,
+        expiration=expiration
     )
     return ing_in_pantry
