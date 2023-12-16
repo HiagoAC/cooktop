@@ -70,19 +70,37 @@ class PrivatePantryAPITests(TestCase):
         self.client = Client()
 
     def test_retrieve_pantry_ingredients(self):
-        """Test retrieving user's pantry's ingredients."""
+        """Test retrieving user's pantry ingredients."""
         ing_1 = get_ing_in_pantry(name='a food', user=self.user)
         ing_2 = get_ing_in_pantry(name='another food', user=self.user)
         response = self.client.get(PANTRY_LIST_URL, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
 
         # 200 - OK
         self.assertEqual(response.status_code, 200)
-
-        # Parse content
-        content = json.loads(response.content.decode('utf-8'))
 
         expected = [
             {'id': ing_1.pk, 'name': ing_1.ingredient.name},
             {'id': ing_2.pk, 'name': ing_2.ingredient.name}
         ]
+        self.assertEqual(content, expected)
+
+    def test_pantry_ingridients_limited_to_user(self):
+        """
+        Test retrieving pantry ingredients is limited to the ones of the
+        authenticated user.
+        """
+        another_user = User.objects.create_user(
+            email='another_user@example.com',
+            password='password321'
+        )
+        ing = get_ing_in_pantry(name='a food', user=self.user)
+        get_ing_in_pantry(name='another food', user=another_user)
+        response = self.client.get(PANTRY_LIST_URL, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        expected = [{'id': ing.pk, 'name': ing.ingredient.name},]
         self.assertEqual(content, expected)
