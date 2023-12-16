@@ -1,5 +1,5 @@
 """
-/users/ and /tokens API views.
+API views for the user app.
 """
 from django.contrib.auth import (
     get_user_model,

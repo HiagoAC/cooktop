@@ -1,5 +1,5 @@
 """
-Schemas for the user API.
+Schemas for apis in user app.
 """
 from django.contrib.auth import get_user_model
 from ninja import ModelSchema, Schema
