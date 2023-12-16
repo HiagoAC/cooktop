@@ -3,13 +3,9 @@ Ingredient app models.
 """
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
-MEASUREMENT_UNITS = [
-        ('g', 'gram'),
-        ('ml', 'milliliter'),
-        ('un', 'unit')
-    ]
 User = get_user_model()
 
 
@@ -29,13 +25,19 @@ class Ingredient(models.Model):
 
 class IngredientInPantry(models.Model):
     """Ingrendient a user has."""
+    class MeasurementUnits(models.TextChoices):
+        GRAM = 'g', _('gram')
+        MILLILITER = 'ml', _('milliliter')
+        UNIT = 'un', _('unit')
+
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     quantity = models.DecimalField(max_digits=6, default=0, decimal_places=2)
     measurement_unit = models.CharField(
         max_length=3,
-        choices=MEASUREMENT_UNITS
+        choices=MeasurementUnits.choices,
+        default=MeasurementUnits.UNIT
     )
     expiration = models.DateField(null=True, default=None)
 
@@ -52,7 +54,7 @@ class IngredientInPantry(models.Model):
         if self.measurement_unit == sub_unit:
             self.quantity = max(0, self.quantity - sub_quantity)
         else:
-            unit_name = dict(MEASUREMENT_UNITS)[self.measurement_unit]
+            unit_name = self.MeasurementUnits(self.measurement_unit).label
             raise ValueError(f'Cannot subtract quantity with different'
                              f'measurement units. Convert the subtract'
                              f'quantity to {unit_name}'
