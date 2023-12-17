@@ -10,9 +10,9 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from time import time
 
+from ingredient.models import Ingredient
 from ingredient.tests.utils import get_ing_in_pantry
 from user.auth_handler import JWT_SECRET, JWT_ALGO
-
 
 User = get_user_model()
 PANTRY_LIST_URL = reverse('api:pantry_list')
@@ -121,6 +121,7 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = {
+            'id': ing.pk,
             'name': ing.ingredient.name,
             'quantity': float(ing.quantity),
             'measurement_unit': ing.measurement_unit,
@@ -128,3 +129,54 @@ class PrivatePantryAPITests(TestCase):
         }
 
         self.assertEqual(content, expected)
+
+    def test_add_ingredient_to_pantry(self):
+        """Test adding ingredient to pantry is successful."""
+        payload = {
+            'name': 'a food',
+            'quantity': 100,
+            'measurement_unit': 'ml',
+        }
+        response = self.client.post(
+            PANTRY_LIST_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('id', content)
+        for key, value in payload.items():
+            self.assertEqual(value, content[key])
+
+    def test_add_existing_ingredient_to_pantry(self):
+        """
+        Test adding existing ingredient to pantry does not alter Ingredient
+        instance.
+        """
+        ing_name = 'a food'
+        another_user = User.objects.create(
+            email='another_user@example.com', password='password321')
+        ingredient = Ingredient.objects.create(
+            name='a food', added_by=another_user)
+        original_ing_id = ingredient.pk
+        payload = {
+            'name': ing_name,
+            'quantity': 100,
+            'measurement_unit': 'ml',
+        }
+        response = self.client.post(
+            PANTRY_LIST_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        content = json.loads(response.content.decode('utf-8'))
+        ingredient.refresh_from_db()
+
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ingredient.pk, original_ing_id)
+        self.assertEqual(ing_name, content['name'])
