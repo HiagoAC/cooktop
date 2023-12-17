@@ -103,3 +103,10 @@ def pantry_update(request, ing_pantry_id: int, payload: PantryDetailPatch):
         setattr(ing_pantry, attr, value)
     ing_pantry.save()
     return response_ing_in_pantry(ing_pantry)
+
+
+@pantry_router.delete('/{ing_pantry_id}', response={204: None})
+def pantry_delete(request, ing_pantry_id: int):
+    ing_pantry = get_ing_pantry_detail(ing_pantry_id, user=request.auth)
+    ing_pantry.delete()
+    return 204, None

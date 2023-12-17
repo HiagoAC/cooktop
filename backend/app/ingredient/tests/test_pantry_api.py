@@ -10,7 +10,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from time import time
 
-from ingredient.models import Ingredient
+from ingredient.models import Ingredient, IngredientInPantry
 from ingredient.tests.utils import get_ing_in_pantry
 from user.auth_handler import JWT_SECRET, JWT_ALGO
 
@@ -225,16 +225,16 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(ing_in_pantry.ingredient.name, payload['name'])
         self.assertEqual(ing.name, original_name)
 
-    # def test_delete_ing_in_pantry(self):
-    #     """Test deleting ingredient in pantry."""
-    #     ing_in_pantry = get_ing_in_pantry(user=self.user)
-    #     response = self.client.delete(
-    #         pantry_detail_url(ing_in_pantry.id), **self.headers)
+    def test_delete_ing_in_pantry(self):
+        """Test deleting ingredient in pantry."""
+        ing_in_pantry = get_ing_in_pantry(user=self.user)
+        response = self.client.delete(
+            pantry_detail_url(ing_in_pantry.id), **self.headers)
 
-    #     # 204 - NO CONTENT
-    #     self.assertEqual(response.status_code, 204)
-    #     self.assertFalse(
-    #         IngredientInPantry.objects.filter(id=ing_in_pantry.id).exists())
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(
+            IngredientInPantry.objects.filter(id=ing_in_pantry.id).exists())
 
     def test_get_another_user_ing_in_pantry(self):
         """
@@ -275,20 +275,20 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(ing_in_pantry.quantity, original_quantity)
 
-    # def test_delete_another_user_ing_in_pantry(self):
-    #     """
-    #     Test deleting another user's pantry ingredient is not allowed.
-    #     """
-    #     another_user = User.objects.create_user(
-    #         email='another@example.com',
-    #         password='password321',
-    #     )
-    #     ing_in_pantry = get_ing_in_pantry(user=another_user)
+    def test_delete_another_user_ing_in_pantry(self):
+        """
+        Test deleting another user's pantry ingredient is not allowed.
+        """
+        another_user = User.objects.create_user(
+            email='another@example.com',
+            password='password321',
+        )
+        ing_in_pantry = get_ing_in_pantry(user=another_user)
 
-    #     response = self.client.delete(
-    #         pantry_detail_url(ing_in_pantry.id), **self.headers)
+        response = self.client.delete(
+            pantry_detail_url(ing_in_pantry.id), **self.headers)
 
-    #     # 401 - UNAUTHORIZED
-    #     self.assertEqual(response.status_code, 401)
-    #     self.assertTrue(
-    #         IngredientInPantry.objects.filter(ing_in_pantry.id).exists())
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(
+            IngredientInPantry.objects.filter(id=ing_in_pantry.id).exists())
