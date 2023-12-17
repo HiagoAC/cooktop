@@ -20,6 +20,14 @@ class PantryDetailIn(Schema):
     expiration: date | None = None
 
 
+class PantryDetailPatch(Schema):
+    """Input schema for pantry_detail patch."""
+    name: str | None = None
+    quantity: NonNegativeFloat | None = None
+    measurement_unit: str | None = None
+    expiration: date | None = None
+
+
 class PantryDetailOut(PantryDetailIn):
     """Output schema for pantry_detail."""
     id: int
