@@ -5,8 +5,7 @@ Tests for Recipe app models.
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ingredient.models import Ingredient
-from recipe.models import Recipe, RecipeIngredient, Tag
+from recipe.models import Recipe, Tag
 
 
 def create_user(email='example@test.com'):
@@ -58,27 +57,6 @@ class RecipeModelTests(TestCase):
             user=user, title=title).exists())
         self.assertFalse(Tag.objects.filter(name=unused))
         self.assertTrue(Tag.objects.filter(name=used))
-
-
-class RecipeIngredientModelTests(TestCase):
-    """Tests for the RecipeIngredient model."""
-
-    def test_add_ingredient_to_recipe(self):
-        """Test creating RecipeIngredient instance."""
-        recipe = Recipe.objects.create(
-            user=create_user(),
-            title='title',
-            directions=['step 1']
-        )
-        ing = Ingredient.objects.create(name='ing')
-        recipe_ing = RecipeIngredient.objects.create(
-            recipe=recipe,
-            ingredient=ing,
-            quantity=473.18,
-            measurement_unit='ml',
-            display_unit='cup'
-        )
-        self.assertEqual(str(recipe_ing), f'{str(ing)} in {str(recipe)}')
 
 
 class TagModelTests(TestCase):

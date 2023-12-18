@@ -1,9 +1,12 @@
 """
 Ingredient app models.
 """
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from recipe.models import Recipe
 
 User = get_user_model()
 
@@ -44,6 +47,20 @@ class IngredientInPantry(models.Model):
     class Meta:
         unique_together = ['user', 'ingredient']
 
+    def delete(self):
+        """
+        Delete IngredientInPantry instance and Ingredient if it is not
+        associated with other IngredientInPantry or RecipeIngredient.
+        """
+        ingredient = self.ingredient
+        super().delete()
+        ing_pantry_exists = IngredientInPantry.objects.filter(
+            ingredient=ingredient).exists()
+        recipe_ing_exists = RecipeIngredient.objects.filter(
+            ingredient=ingredient).exists()
+        if not ing_pantry_exists and not recipe_ing_exists:
+            ingredient.delete()
+
     def subtract_quantity(self, sub_quantity, sub_unit):
         """
         Subtracts quantity of ingredient.
@@ -63,3 +80,19 @@ class IngredientInPantry(models.Model):
 
     def __str__(self):
         return f'{self.ingredient.name} - {self.user.email}'
+
+
+class RecipeIngredient(models.Model):
+    """Ingredient in a recipe."""
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=6, default=0, decimal_places=2)
+    measurement_unit = models.CharField(
+        max_length=3,
+        choices=MeasurementUnits.choices,
+        default=MeasurementUnits.UNIT
+    )
+    display_unit = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{str(self.ingredient)} in {str(self.recipe)}'

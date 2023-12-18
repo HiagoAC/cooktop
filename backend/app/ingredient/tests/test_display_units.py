@@ -4,7 +4,7 @@ Tests for the DisplayUnit class.
 
 from django.test import TestCase
 
-from recipe.display_units import DisplayUnit
+from ingredient.display_units import DisplayUnit
 
 
 class DisplayUnitTests(TestCase):
