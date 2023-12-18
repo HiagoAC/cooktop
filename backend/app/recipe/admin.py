@@ -1,3 +1,7 @@
-# from django.contrib import admin
+from django.contrib import admin
 
-# Register your models here.
+from recipe.models import Recipe, Tag
+
+
+admin.site.register(Recipe)
+admin.site.register(Tag)
