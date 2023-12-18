@@ -5,13 +5,30 @@ Tests for Recipe app models.
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from recipe.models import Tag
+from recipe.models import Recipe, Tag
 
 
 def create_user(email='example@test.com'):
     """Create a user."""
     return get_user_model().objects.create_user(
         email=email, password='password321')
+
+
+class RecipeModelTests(TestCase):
+    """Tests for the Recipe model."""
+
+    def test_create_recipe(self):
+        """Test creating a recipe is successful."""
+        user = create_user()
+        directions = ['step 1', 'step 2']
+        recipe = Recipe.objects.create(
+            user=user,
+            title='a recipe',
+            directions=directions
+        )
+
+        self.assertEqual(str(recipe), recipe.title)
+        self.assertEqual(len(recipe.directions), len(directions))
 
 
 class TagModelTests(TestCase):
