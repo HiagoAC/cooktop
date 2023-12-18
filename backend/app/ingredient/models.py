@@ -50,7 +50,8 @@ class IngredientInPantry(models.Model):
     def delete(self):
         """
         Delete IngredientInPantry instance and Ingredient if it is not
-        associated with other IngredientInPantry or RecipeIngredient.
+        associated with another IngredientInPantry or RecipeIngredient
+        instance.
         """
         ingredient = self.ingredient
         super().delete()
@@ -93,6 +94,21 @@ class RecipeIngredient(models.Model):
         default=MeasurementUnits.UNIT
     )
     display_unit = models.CharField(max_length=20)
+
+    def delete(self):
+        """
+        Delete RecipeIngredient instance and Ingredient if it is not
+        associated with another IngredientInPantry or RecipeIngredient
+        instance.
+        """
+        ingredient = self.ingredient
+        super().delete()
+        ing_pantry_exists = IngredientInPantry.objects.filter(
+            ingredient=ingredient).exists()
+        recipe_ing_exists = RecipeIngredient.objects.filter(
+            ingredient=ingredient).exists()
+        if not ing_pantry_exists and not recipe_ing_exists:
+            ingredient.delete()
 
     def __str__(self):
         return f'{str(self.ingredient)} in {str(self.recipe)}'

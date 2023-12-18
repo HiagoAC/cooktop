@@ -54,7 +54,7 @@ class IngredientInPantryModelTests(TestCase):
         with self.assertRaises(IntegrityError):
             get_ing_in_pantry(quantity=200, measurement_unit='g')
 
-    def test_delete_unused_ingredient(self):
+    def test_delete_ing_in_pantry_with_unused_ingredient(self):
         """
         Test that deleting ingredient in pantry also deletes ingredient if it
         is unused by other entities.
@@ -68,7 +68,7 @@ class IngredientInPantryModelTests(TestCase):
 
     def test_delete_ing_pantry_with_used_ingredient(self):
         """
-        Test that deleting inggredient in pantry does not delete ingredient
+        Test that deleting ingredient in pantry does not delete ingredient
         if it is used by another entity.
         """
         another_user = create_user(email='another_user@example.com')
@@ -149,3 +149,48 @@ class RecipeIngredientModelTests(TestCase):
             display_unit='cup'
         )
         self.assertEqual(str(recipe_ing), f'{str(ing)} in {str(recipe)}')
+
+    def test_delete_recipe_ingredient_with_unused_ingredient(self):
+        """
+        Test that deleting recipe_ingredient also deletes ingredient if it
+        is unused by other entities.
+        """
+        ing = Ingredient.objects.create(name='ing name')
+        ing_id = ing.id
+        recipe = Recipe.objects.create(
+            user=create_user(),
+            title='a recipe',
+            directions=['step 1']
+        )
+        recipe_ingredient = RecipeIngredient.objects.create(
+            recipe=recipe, ingredient=ing)
+        recipe_ingredient.delete()
+
+        self.assertFalse(Ingredient.objects.filter(id=ing_id).exists())
+
+    def test_delete_recipe_ingredient_with_used_ingredient(self):
+        """
+        Test that deleting recipe_ingredient does not delete ingredient
+        if it is used by another entity.
+        """
+        user = create_user(email='another_user@example.com')
+        ing = Ingredient.objects.create(name='ing name')
+        ing_id = ing.id
+        rec_1 = Recipe.objects.create(
+            user=user, title='a recipe', directions=['step 1'])
+        rec_ing_1 = RecipeIngredient.objects.create(
+            recipe=rec_1, ingredient=ing)
+        rec_2 = Recipe.objects.create(
+            user=user, title='recipe 2', directions=['step 1'])
+        rec_ing_2 = RecipeIngredient.objects.create(
+            recipe=rec_2, ingredient=ing)
+        rec_ing_1.delete()
+
+        # Ingredient used by rec_ing_2
+        self.assertTrue(Ingredient.objects.filter(id=ing_id).exists())
+
+        get_ing_in_pantry(ingredient=ing)
+        rec_ing_2.delete()
+
+        # Ingredient used by an ingredient_in_pantry
+        self.assertTrue(Ingredient.objects.filter(id=ing_id).exists())
