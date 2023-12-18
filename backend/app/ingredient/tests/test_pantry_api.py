@@ -1,20 +1,16 @@
 """
-Tests for the apis in the ingredient app.
+Tests for the pantry API.
 """
 import json
-import jwt
 
 from datetime import datetime, timedelta
-from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from time import time
 
+from app.utils_test import create_user, auth_header
 from ingredient.models import Ingredient, IngredientInPantry
 from ingredient.tests.utils import get_ing_in_pantry
-from user.auth_handler import JWT_SECRET, JWT_ALGO
 
-User = get_user_model()
 PANTRY_LIST_URL = reverse('api:pantry_list')
 
 
@@ -57,16 +53,8 @@ class PrivatePantryAPITests(TestCase):
     """Test authenticated requests for the pantry api."""
 
     def setUp(self):
-        email = 'email@example.com'
-        self.user = User.objects.create(
-            email=email, password='password321')
-        token_data = {
-            'email': email,
-            'exp': time() + timedelta(minutes=10).total_seconds(),
-            'sub': 'access_token',
-        }
-        access_token = jwt.encode(token_data, JWT_SECRET, algorithm=JWT_ALGO)
-        self.headers = {'HTTP_AUTHORIZATION': f'Bearer {access_token}'}
+        self.user = create_user()
+        self.headers = auth_header(self.user)
         self.client = Client()
 
     def test_retrieve_pantry_ingredients(self):
@@ -90,10 +78,7 @@ class PrivatePantryAPITests(TestCase):
         Test retrieving pantry ingredients is limited to the ones of the
         authenticated user.
         """
-        another_user = User.objects.create_user(
-            email='another_user@example.com',
-            password='password321'
-        )
+        another_user = create_user(email='another_user@example.com')
         ing = get_ing_in_pantry(name='a food', user=self.user)
         get_ing_in_pantry(name='another food', user=another_user)
         response = self.client.get(PANTRY_LIST_URL, **self.headers)
@@ -157,8 +142,7 @@ class PrivatePantryAPITests(TestCase):
         instance.
         """
         ing_name = 'a food'
-        another_user = User.objects.create(
-            email='another_user@example.com', password='password321')
+        another_user = create_user(email='another_user@example.com')
         ingredient = Ingredient.objects.create(
             name='a food', added_by=another_user)
         original_ing_id = ingredient.id
@@ -240,10 +224,7 @@ class PrivatePantryAPITests(TestCase):
         """
         Test getting another user's pantry ingredient is not allowed.
         """
-        another_user = User.objects.create_user(
-            email='another@example.com',
-            password='password321',
-        )
+        another_user = create_user(email='another_user@example.com')
         ing_in_pantry = get_ing_in_pantry(user=another_user)
 
         response = self.client.get(
@@ -256,10 +237,7 @@ class PrivatePantryAPITests(TestCase):
         """
         Test updating another user's pantry ingredient is not allowed.
         """
-        another_user = User.objects.create_user(
-            email='another@example.com',
-            password='password321',
-        )
+        another_user = create_user(email='another_user@example.com')
         original_quantity = 100
         ing_in_pantry = get_ing_in_pantry(
             quantity=original_quantity, user=another_user)
@@ -279,10 +257,7 @@ class PrivatePantryAPITests(TestCase):
         """
         Test deleting another user's pantry ingredient is not allowed.
         """
-        another_user = User.objects.create_user(
-            email='another@example.com',
-            password='password321',
-        )
+        another_user = create_user(email='another_user@example.com')
         ing_in_pantry = get_ing_in_pantry(user=another_user)
 
         response = self.client.delete(
