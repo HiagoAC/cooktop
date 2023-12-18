@@ -5,7 +5,8 @@ Tests for Recipe app models.
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from recipe.models import Recipe, Tag
+from ingredient.models import Ingredient
+from recipe.models import Recipe, RecipeIngredient, Tag
 
 
 def create_user(email='example@test.com'):
@@ -29,6 +30,27 @@ class RecipeModelTests(TestCase):
 
         self.assertEqual(str(recipe), recipe.title)
         self.assertEqual(len(recipe.directions), len(directions))
+
+
+class RecipeIngredientModelTests(TestCase):
+    """Tests for the RecipeIngredient model."""
+
+    def test_add_ingredient_to_recipe(self):
+        """Test creating RecipeIngredient instance."""
+        recipe = Recipe.objects.create(
+            user=create_user(),
+            title='title',
+            directions=['step 1']
+        )
+        ing = Ingredient.objects.create(name='ing')
+        recipe_ing = RecipeIngredient.objects.create(
+            recipe=recipe,
+            ingredient=ing,
+            quantity=473.18,
+            measurement_unit='ml',
+            display_unit='cup'
+        )
+        self.assertEqual(str(recipe_ing), f'{str(ing)} in {str(recipe)}')
 
 
 class TagModelTests(TestCase):
