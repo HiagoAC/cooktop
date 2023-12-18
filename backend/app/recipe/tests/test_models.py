@@ -31,6 +31,34 @@ class RecipeModelTests(TestCase):
         self.assertEqual(str(recipe), recipe.title)
         self.assertEqual(len(recipe.directions), len(directions))
 
+    def delete_recipe_unused_tags(self):
+        """Test that deleting a recipe deletes unused tags as well."""
+        unused = 'unused tag'
+        used = 'used tag'
+        tag_1 = Tag.objects.create(name=unused)
+        tag_2 = Tag.objects.create(name=used)
+        user = create_user()
+        title = 'a recipe'
+        recipe = Recipe.objects.create(
+            user=user,
+            title=title,
+            directions=['a step'],
+            tags=[tag_1, tag_2]
+        )
+        Recipe.objects.create(
+            user=create_user(email='another_email@example.com'),
+            title='another recipe',
+            directions=['a step'],
+            tags=[tag_2]
+        )
+
+        recipe.delete()
+
+        self.assertFalse(Recipe.objects.filter(
+            user=user, title=title).exists())
+        self.assertFalse(Tag.objects.filter(name=unused))
+        self.assertTrue(Tag.objects.filter(name=used))
+
 
 class RecipeIngredientModelTests(TestCase):
     """Tests for the RecipeIngredient model."""

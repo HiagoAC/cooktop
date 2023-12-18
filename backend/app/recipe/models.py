@@ -25,6 +25,16 @@ class Recipe(models.Model):
     notes = models.TextField(blank=True)
     tags = models.ManyToManyField('Tag')
 
+    def delete(self):
+        """
+        Delete recipe and tags that are not associated with other recipes.
+        """
+        tags = self.tags.all()
+        for tag in tags:
+            if not Recipe.objects.filter(tags=tag).exists():
+                tag.delete()
+        super().delete()
+
     def __str__(self):
         return self.title
 
