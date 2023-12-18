@@ -8,6 +8,12 @@ from django.utils.translation import gettext_lazy as _
 User = get_user_model()
 
 
+class MeasurementUnits(models.TextChoices):
+    GRAM = 'g', _('gram')
+    MILLILITER = 'ml', _('milliliter')
+    UNIT = 'un', _('unit')
+
+
 class Ingredient(models.Model):
     """Ingredient in the system."""
     name = models.CharField(max_length=63, unique=True)
@@ -24,11 +30,6 @@ class Ingredient(models.Model):
 
 class IngredientInPantry(models.Model):
     """Ingrendient a user has."""
-    class MeasurementUnits(models.TextChoices):
-        GRAM = 'g', _('gram')
-        MILLILITER = 'ml', _('milliliter')
-        UNIT = 'un', _('unit')
-
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -53,7 +54,7 @@ class IngredientInPantry(models.Model):
         if self.measurement_unit == sub_unit:
             self.quantity = max(0, self.quantity - sub_quantity)
         else:
-            unit_name = self.MeasurementUnits(self.measurement_unit).label
+            unit_name = MeasurementUnits(self.measurement_unit).label
             raise ValueError(f'Cannot subtract quantity with different'
                              f'measurement units. Convert the subtract'
                              f'quantity to {unit_name}'
