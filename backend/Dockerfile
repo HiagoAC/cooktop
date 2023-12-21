@@ -10,12 +10,18 @@ WORKDIR /app
 EXPOSE 8000
 
 ARG DEV=false
-RUN pip install --upgrade pip && \
+RUN apt-get update && \
+    # Pillow dependenciens
+    apt-get install -y libjpeg-dev zlib1g-dev && \ 
+    pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then pip install -r /tmp/requirements.dev.txt ; \
     fi && \
-    useradd --system django-user
+    useradd --system django-user && \
+    mkdir -p /vol/web/media && \
+    chown -R django-user:django-user /vol && \
+    chmod -R 755 /vol
 
 COPY ./app /app
 
