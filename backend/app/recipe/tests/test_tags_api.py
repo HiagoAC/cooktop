@@ -15,7 +15,7 @@ User = get_user_model()
 TAGS_LIST_URL = reverse('api:tag_list')
 
 
-class PublicPantryAPITests(TestCase):
+class PublicTagsAPITests(TestCase):
     """Test unauthenticated requests to the tags API."""
 
     def setUp(self):
@@ -32,7 +32,7 @@ class PublicPantryAPITests(TestCase):
         self.assertEqual(response.status_code, 401)
 
 
-class PrivatePantryAPITests(TestCase):
+class PrivateTagsAPITests(TestCase):
     """Test authenticated requests for the tags api."""
 
     def setUp(self):
