@@ -10,6 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/app:/app
+      - dev-static-data:/vol/web
     command:
       sh -c " echo 'Waiting for db...' &&
               wait-for-it --service db:5432
@@ -31,3 +32,4 @@ services:
 
 volumes:
   dev-db-data:
+  dev-static-data:
