@@ -33,6 +33,8 @@ class Recipe(models.Model):
     time_minutes = models.PositiveSmallIntegerField(null=True, default=None)
     notes = models.TextField(blank=True)
     tags = models.ManyToManyField('Tag')
+    image = models.ImageField(
+        null=True, default=None, upload_to=recipe_image_file_path)
 
     def delete(self):
         """
