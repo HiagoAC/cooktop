@@ -4,8 +4,9 @@ Tests for Recipe app models.
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from unittest.mock import patch
 
-from recipe.models import Recipe, Tag
+from recipe.models import Recipe, Tag, recipe_image_file_path
 
 
 def create_user(email='example@test.com'):
@@ -85,3 +86,12 @@ class TagModelTests(TestCase):
         tag.refresh_from_db()
 
         self.assertIsNone(tag.added_by)
+
+    @patch('recipe.models.uuid.uuid4')
+    def test_recipe_image_file_path(self, mock_uuid):
+        """Test that recipe image files are generated correctly."""
+        uuid = 'test_uuid'
+        mock_uuid.return_value = uuid
+        file_path = recipe_image_file_path(None, 'example.jpg')
+
+        self.assertEqual(file_path, f'uploads/recipe/{uuid}.jpg')

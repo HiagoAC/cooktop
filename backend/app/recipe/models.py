@@ -2,11 +2,22 @@
 Recipe app models.
 """
 
+import os
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 User = get_user_model()
+
+
+def recipe_image_file_path(instance, filename):
+    """Generates a file path with a unique file name."""
+    path = 'uploads/recipe/'
+    ext = filename.split('.')[-1]
+    new_name = f'{uuid.uuid4()}.{ext}'
+    return os.path.join(path, new_name)
 
 
 class Recipe(models.Model):
