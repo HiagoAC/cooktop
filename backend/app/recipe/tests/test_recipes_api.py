@@ -12,7 +12,8 @@ from app.utils_test import create_user, auth_header
 from recipe.models import Recipe
 
 User = get_user_model()
-RECIPES_LIST_URL = reverse('api:recipe_list')
+RECIPE_LIST_URL = reverse('api:recipes')
+# RECIPE_DETAIL_URL = reverse('api:recipe_detail')
 
 
 class PublicRecipesAPITests(TestCase):
@@ -26,7 +27,7 @@ class PublicRecipesAPITests(TestCase):
         Test that retrieving recipes list unauthenticated is
         unauthorized.
         """
-        response = self.client.get(RECIPES_LIST_URL)
+        response = self.client.get(RECIPE_LIST_URL)
 
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
@@ -52,7 +53,7 @@ class PrivateRecipesAPITests(TestCase):
             title='a recipe',
             directions=['step 1', 'step 2']
         )
-        response = self.client.get(RECIPES_LIST_URL, **self.headers)
+        response = self.client.get(RECIPE_LIST_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
         # 200 - OK
@@ -76,7 +77,7 @@ class PrivateRecipesAPITests(TestCase):
             title='a recipe',
             directions=['step 1', 'step 2']
         )
-        response = self.client.get(RECIPES_LIST_URL, **self.headers)
+        response = self.client.get(RECIPE_LIST_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
         # 200 - OK

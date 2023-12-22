@@ -12,7 +12,7 @@ from app.utils_test import create_user, auth_header
 from recipe.models import Tag
 
 User = get_user_model()
-TAGS_LIST_URL = reverse('api:tag_list')
+TAG_LIST_URL = reverse('api:tags')
 
 
 class PublicTagsAPITests(TestCase):
@@ -26,7 +26,7 @@ class PublicTagsAPITests(TestCase):
         Test that retrieving tags list unauthenticated is
         unauthorized.
         """
-        response = self.client.get(TAGS_LIST_URL)
+        response = self.client.get(TAG_LIST_URL)
 
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
@@ -47,7 +47,7 @@ class PrivateTagsAPITests(TestCase):
             name='tag_2',
             added_by=create_user(email='another_user@example.com')
         )
-        response = self.client.get(TAGS_LIST_URL, **self.headers)
+        response = self.client.get(TAG_LIST_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
         # 200 - OK
