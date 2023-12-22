@@ -12,8 +12,7 @@ from app.utils_test import create_user, auth_header
 from recipe.models import Recipe
 
 User = get_user_model()
-RECIPE_LIST_URL = reverse('api:recipes')
-# RECIPE_DETAIL_URL = reverse('api:recipe_detail')
+RECIPE_URL = reverse('api:recipes')
 
 
 class PublicRecipesAPITests(TestCase):
@@ -27,7 +26,7 @@ class PublicRecipesAPITests(TestCase):
         Test that retrieving recipes list unauthenticated is
         unauthorized.
         """
-        response = self.client.get(RECIPE_LIST_URL)
+        response = self.client.get(RECIPE_URL)
 
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
@@ -53,7 +52,7 @@ class PrivateRecipesAPITests(TestCase):
             title='a recipe',
             directions=['step 1', 'step 2']
         )
-        response = self.client.get(RECIPE_LIST_URL, **self.headers)
+        response = self.client.get(RECIPE_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
         # 200 - OK
@@ -77,7 +76,7 @@ class PrivateRecipesAPITests(TestCase):
             title='a recipe',
             directions=['step 1', 'step 2']
         )
-        response = self.client.get(RECIPE_LIST_URL, **self.headers)
+        response = self.client.get(RECIPE_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
         # 200 - OK
@@ -86,3 +85,27 @@ class PrivateRecipesAPITests(TestCase):
         expected = [{'id': recipe_1.id, 'title': recipe_1.title}]
 
         self.assertEqual(content, expected)
+
+    def test_create_recipe(self):
+        """Test creating a recipe."""
+        payload = {
+            'title': 'a title',
+            'directions': ['step 1', 'step 2'],
+            'description': 'a description',
+            'servings': 1,
+            'time_minutes': 10,
+            'notes': 'a note',
+        }
+        response = self.client.post(
+            RECIPE_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+
+        for field, value in payload.items():
+            self.assertEqual(content[field], value)

@@ -27,3 +27,14 @@ def recipe_list(request):
     user = request.auth
     queryset = Recipe.objects.filter(user=user).order_by('title')
     return queryset
+
+
+@recipe_router.post('/', response={201: RecipeOut})
+def create_recipe(request, payload: RecipeIn):
+    """Create a new recipe."""
+    user = request.auth
+    payload_dict = payload.dict()
+    payload_dict.pop('tags')
+    payload_dict.pop('ingredients')
+    recipe = Recipe.objects.create(user=user, **payload_dict)
+    return 201, RecipeOut.from_orm(recipe)

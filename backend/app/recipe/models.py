@@ -29,7 +29,7 @@ class Recipe(models.Model):
 
     # optional
     description = models.TextField(blank=True)
-    servings = models.PositiveSmallIntegerField(null=True, default=None)
+    servings = models.PositiveSmallIntegerField(default=1)
     time_minutes = models.PositiveSmallIntegerField(null=True, default=None)
     notes = models.TextField(blank=True)
     tags = models.ManyToManyField('Tag')
