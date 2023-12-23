@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
 from app.utils_test import create_user
+from ingredient.measurement_units import MeasurementUnits
 from ingredient.models import Ingredient, RecipeIngredient
 from ingredient.tests.utils import get_ing_in_pantry
 from recipe.models import Recipe
@@ -132,38 +133,53 @@ class IngredientInPantryModelTests(TestCase):
 
 class RecipeIngredientModelTests(TestCase):
     """Tests for the RecipeIngredient model."""
-
-    def test_add_ingredient_to_recipe(self):
-        """Test creating RecipeIngredient instance."""
-        recipe = Recipe.objects.create(
+    
+    def setUp(self):
+        self.recipe = Recipe.objects.create(
             user=create_user(),
             title='title',
             directions=['step 1']
         )
-        ing = Ingredient.objects.create(name='ing')
+        self.ing = Ingredient.objects.create(name='ing')
+
+    def test_add_ingredient_to_recipe(self):
+        """Test creating RecipeIngredient instance."""
         recipe_ing = RecipeIngredient.objects.create(
-            recipe=recipe,
-            ingredient=ing,
+            recipe=self.recipe,
+            ingredient=self.ing,
             quantity=473.18,
             measurement_unit='ml',
             display_unit='cup'
         )
-        self.assertEqual(str(recipe_ing), f'{str(ing)} in {str(recipe)}')
+
+        self.assertEqual(
+            str(recipe_ing), f'{str(self.ing)} in {str(self.recipe)}')
+
+    def test_create_recipe_ingredient_with_display_unit(self):
+        """
+        Test creating a recipe_ingredient with method
+        create_with_display_units.
+        """
+        recipe_ing = RecipeIngredient.create_with_display_unit(
+            recipe=self.recipe,
+            ingredient=self.ing,
+            quantity=2,
+            display_unit='cup'
+        )
+
+        self.assertEqual(recipe_ing.quantity, 473.18)
+        self.assertEqual(recipe_ing.measurement_unit,
+                         MeasurementUnits.MILLILITER)
 
     def test_delete_recipe_ingredient_with_unused_ingredient(self):
         """
         Test that deleting recipe_ingredient also deletes ingredient if it
         is unused by other entities.
         """
-        ing = Ingredient.objects.create(name='ing name')
+        ing = Ingredient.objects.create(name='another ing')
         ing_id = ing.id
-        recipe = Recipe.objects.create(
-            user=create_user(),
-            title='a recipe',
-            directions=['step 1']
-        )
         recipe_ingredient = RecipeIngredient.objects.create(
-            recipe=recipe, ingredient=ing)
+            recipe=self.recipe, ingredient=ing)
         recipe_ingredient.delete()
 
         self.assertFalse(Ingredient.objects.filter(id=ing_id).exists())
@@ -174,7 +190,7 @@ class RecipeIngredientModelTests(TestCase):
         if it is used by another entity.
         """
         user = create_user(email='another_user@example.com')
-        ing = Ingredient.objects.create(name='ing name')
+        ing = Ingredient.objects.create(name='another ing')
         ing_id = ing.id
         rec_1 = Recipe.objects.create(
             user=user, title='a recipe', directions=['step 1'])

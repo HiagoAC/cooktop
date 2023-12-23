@@ -3,18 +3,13 @@ Ingredient app models.
 """
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
+from ingredient.measurement_units import DISPLAY_UNITS, MeasurementUnits
 from recipe.models import Recipe
 
 User = get_user_model()
-
-
-class MeasurementUnits(models.TextChoices):
-    GRAM = 'g', _('gram')
-    MILLILITER = 'ml', _('milliliter')
-    UNIT = 'un', _('unit')
 
 
 class Ingredient(models.Model):
@@ -94,6 +89,29 @@ class RecipeIngredient(models.Model):
         default=MeasurementUnits.UNIT
     )
     display_unit = models.CharField(max_length=20)
+
+    @classmethod
+    def create_with_display_unit(cls, recipe, ingredient, display_unit,
+                                 quantity):
+        """
+        Create an instance of RecipeIngredient with quantity in display unit.
+        Use this method instead of RecipeIngredient.objects.create().
+        measurement_unit used internally and converted quantity are set
+        accordingly.
+        """
+        if display_unit not in DISPLAY_UNITS:
+            raise ValidationError('Invalid display_unit.')
+        
+        measurement_unit = DISPLAY_UNITS[display_unit].get_standard_unit()
+        quantity = DISPLAY_UNITS[display_unit].convert_quantity(quantity)
+
+        return cls(
+            recipe=recipe,
+            ingredient=ingredient,
+            quantity=quantity,
+            measurement_unit=measurement_unit,
+            display_unit=display_unit
+        )
 
     def delete(self):
         """

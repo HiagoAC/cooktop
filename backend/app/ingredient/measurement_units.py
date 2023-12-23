@@ -2,7 +2,14 @@
 Record of display units for ingredients in recipes.
 """
 
-from ingredient.models import MeasurementUnits
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+
+class MeasurementUnits(models.TextChoices):
+    GRAM = 'g', _('gram')
+    MILLILITER = 'ml', _('milliliter')
+    UNIT = 'un', _('unit')
 
 
 class DisplayUnit:
@@ -17,7 +24,7 @@ class DisplayUnit:
         self.unit_type = unit_type
         self.conversion_rate = conversion_rate
 
-    def convert_unit(self, quantity):
+    def convert_quantity(self, quantity):
         return quantity * self.conversion_rate
 
     def get_standard_unit(self):

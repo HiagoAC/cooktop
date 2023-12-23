@@ -1,10 +1,10 @@
 """
-Tests for the DisplayUnit class.
+Tests for the measurement_units module.
 """
 
 from django.test import TestCase
 
-from ingredient.display_units import DisplayUnit
+from ingredient.measurement_units import DisplayUnit
 
 
 class DisplayUnitTests(TestCase):
@@ -13,7 +13,7 @@ class DisplayUnitTests(TestCase):
     def test_convert_unit(self):
         """Test that conversion is done correctly."""
         kg = DisplayUnit('kg', 'weight', 1000)
-        quantity_grams = kg.convert_unit(2)
+        quantity_grams = kg.convert_quantity(2)
 
         self.assertEqual(quantity_grams, 2000)
 
