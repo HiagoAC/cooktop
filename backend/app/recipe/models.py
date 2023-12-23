@@ -52,7 +52,7 @@ class Recipe(models.Model):
 
 class Tag(models.Model):
     """Tag for filtering recipes."""
-    name = models.CharField(max_length=63)
+    name = models.CharField(max_length=63, unique=True)
     added_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

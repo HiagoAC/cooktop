@@ -9,7 +9,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from app.utils_test import create_user, auth_header
-from recipe.models import Recipe
+from recipe.models import Recipe, Tag
 
 User = get_user_model()
 RECIPE_URL = reverse('api:recipes')
@@ -100,12 +100,37 @@ class PrivateRecipesAPITests(TestCase):
             RECIPE_URL,
             data=json.dumps(payload),
             content_type='application/json',
-            **self.headers,
+            **self.headers
         )
         content = json.loads(response.content.decode('utf-8'))
 
         # 201 - CREATED
         self.assertEqual(response.status_code, 201)
-
         for field, value in payload.items():
             self.assertEqual(content[field], value)
+
+    def test_create_recipe_with_tags(self):
+        """
+        Test creating a recipe with tags retrieve tags by name correctly or
+        create a new one if a tag does not exist.
+        """
+        existing_tag = Tag.objects.create(name='existing tag')
+        new_tag_name = 'new tag'
+        payload = {
+            'title': 'a title',
+            'directions': ['step 1', 'step 2'],
+            'description': 'a description',
+            'tags': [existing_tag.name, new_tag_name]
+        }
+        response = self.client.post(
+            RECIPE_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers
+        )
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(content['tags'], payload['tags'])
+        self.assertTrue(Tag.objects.filter(name=new_tag_name).exists())

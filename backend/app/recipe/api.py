@@ -34,7 +34,11 @@ def create_recipe(request, payload: RecipeIn):
     """Create a new recipe."""
     user = request.auth
     payload_dict = payload.dict()
-    payload_dict.pop('tags')
+    tags = payload_dict.pop('tags')
     payload_dict.pop('ingredients')
     recipe = Recipe.objects.create(user=user, **payload_dict)
-    return 201, RecipeOut.from_orm(recipe)
+    for tag_name in tags:
+        tag, _ = Tag.objects.get_or_create(name=tag_name)
+        recipe.tags.add(tag)
+    recipe.save()
+    return 201, recipe

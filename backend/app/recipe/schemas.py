@@ -44,4 +44,11 @@ class RecipeOut(ModelSchema):
 
     class Config:
         model = Recipe
-        model_exclude = ['user']
+        model_exclude = ['user', 'tags',]
+
+    @staticmethod
+    def resolve_tags(obj):
+        tag_names = []
+        for tag in obj.tags.all():
+            tag_names.append(tag.name)
+        return tag_names
