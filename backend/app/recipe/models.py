@@ -28,10 +28,10 @@ class Recipe(models.Model):
     directions = ArrayField(models.TextField(max_length=1023))
 
     # optional
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, default='')
     servings = models.PositiveSmallIntegerField(default=1)
     time_minutes = models.PositiveSmallIntegerField(null=True, default=None)
-    notes = models.TextField(blank=True)
+    notes = models.TextField(blank=True, default='')
     tags = models.ManyToManyField('Tag')
     image = models.ImageField(
         null=True, default=None, upload_to=recipe_image_file_path)
