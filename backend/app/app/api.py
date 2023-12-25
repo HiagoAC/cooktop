@@ -2,6 +2,7 @@
 API views.
 """
 from ninja import NinjaAPI
+from ninja.errors import ValidationError
 
 from user.auth_handler import AuthHandler, InvalidAccessTokenError
 from user.api import user_router, token_router
@@ -22,3 +23,9 @@ api.add_router('users/', user_router)
 def on_invalid_token(request, exc):
     return api.create_response(
         request, {"detail": "Invalid token supplied."}, status=401)
+
+
+@api.exception_handler(ValidationError)
+def on_validation_error(request, exc):
+    print(exc.errors)
+    return api.create_response(request, {'detail': exc.errors}, status=422)

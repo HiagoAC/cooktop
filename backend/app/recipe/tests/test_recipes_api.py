@@ -249,3 +249,77 @@ class PrivateRecipesAPITests(TestCase):
                 self.assertEqual(value, recipe_ings)
             else:
                 self.assertEqual(value, getattr(recipe, attr))
+
+    def test_update_recipe(self):
+        """Test updating a recipe."""
+        recipe = create_recipe(user=self.user)
+        new_data = {
+            'title': 'a new title',
+            'directions': ['new step 1', 'new step 2'],
+            'description': 'a new description',
+            'servings': 1,
+            'time_minutes': 20,
+            'notes': 'some new notes',
+            'tags': ['new tag 1', 'new tag 2']
+        }
+        response = self.client.patch(
+            recipe_detail_url(recipe.id),
+            data=json.dumps(new_data),
+            content_type='application/json',
+            **self.headers,
+        )
+        recipe.refresh_from_db()
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        for attr, value in new_data.items():
+            if attr == 'tags':
+                tags = []
+                for tag in recipe.tags.all().order_by('name'):
+                    tags.append(tag.name)
+                self.assertEqual(value, tags)
+            else:
+                self.assertEqual(value, getattr(recipe, attr))
+
+    def test_update_recipe_ingredient(self):
+        """Test updating recipe's ingredients."""
+        recipe = create_recipe(user=self.user)
+        updated_ing_name = 'updated ing'
+        create_recipe_ing(recipe=recipe, name=updated_ing_name)
+        removed_ing_name = 'removed ing'
+        create_recipe_ing(recipe=recipe, name=removed_ing_name)
+        new_ing = {'name': 'ing 3 new', 'quantity': '20.00',
+                   'display_unit': 'ml'}
+        new_data = {
+            'ingredients': [
+                {'name': updated_ing_name, 'quantity': '10.00',
+                 'display_unit': 'unit'},
+                new_ing
+            ]}
+        response = self.client.patch(
+            recipe_detail_url(recipe.id),
+            data=json.dumps(new_data),
+            content_type='application/json',
+            **self.headers,
+        )
+        updated_ing = RecipeIngredient.objects.filter(
+            recipe=recipe, ingredient__name=updated_ing_name).first()
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(RecipeIngredient.objects.filter(
+            recipe=recipe).count(), 2)
+        # updated ingredient
+        self.assertEqual(
+            updated_ing.get_display_quantity(),
+            Decimal(new_data['ingredients'][0]['quantity'])
+        )
+        self.assertEqual(updated_ing.display_unit,
+                         new_data['ingredients'][0]['display_unit'])
+        # removed ingredient
+        self.assertFalse(RecipeIngredient.objects.filter(
+            recipe=recipe, ingredient__name=removed_ing_name).exists())
+        # new ingredient
+        self.assertTrue(RecipeIngredient.objects.filter(
+            recipe=recipe, ingredient__name=new_ing['name']))

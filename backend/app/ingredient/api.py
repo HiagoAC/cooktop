@@ -61,7 +61,7 @@ def pantry_detail(request, ing_pantry_id: int):
 
 @pantry_router.patch('/{ing_pantry_id}', response=PantryDetailOut)
 def pantry_update(request, ing_pantry_id: int, payload: PantryDetailPatch):
-    """Updates ingredient in pantry."""
+    """Update ingredient in pantry."""
     ing_pantry = get_ing_pantry_detail(ing_pantry_id, user=request.auth)
     for attr, value in payload.dict(exclude_unset=True).items():
         if attr == 'name':

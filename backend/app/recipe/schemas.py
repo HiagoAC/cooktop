@@ -66,3 +66,17 @@ class RecipeOut(ModelSchema):
                 'display_unit': recipe_ing.display_unit
             })
         return ings_data
+
+
+class RecipePatch(ModelSchema):
+    """Input schema for recipe patch."""
+    ingredients: List[RecipeIngredientSchema] = []
+    tags: List[str] = []
+    title: str = ''
+    directions: List[str] = []
+    descriptions: str = ''
+
+    class Config:
+        model = Recipe
+        model_exclude = ['id', 'user', 'image']
+        fields_optional = '__all__'
