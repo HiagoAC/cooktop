@@ -75,7 +75,7 @@ def create_recipe(request, payload: RecipeIn):
 
 @recipe_router.get('/{recipe_id}', response=RecipeOut,
                    url_name='recipe_detail')
-def pantry_detail(request, recipe_id: int):
+def recipe_detail(request, recipe_id: int):
     """Retrieve details of an ingriendt in pantry."""
     recipe = get_recipe_detail(recipe_id, request.auth)
     return recipe
