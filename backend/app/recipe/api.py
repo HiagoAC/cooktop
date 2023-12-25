@@ -18,6 +18,16 @@ tag_router = Router()
 recipe_router = Router()
 
 
+def get_recipe_detail(recipe_id: int, user):
+    """
+    Return recipe if it belongs to user.
+    """
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    if recipe.user != user:
+        raise HttpError(401, "Unauthorized")
+    return recipe
+
+
 @tag_router.get('/', response=List[TagListSchema],
                 url_name='tags')
 def tag_list(request):
@@ -61,20 +71,6 @@ def create_recipe(request, payload: RecipeIn):
         )
 
     return 201, recipe
-
-def get_recipe_detail(recipe_id: int, user):
-    """
-    Return recipe if it belongs to user.
-    """
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    if recipe.user != user:
-        raise HttpError(401, "Unauthorized")
-    return recipe
-
-
-
-
-
 
 
 @recipe_router.get('/{recipe_id}', response=RecipeOut,
