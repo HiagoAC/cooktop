@@ -101,17 +101,22 @@ class RecipeIngredient(models.Model):
         """
         if display_unit not in DISPLAY_UNITS:
             raise ValidationError('Invalid display_unit.')
-        
+
         measurement_unit = DISPLAY_UNITS[display_unit].get_standard_unit()
         quantity = DISPLAY_UNITS[display_unit].convert_quantity(quantity)
 
-        return cls(
+        return cls.objects.create(
             recipe=recipe,
             ingredient=ingredient,
             quantity=quantity,
             measurement_unit=measurement_unit,
             display_unit=display_unit
         )
+
+    def get_display_quantity(self):
+        """Get quantity in display unit."""
+        return DISPLAY_UNITS[self.display_unit].convert_to_display_unit(
+            self.quantity)
 
     def delete(self):
         """

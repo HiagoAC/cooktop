@@ -2,9 +2,13 @@
 API views for the recipe app.
 """
 
+
+from django.db import transaction
 from ninja import Router
 from typing import List
 
+from ingredient.api_utils import get_or_create_ingredient
+from ingredient.models import RecipeIngredient
 from recipe.models import Recipe, Tag
 from recipe.schemas import RecipeListSchema, RecipeIn, RecipeOut, TagListSchema
 
@@ -30,15 +34,28 @@ def recipe_list(request):
 
 
 @recipe_router.post('/', response={201: RecipeOut})
+@transaction.atomic
 def create_recipe(request, payload: RecipeIn):
     """Create a new recipe."""
     user = request.auth
     payload_dict = payload.dict()
     tags = payload_dict.pop('tags')
-    payload_dict.pop('ingredients')
+    recipe_ings = payload_dict.pop('ingredients')
     recipe = Recipe.objects.create(user=user, **payload_dict)
     for tag_name in tags:
-        tag, _ = Tag.objects.get_or_create(name=tag_name)
+        tag, created = Tag.objects.get_or_create(name=tag_name)
+        if created:
+            tag.added_by = user
         recipe.tags.add(tag)
     recipe.save()
+    for recipe_ing_data in recipe_ings:
+        name = recipe_ing_data.pop('name')
+        ingredient = get_or_create_ingredient(name, user)
+
+        RecipeIngredient.create_with_display_unit(
+            recipe=recipe,
+            ingredient=ingredient,
+            **recipe_ing_data
+        )
+
     return 201, recipe

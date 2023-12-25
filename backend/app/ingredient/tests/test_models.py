@@ -2,6 +2,7 @@
 Tests for ingredient app models.
 """
 
+from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
@@ -133,7 +134,7 @@ class IngredientInPantryModelTests(TestCase):
 
 class RecipeIngredientModelTests(TestCase):
     """Tests for the RecipeIngredient model."""
-    
+
     def setUp(self):
         self.recipe = Recipe.objects.create(
             user=create_user(),
@@ -167,7 +168,7 @@ class RecipeIngredientModelTests(TestCase):
             display_unit='cup'
         )
 
-        self.assertEqual(recipe_ing.quantity, 473.18)
+        self.assertEqual(recipe_ing.quantity, Decimal('473.18'))
         self.assertEqual(recipe_ing.measurement_unit,
                          MeasurementUnits.MILLILITER)
 
