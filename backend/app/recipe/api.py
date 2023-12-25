@@ -4,7 +4,9 @@ API views for the recipe app.
 
 
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from ninja import Router
+from ninja.errors import HttpError
 from typing import List
 
 from ingredient.api_utils import get_or_create_ingredient
@@ -14,6 +16,16 @@ from recipe.schemas import RecipeListSchema, RecipeIn, RecipeOut, TagListSchema
 
 tag_router = Router()
 recipe_router = Router()
+
+
+def get_recipe_detail(recipe_id: int, user):
+    """
+    Return recipe if it belongs to user.
+    """
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    if recipe.user != user:
+        raise HttpError(401, "Unauthorized")
+    return recipe
 
 
 @tag_router.get('/', response=List[TagListSchema],
@@ -59,3 +71,11 @@ def create_recipe(request, payload: RecipeIn):
         )
 
     return 201, recipe
+
+
+@recipe_router.get('/{recipe_id}', response=RecipeOut,
+                   url_name='recipe_detail')
+def pantry_detail(request, recipe_id: int):
+    """Retrieve details of an ingriendt in pantry."""
+    recipe = get_recipe_detail(recipe_id, request.auth)
+    return recipe

@@ -18,6 +18,45 @@ User = get_user_model()
 RECIPE_URL = reverse('api:recipes')
 
 
+def recipe_detail_url(recipe_id):
+    """Return a recipe detail URL."""
+    return reverse('api:recipe_detail', args=[recipe_id])
+
+
+def create_recipe_ing(recipe, name='ing 1', **params):
+    """Create and return a RecipeIngredient instance."""
+    ingredient, _ = Ingredient.objects.get_or_create(name=name)
+    data = {
+        'quantity': '2.00',
+        'display_unit': 'cup'
+    }
+    data.update(params)
+    recipe_ing = RecipeIngredient.create_with_display_unit(
+        recipe=recipe, ingredient=ingredient, **data)
+    return recipe_ing
+
+
+def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
+    """Create and return a recipe with tags."""
+    recipe_data = {
+        'title': 'a title',
+        'directions': ['step 1', 'step 2'],
+        'description': 'a description',
+        'servings': 2,
+        'time_minutes': 10,
+        'notes': 'some notes'
+    }
+    recipe_data.update(params)
+    recipe = Recipe.objects.create(user=user, **recipe_data)
+
+    for tag_name in tags:
+        tag = Tag.objects.create(name=tag_name, added_by=user)
+        recipe.tags.add(tag)
+
+    recipe.save()
+    return recipe
+
+
 class PublicRecipesAPITests(TestCase):
     """Test unauthenticated requests to the recipes API."""
 
@@ -180,3 +219,33 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(recipe_existing_ing.quantity, Decimal('473.18'))
         self.assertEqual(recipe_existing_ing.measurement_unit,
                          MeasurementUnits.MILLILITER)
+
+    def test_get_recipe_detail(self):
+        """Test getting recipe detail."""
+        tags = ['tag 1', 'tag 2']
+        recipe = create_recipe(user=self.user, tags=tags)
+        quantity = '2.00'
+        ing_1 = create_recipe_ing(recipe=recipe, quantity=quantity)
+        ing_2 = create_recipe_ing(recipe=recipe, name='another ingredient',
+                                  quantity=quantity)
+        recipe_ings = [
+            {'name': ing_1.ingredient.name, 'quantity': quantity,
+             'display_unit': ing_1.display_unit},
+            {'name': ing_2.ingredient.name, 'quantity': quantity,
+             'display_unit': ing_2.display_unit}
+        ]
+
+        response = self.client.get(
+            recipe_detail_url(recipe.id), **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        for attr, value in content.items():
+            if attr == 'tags':
+                self.assertEqual(value, tags)
+            elif attr == 'ingredients':
+                self.assertEqual(value, recipe_ings)
+            else:
+                self.assertEqual(value, getattr(recipe, attr))
