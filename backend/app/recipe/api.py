@@ -118,3 +118,10 @@ def recipe_update(request, recipe_id: int, payload: RecipePatch):
             setattr(recipe, attr, value)
     recipe.save()
     return recipe
+
+
+@recipe_router.delete('/{recipe_id}', response={204: None})
+def recipe_delete(request, recipe_id: int):
+    recipe = get_recipe_detail(recipe_id, user=request.auth)
+    recipe.delete()
+    return 204, None

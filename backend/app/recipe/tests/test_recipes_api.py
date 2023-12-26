@@ -323,3 +323,20 @@ class PrivateRecipesAPITests(TestCase):
         # new ingredient
         self.assertTrue(RecipeIngredient.objects.filter(
             recipe=recipe, ingredient__name=new_ing['name']))
+
+    def test_delete_recipe(self):
+        """Test deleting a recipe."""
+        recipe = create_recipe(user=self.user)
+        recipe_ing_1 = create_recipe_ing(recipe)
+        recipe_ing_2 = create_recipe_ing(recipe, name='ing 2')
+
+        response = self.client.delete(
+            recipe_detail_url(recipe.id), **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Recipe.objects.filter(id=recipe.id).exists())
+        self.assertFalse(
+            RecipeIngredient.objects.filter(id=recipe_ing_1.id).exists())
+        self.assertFalse(
+            RecipeIngredient.objects.filter(id=recipe_ing_2.id).exists())
