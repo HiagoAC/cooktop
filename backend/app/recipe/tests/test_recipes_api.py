@@ -340,3 +340,50 @@ class PrivateRecipesAPITests(TestCase):
             RecipeIngredient.objects.filter(id=recipe_ing_1.id).exists())
         self.assertFalse(
             RecipeIngredient.objects.filter(id=recipe_ing_2.id).exists())
+
+    def test_get_another_user_recipe(self):
+        """
+        Test getting another user's recipe is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        recipe = create_recipe(user=another_user)
+
+        response = self.client.get(
+            recipe_detail_url(recipe.id), **self.headers)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_another_user_recipe(self):
+        """
+        Test updating another user's recipe is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        title = 'a title'
+        recipe = create_recipe(user=another_user, title=title)
+
+        response = self.client.patch(
+            recipe_detail_url(recipe.id),
+            data=json.dumps({'title': 'new title'}),
+            content_type='application/json',
+            **self.headers
+        )
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(recipe.title, title)
+
+    def test_delete_another_user_recipe(self):
+        """
+        Test deleting another user's recipe is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        recipe = create_recipe(user=another_user)
+
+        response = self.client.delete(
+            recipe_detail_url(recipe.id), **self.headers)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(
+            Recipe.objects.filter(id=recipe.id).exists())
