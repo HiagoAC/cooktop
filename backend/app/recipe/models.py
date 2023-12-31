@@ -44,6 +44,7 @@ class Recipe(models.Model):
         for tag in tags:
             if not Recipe.objects.filter(tags=tag).exists():
                 tag.delete()
+        self.image.delete(save=False)
         super().delete()
 
     def __str__(self):
