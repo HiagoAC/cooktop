@@ -6,10 +6,18 @@ import json
 
 from decimal import Decimal
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
+from os import path
 
-from app.utils_test import create_user, auth_header
+from app.utils_test import (
+    create_user,
+    auth_header,
+    create_sample_image,
+    create_recipe,
+    create_recipe_ing
+)
 from recipe.models import Recipe, Tag
 from ingredient.models import Ingredient, RecipeIngredient, MeasurementUnits
 
@@ -23,38 +31,9 @@ def recipe_detail_url(recipe_id):
     return reverse('api:recipe_detail', args=[recipe_id])
 
 
-def create_recipe_ing(recipe, name='ing 1', **params):
-    """Create and return a RecipeIngredient instance."""
-    ingredient, _ = Ingredient.objects.get_or_create(name=name)
-    data = {
-        'quantity': '2.00',
-        'display_unit': 'cup'
-    }
-    data.update(params)
-    recipe_ing = RecipeIngredient.create_with_display_unit(
-        recipe=recipe, ingredient=ingredient, **data)
-    return recipe_ing
-
-
-def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
-    """Create and return a recipe with tags."""
-    recipe_data = {
-        'title': 'a title',
-        'directions': ['step 1', 'step 2'],
-        'description': 'a description',
-        'servings': 2,
-        'time_minutes': 10,
-        'notes': 'some notes'
-    }
-    recipe_data.update(params)
-    recipe = Recipe.objects.create(user=user, **recipe_data)
-
-    for tag_name in tags:
-        tag = Tag.objects.create(name=tag_name, added_by=user)
-        recipe.tags.add(tag)
-
-    recipe.save()
-    return recipe
+def recipe_image_url(recipe_id):
+    """Return a recipe_image URL."""
+    return reverse('api:recipe_image', args=[recipe_id])
 
 
 class PublicRecipesAPITests(TestCase):
@@ -387,3 +366,43 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertTrue(
             Recipe.objects.filter(id=recipe.id).exists())
+
+
+class RecipeImageTests(TestCase):
+    """Tests for recipe image field."""
+
+    def setUp(self):
+        self.user = create_user()
+        self.recipe = create_recipe(self.user)
+        self.headers = auth_header(self.user)
+        self.client = Client()
+
+    def tearDown(self):
+        self.recipe.image.delete()
+
+    def test_upload_image(self):
+        """Test uploading an image is successful."""
+        image = create_sample_image()
+        response = self.client.post(
+            recipe_image_url(self.recipe.id),
+            data={'img': image},
+            **self.headers
+        )
+        self.recipe.refresh_from_db()
+
+        # 201 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(path.exists(self.recipe.image.path))
+
+    def test_delete_image(self):
+        """Test deleting a recipe image."""
+        image = create_sample_image()
+        self.recipe.image = SimpleUploadedFile(
+            name='test.jpg', content=image.read(), content_type='image/jpeg')
+        self.recipe.save()
+        response = self.client.delete(
+            recipe_image_url(self.recipe.id), **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(path.exists(self.recipe.image.path))

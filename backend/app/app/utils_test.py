@@ -6,8 +6,12 @@ import jwt
 
 from datetime import timedelta
 from django.contrib.auth import get_user_model
+from io import BytesIO
+from PIL import Image
 from time import time
 
+from ingredient.models import Ingredient, RecipeIngredient
+from recipe.models import Recipe, Tag
 from user.auth_handler import JWT_SECRET, JWT_ALGO
 
 
@@ -27,3 +31,47 @@ def auth_header(user):
     access_token = jwt.encode(token_data, JWT_SECRET, algorithm=JWT_ALGO)
     headers = {'HTTP_AUTHORIZATION': f'Bearer {access_token}'}
     return headers
+
+
+def create_sample_image():
+    """Return an in-memory file-like image object."""
+    image = Image.new('RGB', (100, 100))
+    image_io = BytesIO()
+    image.save(image_io, format='JPEG')
+    image_io.seek(0)
+
+    return image_io
+
+
+def create_recipe_ing(recipe, name='ing 1', **params):
+    """Create and return a RecipeIngredient instance."""
+    ingredient, _ = Ingredient.objects.get_or_create(name=name)
+    data = {
+        'quantity': '2.00',
+        'display_unit': 'cup'
+    }
+    data.update(params)
+    recipe_ing = RecipeIngredient.create_with_display_unit(
+        recipe=recipe, ingredient=ingredient, **data)
+    return recipe_ing
+
+
+def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
+    """Create and return a recipe with tags."""
+    recipe_data = {
+        'title': 'a title',
+        'directions': ['step 1', 'step 2'],
+        'description': 'a description',
+        'servings': 2,
+        'time_minutes': 10,
+        'notes': 'some notes'
+    }
+    recipe_data.update(params)
+    recipe = Recipe.objects.create(user=user, **recipe_data)
+
+    for tag_name in tags:
+        tag = Tag.objects.create(name=tag_name, added_by=user)
+        recipe.tags.add(tag)
+
+    recipe.save()
+    return recipe

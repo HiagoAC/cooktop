@@ -4,8 +4,9 @@ API views for the recipe app.
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from ninja import Router
+from ninja import File, Router
 from ninja.errors import HttpError
+from ninja.files import UploadedFile
 from typing import List
 
 from ingredient.api_utils import get_or_create_ingredient
@@ -121,7 +122,25 @@ def recipe_update(request, recipe_id: int, payload: RecipePatch):
 
 
 @recipe_router.delete('/{recipe_id}', response={204: None})
-def recipe_delete(request, recipe_id: int):
+def delete_recipe(request, recipe_id: int):
+    """Delete a recipe."""
     recipe = get_recipe_detail(recipe_id, user=request.auth)
     recipe.delete()
+    return 204, None
+
+
+@recipe_router.post('/{recipe_id}/image', url_name='recipe_image')
+def upload_recipe_image(
+        request, recipe_id: int, img: UploadedFile = File(...)):
+    """Upload an image to a recipe."""
+    recipe = get_recipe_detail(recipe_id, user=request.auth)
+    recipe.image.save(img.name, img)
+    return {'success': True}
+
+
+@recipe_router.delete('/{recipe_id}/image', response={204: None})
+def delete_image(request, recipe_id: int):
+    """Delete a recipe image."""
+    recipe = get_recipe_detail(recipe_id, user=request.auth)
+    recipe.image.delete()
     return 204, None
