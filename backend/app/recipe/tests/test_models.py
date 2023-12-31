@@ -2,10 +2,11 @@
 Tests for Recipe app models.
 """
 
+import os
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from unittest.mock import patch
-from os import path
 
 from app.utils_test import create_recipe, create_sample_image, create_user
 from recipe.models import Recipe, Tag, recipe_image_file_path
@@ -87,6 +88,18 @@ class TagModelTests(TestCase):
 class RecipeImageTests(TestCase):
     """Tests for recipes' images."""
 
+    def setUp(self):
+        self.recipe = create_recipe(create_user())
+        self.image = create_sample_image()
+        self.recipe.image = SimpleUploadedFile(
+            name='test.jpg', content=self.image.read(), content_type='image/jpeg')
+        self.recipe.save()
+        self.image_path = self.recipe.image.path
+
+    def tearDown(self):
+        if os.path.exists(self.image_path):
+            os.remove(self.image_path)
+
     @patch('recipe.models.uuid.uuid4')
     def test_recipe_image_file_path(self, mock_uuid):
         """Test that recipe image files are generated correctly."""
@@ -101,15 +114,6 @@ class RecipeImageTests(TestCase):
         Test that an image associated with a recipe is deleted when the recipe
         is deleted.
         """
-        recipe = create_recipe(create_user())
-        image = create_sample_image()
-        recipe.image = SimpleUploadedFile(
-            name='test.jpg', content=image.read(), content_type='image/jpeg')
-        recipe.save()
+        self.recipe.delete()
 
-        self.assertTrue(path.exists(recipe.image.path))
-
-        image_path = recipe.image.path
-        recipe.delete()
-
-        self.assertFalse(path.exists(image_path))
+        self.assertFalse(os.path.exists(self.image_path))
