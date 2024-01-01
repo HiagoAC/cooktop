@@ -2,7 +2,12 @@
 Schemas for the apis in ingredient app.
 """
 
-from ninja import ModelSchema, Schema
+from ninja import (
+    Field,
+    FilterSchema,
+    ModelSchema,
+    Schema
+)
 from typing import List
 
 from recipe.models import Recipe
@@ -80,3 +85,8 @@ class RecipePatch(ModelSchema):
         model = Recipe
         model_exclude = ['id', 'user', 'image']
         fields_optional = '__all__'
+
+
+class RecipeFilter(FilterSchema):
+    """Schema for recipe filters."""
+    tags: str | None = Field(None, q='tags__name')

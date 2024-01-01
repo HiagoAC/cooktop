@@ -92,7 +92,10 @@ class RecipeImageTests(TestCase):
         self.recipe = create_recipe(create_user())
         self.image = create_sample_image()
         self.recipe.image = SimpleUploadedFile(
-            name='test.jpg', content=self.image.read(), content_type='image/jpeg')
+            name='test.jpg',
+            content=self.image.read(),
+            content_type='image/jpeg'
+        )
         self.recipe.save()
         self.image_path = self.recipe.image.path
 

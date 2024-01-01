@@ -70,7 +70,9 @@ def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
     recipe = Recipe.objects.create(user=user, **recipe_data)
 
     for tag_name in tags:
-        tag = Tag.objects.create(name=tag_name, added_by=user)
+        tag, created = Tag.objects.get_or_create(name=tag_name)
+        if created:
+            tag.added_by = user
         recipe.tags.add(tag)
 
     recipe.save()

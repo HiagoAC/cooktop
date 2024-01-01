@@ -86,7 +86,7 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(content, expected)
 
     def test_retrieve_recipe_list_another_user(self):
-        """Test retrieving recipes list authenticated."""
+        """Test retrieving recipes list only returns own recipes."""
         recipe_1 = Recipe.objects.create(
             user=self.user,
             title='a recipe',
@@ -104,6 +104,59 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = [{'id': recipe_1.id, 'title': recipe_1.title}]
+
+        self.assertEqual(content, expected)
+
+    def test_filter_recipes_by_tags(self):
+        """Test filtering recipes by tags."""
+        tag_1 = Tag.objects.create(name='tag_1')
+        tag_2 = Tag.objects.create(name='tag_2')
+        recipe_1 = create_recipe(user=self.user, tags=[tag_1.name, tag_2.name])
+        recipe_2 = create_recipe(user=self.user, tags=[tag_1.name])
+        create_recipe(user=self.user, tags=[tag_2.name])
+
+        params = {'tags': f'{tag_1.name}'}
+        response = self.client.get(RECIPE_URL, params, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        expected = [
+            {'id': recipe_1.id, 'title': recipe_1.title},
+            {'id': recipe_2.id, 'title': recipe_2.title}
+        ]
+
+        self.assertEqual(content, expected)
+
+    def test_filter_recipes_ingredients(self):
+        """
+        Test recipes can be filtered by ingredient's names and that recipes are ordered by
+        the number of ingredients in query matched by the recipes.
+        """
+        recipe_1 = create_recipe(user=self.user)
+        recipe_2 = create_recipe(user=self.user)
+        create_recipe(user=self.user)
+
+        ing_1 = 'ing 1'
+        ing_2 = 'ing 2'
+
+        create_recipe_ing(recipe_1, name=ing_1)
+        create_recipe_ing(recipe_2, name=ing_1)
+        create_recipe_ing(recipe_2, name=ing_2)
+
+        params = {'ingredients': f'{ing_1},{ing_2}'}
+        response = self.client.get(RECIPE_URL, params, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        # recipe_2 must come before recipe_1 more ingredients in the query.
+        expected = [
+            {'id': recipe_2.id, 'title': recipe_1.title},
+            {'id': recipe_1.id, 'title': recipe_1.title}
+        ]
 
         self.assertEqual(content, expected)
 

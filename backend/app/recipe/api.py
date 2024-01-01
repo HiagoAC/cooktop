@@ -4,7 +4,7 @@ API views for the recipe app.
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from ninja import File, Router
+from ninja import File, Query, Router
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
 from typing import List
@@ -13,8 +13,9 @@ from ingredient.api_utils import get_or_create_ingredient
 from ingredient.models import RecipeIngredient
 from recipe.models import Recipe, Tag
 from recipe.schemas import (
-    RecipeListSchema,
+    RecipeFilter,
     RecipeIn,
+    RecipeListSchema,
     RecipeOut,
     RecipePatch,
     TagListSchema
@@ -73,10 +74,11 @@ def tag_list(request):
 
 @recipe_router.get('/', response=List[RecipeListSchema],
                    url_name='recipes')
-def recipe_list(request):
+def recipe_list(request, filters: RecipeFilter = Query(...)):
     """Retrieve all user's recipes."""
     user = request.auth
     queryset = Recipe.objects.filter(user=user).order_by('title')
+    queryset = filters.filter(queryset)
     return queryset
 
 
