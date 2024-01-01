@@ -2,6 +2,7 @@
 Schemas for the apis in ingredient app.
 """
 
+from django.db.models import Q
 from ninja import (
     Field,
     FilterSchema,
@@ -89,4 +90,11 @@ class RecipePatch(ModelSchema):
 
 class RecipeFilter(FilterSchema):
     """Schema for recipe filters."""
-    tags: str | None = Field(None, q='tags__name')
+    tags: str | None = None
+    # ingredients: str | None = None
+
+    def filter_tags(self, value: str) -> Q:
+        if not value:
+            return Q()
+        tags = value.split(',')
+        return Q(tags__name__in=tags)

@@ -115,7 +115,7 @@ class PrivateRecipesAPITests(TestCase):
         recipe_2 = create_recipe(user=self.user, tags=[tag_1.name])
         create_recipe(user=self.user, tags=[tag_2.name])
 
-        params = {'tags': f'{tag_1.name}'}
+        params = {'tags': f'{tag_1.name},another_tag'}
         response = self.client.get(RECIPE_URL, params, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
