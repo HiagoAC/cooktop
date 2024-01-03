@@ -131,8 +131,9 @@ class PrivateRecipesAPITests(TestCase):
 
     def test_filter_recipes_ingredients(self):
         """
-        Test recipes can be filtered by ingredient's names and that recipes are ordered by
-        the number of ingredients in query matched by the recipes.
+        Test recipes can be filtered by ingredient's names and that recipes
+        are ordered by the number of ingredients in query matched by the
+        recipes.
         """
         recipe_1 = create_recipe(user=self.user)
         recipe_2 = create_recipe(user=self.user)

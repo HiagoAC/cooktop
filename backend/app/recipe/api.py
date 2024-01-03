@@ -20,6 +20,7 @@ from recipe.schemas import (
     RecipePatch,
     TagListSchema
 )
+from recipe.utils import get_recipes_by_ings
 
 tag_router = Router()
 recipe_router = Router()
@@ -74,10 +75,15 @@ def tag_list(request):
 
 @recipe_router.get('/', response=List[RecipeListSchema],
                    url_name='recipes')
-def recipe_list(request, filters: RecipeFilter = Query(...)):
+def recipe_list(
+        request, ingredients: str | None = None,
+        filters: RecipeFilter = Query(...)):
     """Retrieve all user's recipes."""
     user = request.auth
     queryset = Recipe.objects.filter(user=user).order_by('title')
+    if ingredients:
+        ing_list = ingredients.split(',')
+        queryset = get_recipes_by_ings(queryset, ing_list)
     queryset = filters.filter(queryset)
     return queryset
 

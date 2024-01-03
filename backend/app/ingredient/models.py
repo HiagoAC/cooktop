@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from ingredient.measurement_units import DISPLAY_UNITS, MeasurementUnits
-from recipe.models import Recipe
 
 User = get_user_model()
 
@@ -80,7 +79,7 @@ class IngredientInPantry(models.Model):
 
 class RecipeIngredient(models.Model):
     """Ingredient in a recipe."""
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey('recipe.Recipe', on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=6, default=0, decimal_places=2)
     measurement_unit = models.CharField(

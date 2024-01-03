@@ -8,9 +8,6 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from typing import List
-
-from ingredient.models import RecipeIngredient
 
 User = get_user_model()
 
@@ -38,18 +35,6 @@ class Recipe(models.Model):
     tags = models.ManyToManyField('Tag')
     image = models.ImageField(
         null=True, default=None, upload_to=recipe_image_file_path)
-    
-    def ingredient_match_count(self, ingredients: List[str]) -> int:
-        """
-        Return the number of ingredients in the list ingredients the recipe
-        contains.
-        """
-        match_count = 0
-        for ingredient_name in ingredients:
-            if RecipeIngredient.objects.filter(
-                recipe=self, ingredient__name=ingredient_name).exists():
-                match_count += 1
-        return match_count
 
     def delete(self):
         """

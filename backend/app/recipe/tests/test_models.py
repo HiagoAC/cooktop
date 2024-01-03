@@ -8,9 +8,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from unittest.mock import patch
 
-from app.utils_test import(
+from app.utils_test import (
     create_recipe,
-    create_recipe_ing,
     create_sample_image,
     create_user
 )
@@ -32,18 +31,6 @@ class RecipeModelTests(TestCase):
 
         self.assertEqual(str(recipe), recipe.title)
         self.assertEqual(len(recipe.directions), len(directions))
-
-    def test_ingredient_match_count(self):
-        """Test that ingredient_match_count method works correctly."""
-        recipe = create_recipe(user=create_user())
-        create_recipe_ing(recipe, 'ing_1')
-        create_recipe_ing(recipe, 'ing_2')
-        another_recipe = create_recipe(
-            user=create_user('another_user@example.com'), title='title')
-        create_recipe_ing(another_recipe, 'ing_3')
-        match_count = recipe.ingredient_match_count(
-            ['ing_1', 'ing_2', 'ing_3'])
-        self.assertEqual(match_count, 2)
 
     def test_delete_recipe_unused_tags(self):
         """Test that deleting a recipe deletes unused tags as well."""
