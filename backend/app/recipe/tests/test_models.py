@@ -8,7 +8,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from unittest.mock import patch
 
-from app.utils_test import create_recipe, create_sample_image, create_user
+from app.utils_test import(
+    create_recipe,
+    create_recipe_ing,
+    create_sample_image,
+    create_user
+)
 from recipe.models import Recipe, Tag, recipe_image_file_path
 
 
@@ -28,33 +33,45 @@ class RecipeModelTests(TestCase):
         self.assertEqual(str(recipe), recipe.title)
         self.assertEqual(len(recipe.directions), len(directions))
 
-    def delete_recipe_unused_tags(self):
+    def test_ingredient_match_count(self):
+        """Test that ingredient_match_count method works correctly."""
+        recipe = create_recipe(user=create_user())
+        create_recipe_ing(recipe, 'ing_1')
+        create_recipe_ing(recipe, 'ing_2')
+        another_recipe = create_recipe(
+            user=create_user('another_user@example.com'), title='title')
+        create_recipe_ing(another_recipe, 'ing_3')
+        match_count = recipe.ingredient_match_count(
+            ['ing_1', 'ing_2', 'ing_3'])
+        self.assertEqual(match_count, 2)
+
+    def test_delete_recipe_unused_tags(self):
         """Test that deleting a recipe deletes unused tags as well."""
         unused = 'unused tag'
         used = 'used tag'
-        tag_1 = Tag.objects.create(name=unused)
-        tag_2 = Tag.objects.create(name=used)
+        Tag.objects.create(name=unused)
+        Tag.objects.create(name=used)
         user = create_user()
         title = 'a recipe'
-        recipe = Recipe.objects.create(
+        recipe = create_recipe(
             user=user,
+            tags=[unused, used],
             title=title,
             directions=['a step'],
-            tags=[tag_1, tag_2]
         )
-        Recipe.objects.create(
+        create_recipe(
             user=create_user(email='another_email@example.com'),
+            tags=[used],
             title='another recipe',
             directions=['a step'],
-            tags=[tag_2]
         )
 
         recipe.delete()
 
         self.assertFalse(Recipe.objects.filter(
             user=user, title=title).exists())
-        self.assertFalse(Tag.objects.filter(name=unused))
-        self.assertTrue(Tag.objects.filter(name=used))
+        self.assertFalse(Tag.objects.filter(name=unused).exists())
+        self.assertTrue(Tag.objects.filter(name=used).exists())
 
 
 class TagModelTests(TestCase):
