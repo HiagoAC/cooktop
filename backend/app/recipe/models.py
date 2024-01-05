@@ -8,6 +8,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -22,6 +23,14 @@ def recipe_image_file_path(instance, filename):
 
 class Recipe(models.Model):
     """Recipe of a user."""
+
+    class RecipeTypes(models.TextChoices):
+        MAIN_DISH = 'mai', _('main dish')
+        SIDE_DISH = 'sid', _('side dish')
+        SALAD = 'sal', _('salad')
+        DESSERT = 'des', _('dessert')
+        SNACK = 'sna', _('snack')
+
     # required
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -31,6 +40,11 @@ class Recipe(models.Model):
     description = models.TextField(blank=True, default='')
     servings = models.PositiveSmallIntegerField(default=1)
     time_minutes = models.PositiveSmallIntegerField(null=True, default=None)
+    recipe_type = models.CharField(
+        max_length=3,
+        choices=RecipeTypes.choices,
+        default=RecipeTypes.MAIN_DISH
+    )
     notes = models.TextField(blank=True, default='')
     tags = models.ManyToManyField('Tag')
     image = models.ImageField(
