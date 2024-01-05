@@ -11,6 +11,7 @@ from PIL import Image
 from time import time
 
 from ingredient.models import Ingredient, RecipeIngredient
+from meal_plan.models import Meal
 from recipe.models import Recipe, Tag
 from user.auth_handler import JWT_SECRET, JWT_ALGO
 
@@ -78,3 +79,19 @@ def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
 
     recipe.save()
     return recipe
+
+
+def create_meal(user, **params):
+    """Create and return a meal."""
+    meal_data = {
+        'main_dish': create_recipe(
+                user=user, recipe_type=Recipe.RecipeTypes.MAIN_DISH),
+        'side_dish': create_recipe(
+                user=user, recipe_type=Recipe.RecipeTypes.SIDE_DISH),
+        'salad': create_recipe(
+                user=user, recipe_type=Recipe.RecipeTypes.SALAD),
+        'day': 1
+    }
+    meal_data.update(params)
+    meal = Meal.objects.create(**meal_data)
+    return meal

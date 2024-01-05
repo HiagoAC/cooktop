@@ -25,4 +25,5 @@ class Meal(models.Model):
 
 class MealPlan(models.Model):
     """User's meal plan for the week."""
-    pass
+    meals = models.ManyToManyField('Meal')
+    creation_date = models.DateTimeField(auto_now_add=True)
