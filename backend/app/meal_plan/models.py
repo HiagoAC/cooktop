@@ -12,6 +12,17 @@ class Preferences(models.Model):
     cookings_per_week = models.PositiveSmallIntegerField(default=7)
 
 
+class Meal(models.Model):
+    """A meal composed by a main dish, a side dish, and a salad."""
+    main_dish = models.ForeignKey(
+        'recipe.Recipe', on_delete=models.CASCADE, related_name='main_dish')
+    side_dish = models.ForeignKey(
+        'recipe.Recipe', on_delete=models.CASCADE, related_name='side_dish')
+    salad = models.ForeignKey(
+        'recipe.Recipe', on_delete=models.CASCADE, related_name='salad')
+    day = models.PositiveSmallIntegerField()
+
+
 class MealPlan(models.Model):
     """User's meal plan for the week."""
     pass

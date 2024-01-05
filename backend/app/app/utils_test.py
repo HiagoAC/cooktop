@@ -64,6 +64,7 @@ def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
         'description': 'a description',
         'servings': 2,
         'time_minutes': 10,
+        'recipe_type': Recipe.RecipeTypes.MAIN_DISH,
         'notes': 'some notes'
     }
     recipe_data.update(params)

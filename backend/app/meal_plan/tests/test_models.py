@@ -2,8 +2,9 @@
 
 from django.test import TestCase
 
-from app.utils_test import create_user
-from meal_plan.models import Preferences
+from app.utils_test import create_recipe, create_user
+from recipe.models import Recipe
+from meal_plan.models import Preferences, Meal
 
 
 class PreferencesModelTests(TestCase):
@@ -20,3 +21,20 @@ class PreferencesModelTests(TestCase):
 
         for attr, value in params.items():
             self.assertEqual(getattr(prefs, attr), value)
+
+    def test_create_meal(self):
+        """Test creating a meal."""
+        user = create_user()
+        params = {
+            'main_dish': create_recipe(
+                user=user, recipe_type=Recipe.RecipeTypes.MAIN_DISH),
+            'side_dish': create_recipe(
+                user=user, recipe_type=Recipe.RecipeTypes.SIDE_DISH),
+            'salad': create_recipe(
+                user=user, recipe_type=Recipe.RecipeTypes.SALAD),
+            'day': 1
+        }
+        meal = Meal.objects.create(**params)
+
+        for attr, value in params.items():
+            self.assertEqual(getattr(meal, attr), value)
