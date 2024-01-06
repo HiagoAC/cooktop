@@ -8,7 +8,7 @@ User = get_user_model()
 class Preferences(models.Model):
     """General user's preferences for meal plans."""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    servings_per_week = models.PositiveSmallIntegerField(default=1)
+    servings_per_week = models.PositiveSmallIntegerField(default=7)
     cookings_per_week = models.PositiveSmallIntegerField(default=7)
 
 
@@ -26,4 +26,5 @@ class Meal(models.Model):
 class MealPlan(models.Model):
     """User's meal plan for the week."""
     meals = models.ManyToManyField('Meal')
+    servings_per_meal = models.PositiveSmallIntegerField(default=2)
     creation_date = models.DateTimeField(auto_now_add=True)

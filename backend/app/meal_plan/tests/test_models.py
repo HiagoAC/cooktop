@@ -49,7 +49,9 @@ class MealPlanModelTests(TestCase):
 
     def test_create_meal_plan(self):
         """Test creating a meal_plan."""
-        meal_plan = MealPlan.objects.create()
+        servings_per_meal = 2
+        meal_plan = MealPlan.objects.create(
+            servings_per_meal=servings_per_meal)
         meals = dict()
         user = create_user()
         for day in range(1, 3):
@@ -57,5 +59,6 @@ class MealPlanModelTests(TestCase):
             meal_plan.meals.add(meals[day])
         meal_plan.save()
 
+        self.assertEqual(servings_per_meal, meal_plan.servings_per_meal)
         for _, meal in meals.items():
             self.assertIn(meal, meal_plan.meals.all())
