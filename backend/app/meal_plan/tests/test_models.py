@@ -49,11 +49,11 @@ class MealPlanModelTests(TestCase):
 
     def test_create_meal_plan(self):
         """Test creating a meal_plan."""
+        user = create_user()
         servings_per_meal = 2
         meal_plan = MealPlan.objects.create(
-            servings_per_meal=servings_per_meal)
+            user=user, servings_per_meal=servings_per_meal)
         meals = dict()
-        user = create_user()
         for day in range(1, 3):
             meals[day] = create_meal(user=user, day=day)
             meal_plan.meals.add(meals[day])

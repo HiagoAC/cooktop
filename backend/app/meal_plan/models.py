@@ -23,8 +23,15 @@ class Meal(models.Model):
     day = models.PositiveSmallIntegerField()
 
 
+class MealPlanManager(models.Manager):
+    """Manager for the MealPlan model."""
+    def generate_plan(self):
+        """Generate a meal plan based on the """
+
+
 class MealPlan(models.Model):
     """User's meal plan for the week."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     meals = models.ManyToManyField('Meal')
     servings_per_meal = models.PositiveSmallIntegerField(default=2)
     creation_date = models.DateTimeField(auto_now_add=True)
