@@ -30,7 +30,8 @@ class IngredientInPantry(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    quantity = models.DecimalField(max_digits=6, default=0, decimal_places=2)
+    quantity = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, default=None)
     measurement_unit = models.CharField(
         max_length=3,
         choices=MeasurementUnits.choices,
@@ -59,18 +60,25 @@ class IngredientInPantry(models.Model):
     def subtract_quantity(self, sub_quantity, sub_unit):
         """
         Subtracts quantity of ingredient.
-        If subtracted quantity is greater, quantity is set to 0.
-        Convert the value of value to be subtracted to the same used in this
-        object.
+        - If subtracted quantity is greater or equal to the ingredient's
+        quantity the ingredient is deleted from pantry.
+        - ValueError is raised if this method is called with a measurement
+        unit different from the one of the object or if the quantity of the
+        object has not been set.
         """
+        if self.quantity is None:
+            raise ValueError("Quantity not set for this ingredient.")
         if self.measurement_unit == sub_unit:
-            self.quantity = max(0, self.quantity - sub_quantity)
+            self.quantity = self.quantity - sub_quantity
         else:
             unit_name = MeasurementUnits(self.measurement_unit).label
             raise ValueError(f'Cannot subtract quantity with different'
                              f'measurement units. Convert the subtract'
                              f'quantity to {unit_name}'
                              f'({self.measurement_unit})')
+        if self.quantity <= 0:
+            self.delete()
+
         return self.quantity
 
     def __str__(self):

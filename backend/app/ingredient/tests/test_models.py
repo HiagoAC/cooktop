@@ -9,7 +9,7 @@ from django.db.utils import IntegrityError
 
 from app.utils_test import create_user
 from ingredient.measurement_units import MeasurementUnits
-from ingredient.models import Ingredient, RecipeIngredient
+from ingredient.models import Ingredient, IngredientInPantry, RecipeIngredient
 from ingredient.tests.utils import get_ing_in_pantry
 from recipe.models import Recipe
 
@@ -110,17 +110,25 @@ class IngredientInPantryModelTests(TestCase):
         self.assertEqual(
             ing_in_pantry.quantity, original_quantity - sub_quantity)
 
-    def test_subtract_more_than_quantity(self):
+    def test_subtract_all_quantity(self):
         """
-        Test that calling subtract_quantity with a value superior to object's
-        quantity sets quantity to 0.
+        Test that subtracting all quantity of ingredient in pantry makes it to
+        be deleted.
         """
         ing_in_pantry = get_ing_in_pantry()
-        sub_quantity = ing_in_pantry.quantity + 1
         ing_in_pantry.subtract_quantity(
-            sub_quantity, ing_in_pantry.measurement_unit)
+            ing_in_pantry.quantity, ing_in_pantry.measurement_unit)
 
-        self.assertEqual(ing_in_pantry.quantity, 0)
+        self.assertFalse(
+            IngredientInPantry.objects.filter(id=ing_in_pantry.id).exists())
+        
+    def test_subtract_when_quantity_not_set(self):
+        """
+        Test that subtracting when quantity is not set raises a ValueError.
+        """
+        ing_in_pantry = get_ing_in_pantry(quantity=None)
+        with self.assertRaises(ValueError):
+            ing_in_pantry.subtract_quantity(50, 'ml')
 
     def test_subtract_with_wrong_unit(self):
         """
