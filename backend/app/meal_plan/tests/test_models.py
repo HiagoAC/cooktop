@@ -14,7 +14,7 @@ class PreferencesModelTests(TestCase):
         """Test creating a preferences object."""
         params = {
             'user': create_user(),
-            'servings_per_week': 14,
+            'servings_per_meal': 2,
             'cookings_per_week': 7,
         }
         prefs = Preferences.objects.create(**params)

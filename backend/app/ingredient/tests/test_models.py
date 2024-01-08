@@ -121,7 +121,7 @@ class IngredientInPantryModelTests(TestCase):
 
         self.assertFalse(
             IngredientInPantry.objects.filter(id=ing_in_pantry.id).exists())
-        
+
     def test_subtract_when_quantity_not_set(self):
         """
         Test that subtracting when quantity is not set raises a ValueError.

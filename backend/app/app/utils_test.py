@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from io import BytesIO
 from PIL import Image
 from time import time
+from typing import Dict, List
 
 from ingredient.models import Ingredient, RecipeIngredient
 from meal_plan.models import Meal
@@ -79,6 +80,35 @@ def create_recipe(user, tags=['tag 1', 'tag 2'], **params):
 
     recipe.save()
     return recipe
+
+
+def create_recipes_dict(
+        user, main_dish=0, side_dish=0, salad=0, snack=0, dessert=0
+        ) -> Dict[str, List[Recipe]]:
+    """Create a dictionary of recipes by type."""
+    recipes = dict()
+    recipes['main_dish'] = [
+        create_recipe(user=user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
+        for _ in range(main_dish)
+        ]
+    recipes['side_dish'] = [
+        create_recipe(user=user, recipe_type=Recipe.RecipeTypes.SIDE_DISH)
+        for _ in range(side_dish)
+        ]
+    recipes['salad'] = [
+        create_recipe(user=user, recipe_type=Recipe.RecipeTypes.SALAD)
+        for _ in range(salad)
+        ]
+    recipes['snack'] = [
+        create_recipe(user=user, recipe_type=Recipe.RecipeTypes.SNACK)
+        for _ in range(snack)
+        ]
+    recipes['dessert'] = [
+        create_recipe(user=user, recipe_type=Recipe.RecipeTypes.DESSERT)
+        for _ in range(dessert)
+        ]
+
+    return recipes
 
 
 def create_meal(user, **params):
