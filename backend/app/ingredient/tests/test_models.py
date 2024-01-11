@@ -7,10 +7,9 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
-from app.utils_test import create_user
+from app.utils_test import create_ing_in_pantry, create_user
 from ingredient.measurement_units import MeasurementUnits
 from ingredient.models import Ingredient, IngredientInPantry, RecipeIngredient
-from ingredient.tests.utils import get_ing_in_pantry
 from recipe.models import Recipe
 
 User = get_user_model()
@@ -52,9 +51,9 @@ class IngredientInPantryModelTests(TestCase):
         Test that creating two IngredientInPantry objects with same user and
         ingredient raises IntegrityError.
         """
-        get_ing_in_pantry()
+        create_ing_in_pantry()
         with self.assertRaises(IntegrityError):
-            get_ing_in_pantry(quantity=200, measurement_unit='g')
+            create_ing_in_pantry(quantity=200, measurement_unit='g')
 
     def test_delete_ing_in_pantry_with_unused_ingredient(self):
         """
@@ -63,7 +62,7 @@ class IngredientInPantryModelTests(TestCase):
         """
         ing = Ingredient.objects.create(name='ing name')
         ing_id = ing.id
-        ing_in_pantry = get_ing_in_pantry(ingredient=ing)
+        ing_in_pantry = create_ing_in_pantry(ingredient=ing)
         ing_in_pantry.delete()
 
         self.assertFalse(Ingredient.objects.filter(id=ing_id).exists())
@@ -76,8 +75,8 @@ class IngredientInPantryModelTests(TestCase):
         another_user = create_user(email='another_user@example.com')
         ing = Ingredient.objects.create(name='ing name')
         ing_id = ing.id
-        ing_in_pantry_1 = get_ing_in_pantry(ingredient=ing)
-        ing_in_pantry_2 = get_ing_in_pantry(
+        ing_in_pantry_1 = create_ing_in_pantry(ingredient=ing)
+        ing_in_pantry_2 = create_ing_in_pantry(
             user=another_user,
             ingredient=ing
         )
@@ -102,7 +101,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that subtract_quantity succeeds in subtracting from quantity.
         """
         original_quantity = 100
-        ing_in_pantry = get_ing_in_pantry(quantity=original_quantity)
+        ing_in_pantry = create_ing_in_pantry(quantity=original_quantity)
         sub_quantity = 50
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
@@ -115,7 +114,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that subtracting all quantity of ingredient in pantry makes it to
         be deleted.
         """
-        ing_in_pantry = get_ing_in_pantry()
+        ing_in_pantry = create_ing_in_pantry()
         ing_in_pantry.subtract_quantity(
             ing_in_pantry.quantity, ing_in_pantry.measurement_unit)
 
@@ -126,7 +125,7 @@ class IngredientInPantryModelTests(TestCase):
         """
         Test that subtracting when quantity is not set raises a ValueError.
         """
-        ing_in_pantry = get_ing_in_pantry(quantity=None)
+        ing_in_pantry = create_ing_in_pantry(quantity=None)
         with self.assertRaises(ValueError):
             ing_in_pantry.subtract_quantity(50, 'ml')
 
@@ -135,7 +134,7 @@ class IngredientInPantryModelTests(TestCase):
         Test that calling subtract_quantity with a mismatched unit raises a
         ValueError.
         """
-        ing_in_pantry = get_ing_in_pantry(measurement_unit='g')
+        ing_in_pantry = create_ing_in_pantry(measurement_unit='g')
         with self.assertRaises(ValueError):
             ing_in_pantry.subtract_quantity(50, 'ml')
 
@@ -144,8 +143,9 @@ class RecipeIngredientModelTests(TestCase):
     """Tests for the RecipeIngredient model."""
 
     def setUp(self):
+        self.user = create_user()
         self.recipe = Recipe.objects.create(
-            user=create_user(),
+            user=self.user,
             title='title',
             directions=['step 1']
         )
@@ -214,7 +214,7 @@ class RecipeIngredientModelTests(TestCase):
         # Ingredient used by rec_ing_2
         self.assertTrue(Ingredient.objects.filter(id=ing_id).exists())
 
-        get_ing_in_pantry(ingredient=ing)
+        create_ing_in_pantry(ingredient=ing, user=self.user)
         rec_ing_2.delete()
 
         # Ingredient used by an ingredient_in_pantry

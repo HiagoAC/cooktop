@@ -7,9 +7,9 @@ from datetime import datetime, timedelta
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from app.utils_test import create_user, auth_header
+from app.utils_test import auth_header, create_ing_in_pantry, create_user
 from ingredient.models import Ingredient, IngredientInPantry
-from ingredient.tests.utils import get_ing_in_pantry
+
 
 PANTRY_LIST_URL = reverse('api:pantry_list')
 
@@ -42,7 +42,7 @@ class PublicPantryAPITests(TestCase):
         Test that retrieving pantry ingredient detail unauthenticated is
         unauthorized.
         """
-        ing_pantry = get_ing_in_pantry()
+        ing_pantry = create_ing_in_pantry()
         response = self.client.get(pantry_detail_url(ing_pantry.id))
 
         # 401 - UNAUTHORIZED
@@ -59,8 +59,8 @@ class PrivatePantryAPITests(TestCase):
 
     def test_retrieve_pantry_ingredients(self):
         """Test retrieving user's pantry ingredients."""
-        ing_1 = get_ing_in_pantry(name='a food', user=self.user)
-        ing_2 = get_ing_in_pantry(name='another food', user=self.user)
+        ing_1 = create_ing_in_pantry(name='a food', user=self.user)
+        ing_2 = create_ing_in_pantry(name='another food', user=self.user)
         response = self.client.get(PANTRY_LIST_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
@@ -79,8 +79,8 @@ class PrivatePantryAPITests(TestCase):
         authenticated user.
         """
         another_user = create_user(email='another_user@example.com')
-        ing = get_ing_in_pantry(name='a food', user=self.user)
-        get_ing_in_pantry(name='another food', user=another_user)
+        ing = create_ing_in_pantry(name='a food', user=self.user)
+        create_ing_in_pantry(name='another food', user=another_user)
         response = self.client.get(PANTRY_LIST_URL, **self.headers)
         content = json.loads(response.content.decode('utf-8'))
 
@@ -92,7 +92,7 @@ class PrivatePantryAPITests(TestCase):
 
     def test_get_pantry_detail(self):
         """Test getting pantry ingredient detail."""
-        ing = get_ing_in_pantry(
+        ing = create_ing_in_pantry(
             name='a food',
             quantity=100,
             measurement_unit='ml',
@@ -167,7 +167,7 @@ class PrivatePantryAPITests(TestCase):
 
     def test_update_ing_in_pantry(self):
         """Test updating ingredient in pantry."""
-        ing_in_pantry = get_ing_in_pantry(
+        ing_in_pantry = create_ing_in_pantry(
             quantity=100, measurement_unit='ml', user=self.user)
         payload = {
             'quantity': 200,
@@ -193,7 +193,8 @@ class PrivatePantryAPITests(TestCase):
         to Ingredient.
         """
         original_name = 'a food'
-        ing_in_pantry = get_ing_in_pantry(name=original_name, user=self.user)
+        ing_in_pantry = create_ing_in_pantry(
+            name=original_name, user=self.user)
         ing = Ingredient.objects.get(name=original_name)
         payload = {'name': 'another name'}
         response = self.client.patch(
@@ -211,7 +212,7 @@ class PrivatePantryAPITests(TestCase):
 
     def test_delete_ing_in_pantry(self):
         """Test deleting ingredient in pantry."""
-        ing_in_pantry = get_ing_in_pantry(user=self.user)
+        ing_in_pantry = create_ing_in_pantry(user=self.user)
         response = self.client.delete(
             pantry_detail_url(ing_in_pantry.id), **self.headers)
 
@@ -225,7 +226,7 @@ class PrivatePantryAPITests(TestCase):
         Test getting another user's pantry ingredient is not allowed.
         """
         another_user = create_user(email='another_user@example.com')
-        ing_in_pantry = get_ing_in_pantry(user=another_user)
+        ing_in_pantry = create_ing_in_pantry(user=another_user)
 
         response = self.client.get(
             pantry_detail_url(ing_in_pantry.id), **self.headers)
@@ -239,7 +240,7 @@ class PrivatePantryAPITests(TestCase):
         """
         another_user = create_user(email='another_user@example.com')
         original_quantity = 100
-        ing_in_pantry = get_ing_in_pantry(
+        ing_in_pantry = create_ing_in_pantry(
             quantity=original_quantity, user=another_user)
 
         response = self.client.patch(
@@ -258,7 +259,7 @@ class PrivatePantryAPITests(TestCase):
         Test deleting another user's pantry ingredient is not allowed.
         """
         another_user = create_user(email='another_user@example.com')
-        ing_in_pantry = get_ing_in_pantry(user=another_user)
+        ing_in_pantry = create_ing_in_pantry(user=another_user)
 
         response = self.client.delete(
             pantry_detail_url(ing_in_pantry.id), **self.headers)
