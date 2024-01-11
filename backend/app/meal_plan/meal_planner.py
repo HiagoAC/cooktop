@@ -2,11 +2,11 @@
 
 from datetime import timedelta, timezone
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from random import choice
 from typing import Dict, List
 
-from ingredient.models import Ingredient
+from ingredient.models import Ingredient, RecipeIngredient
 from meal_plan.models import Meal, MealPlan
 from recipe.models import Recipe
 from recipe.utils import annotate_by_ing_count, get_recipes_by_ings
@@ -19,6 +19,8 @@ class MealPlanner():
 
     def __init__(self, user: User):
         self.user = user
+        self.pantry_ings = Ingredient.objects.filter(
+            ingredientinpantry__user=self.user)
         self.user_recipes = {
             'main_dish':  Recipe.objects.filter(
                 user=user, recipe_type=Recipe.RecipeTypes.MAIN_DISH),
@@ -30,9 +32,7 @@ class MealPlanner():
 
     def _filter_user_recipes_by_ingredients(
             self,
-            user_recipes: Dict[str, QuerySet[Recipe]],
-            requested_ingredients: List[str],
-            pantry_ings: QuerySet[Ingredient]
+            requested_ingredients: List[str]
             ) -> Dict[str, QuerySet[Recipe]]:
         """
         Filter and order user recipes by the list of requested ingredients
@@ -40,34 +40,33 @@ class MealPlanner():
         """
         # Combine ingredients for filtering recipes
         ingredients = list(requested_ingredients)
-        pantry_ings = pantry_ings
-        ingredients.extend(pantry_ings.values_list('name', flat=True))
+        ingredients.extend(self.pantry_ings.values_list('name', flat=True))
 
         # filter recipes by ingredients
-        for queryset in user_recipes:
-            user_recipes[queryset] = get_recipes_by_ings(
-                user_recipes[queryset], ingredients)
+        filtered_recipes = dict()
+        for queryset in self.user_recipes:
+            filtered_recipes[queryset] = get_recipes_by_ings(
+                self.user_recipes[queryset], ingredients)
 
-        return user_recipes
+        return filtered_recipes
 
     def _reorder_by_expiring_ings(
             self,
-            pantry_ings: QuerySet[Ingredient],
-            user_recipes: Dict[str, QuerySet[Recipe]]
+            recipes: Dict[str, QuerySet[Recipe]]
             ) -> Dict[str, QuerySet[Recipe]]:
         """
         Reorder user_recipes by the number of ingredients expiring in the
         next week.
         """
         week_later = timezone.now().date() + timedelta(weeks=1)
-        expiring_ings = pantry_ings.filter(
+        expiring_ings = self.pantry_ings.filter(
             ingredientinpantry__expiration__lte=week_later)
         expiring_ings = expiring_ings.values_list('name', flat=True)
-        for queryset in user_recipes:
-            user_recipes[queryset] = annotate_by_ing_count(
-                user_recipes[queryset], expiring_ings)
-            user_recipes[queryset].order_by('-match_count')
-        return user_recipes
+        for queryset in recipes:
+            recipes[queryset] = annotate_by_ing_count(
+                recipes[queryset], expiring_ings)
+            recipes[queryset].order_by('-match_count')
+        return recipes
 
     def _pick_random_recipe(
             self, queryset: QuerySet[Recipe]) -> Recipe:
@@ -127,19 +126,46 @@ class MealPlanner():
             raise ValueError("Servings per meal must be greater than 0.")
 
         # Get base meals with required ingredients and pantry ingredients.
-        pantry_ings = Ingredient.objects.filter(
-            ingredientinpantry__user=self.user)
         filtered_recipes = self._filter_user_recipes_by_ingredients(
-            self.user_recipes, requested_ingredients, pantry_ings)
-        filtered_recipes = self._reorder_by_expiring_ings(
-            pantry_ings, filtered_recipes)
+            requested_ingredients)
+        filtered_recipes = self._reorder_by_expiring_ings(filtered_recipes)
         base_meals = self._make_meals(
             queryset=filtered_recipes, number_meals=min(2, cookings))
 
-        # Get meals with overlapping ingredients with base meals.
-        # TODO
+        # Get list of ingredients in base meals
+        base_ings = list()
+        for meal in base_meals:
+            for recipe in (meal.main_dish, meal.side_dish, meal.salad):
+                base_ings.extend(
+                    RecipeIngredient.objects
+                    .filter(recipe=recipe)
+                    .values_list('ingredient__name', flat=True)
+                    )
 
+        # Get meals with overlapping ingredients with base meals.
+        queryset = Recipe.objects.filter(
+            Q(user=self.user) & (
+                Q(recipe_type=Recipe.RecipeTypes.MAIN_DISH) |
+                Q(recipe_type=Recipe.RecipeTypes.SIDE_DISH) |
+                Q(recipe_type=Recipe.RecipeTypes.SALAD)
+                )
+            )
+        queryset = get_recipes_by_ings(queryset, base_ings)
+        other_meals = self._make_meals(
+            queryset=queryset,
+            number_meals=cookings - len(base_meals)
+            )
+
+        # Adjust day in other_meals.
+        day = len(base_meals)
+        for meal in other_meals:
+            meal.day = day
+            day += 1
+
+        # Create meal_plan
         meal_plan = MealPlan.objects.create(
             user=self.user, servings_per_meal=servings_per_meal)
+        meal_plan.meals.add(*base_meals)
+        meal_plan.meals.add(*other_meals)
 
         return meal_plan
