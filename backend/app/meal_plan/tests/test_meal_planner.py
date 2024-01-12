@@ -2,16 +2,20 @@
 Tests for the meal_planner module.
 """
 
+from datetime import timedelta
 from django.test import TestCase
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 from app.utils_test import (
     create_ing_in_pantry,
+    create_recipe,
     create_recipe_ing,
     create_recipes_dict,
     create_user
 )
 from meal_plan.meal_planner import MealPlanner
+from recipe.models import Recipe
 
 User = get_user_model()
 
@@ -34,7 +38,7 @@ class MealPlannerTests(TestCase):
                     self.assertIn(value, self.meal_planner.user_recipes[attr])
 
     def test_filter_user_recipes_by_ingredients(self):
-        """Test _filter_user_recipes_by_ingredients."""
+        """Test private method _filter_user_recipes_by_ingredients."""
         # create ingredients in recipes
         requested_ingredients = [f'ing_{i}' for i in range(3)]
         for t, ing in zip(('main_dish', 'side_dish', 'salad'),
@@ -68,3 +72,56 @@ class MealPlannerTests(TestCase):
         self.assertEqual(filtered_recipes['salad'].count(), 1)
         self.assertEqual(
             self.recipes['salad'][1], filtered_recipes['salad'][0])
+
+    def test_reorder_by_expiring_ings(self):
+        """
+        Test that recipes with expiring ingredients appear before recipes
+        without expiring ingredients in the returned querysets of private
+        method _reorder_by_expiring_ings.
+        """
+        expiring_ing = 'expiring'
+        not_expiring_ing = 'not expiring'
+        create_ing_in_pantry(
+            user=self.user,
+            name=expiring_ing,
+            expiration=timezone.now().date() + timedelta(days=6)
+        )
+        create_ing_in_pantry(
+            user=self.user,
+            name=not_expiring_ing,
+            expiration=timezone.now().date() + timedelta(days=8)
+        )
+        with_expiring = 'B - expiring'
+        not_expiring = 'A - not expiring'
+        recipe_dict = dict()
+        for recipe_type in (
+            Recipe.RecipeTypes.MAIN_DISH,
+            Recipe.RecipeTypes.SIDE_DISH,
+            Recipe.RecipeTypes.SALAD
+        ):
+            recipe_exp = create_recipe(
+                user=self.user, title=with_expiring, recipe_type=recipe_type)
+            create_recipe_ing(
+                recipe=recipe_exp,
+                name=expiring_ing
+            )
+            recipe_not_exp = create_recipe(
+                user=self.user, title=not_expiring, recipe_type=recipe_type)
+            create_recipe_ing(
+                recipe=recipe_not_exp,
+                name=not_expiring_ing
+            )
+            # make recipes with no expiring ings first in querysets
+            recipe_dict[recipe_type] = Recipe.objects.filter(
+                recipe_type=recipe_type).order_by('title')
+
+        recipes = self.meal_planner._reorder_by_expiring_ings(
+            recipe_dict)
+
+        for _, queryset in recipes.items():
+            recipe_exp = queryset.filter(title=with_expiring).first()
+            recipe_not_exp = queryset.filter(title=not_expiring).first()
+            qs_list = list(queryset)
+
+            self.assertTrue(
+                qs_list.index(recipe_exp) < qs_list.index(recipe_not_exp))
