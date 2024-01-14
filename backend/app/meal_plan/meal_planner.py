@@ -2,13 +2,13 @@
 
 from datetime import timedelta
 from django.contrib.auth import get_user_model
-from django.db.models import Q, QuerySet # noqa
+from django.db.models import QuerySet
 from django.utils import timezone
 from random import choice
 from typing import Dict, List
 
-from ingredient.models import Ingredient, RecipeIngredient # noqa
-from meal_plan.models import Meal, MealPlan # noqa
+from ingredient.models import Ingredient, RecipeIngredient
+from meal_plan.models import Meal, MealPlan
 from recipe.models import Recipe
 from recipe.utils import annotate_by_ing_count, get_recipes_by_ings
 
