@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from unittest.mock import patch
 
 from app.utils_test import (
     create_ing_in_pantry,
@@ -125,3 +126,13 @@ class MealPlannerTests(TestCase):
 
             self.assertTrue(
                 qs_list.index(recipe_exp) < qs_list.index(recipe_not_exp))
+
+    @patch('meal_plan.meal_planner.choice')
+    def test_pick_random_recipe(self, mock_choice):
+        """Test picking a random recipe with _pick_random_recipe."""
+        recipe = self.recipes['main_dish'][0]
+        mock_choice.return_value = recipe.id
+        picked_recipe = self.meal_planner._pick_random_recipe(
+            self.meal_planner.user_recipes['main_dish'])
+
+        self.assertEqual(recipe, picked_recipe)
