@@ -26,7 +26,7 @@ class MealPlannerTests(TestCase):
     def setUp(self):
         self.user = create_user()
         self.recipes = create_recipes_dict(
-            user=self.user, main_dish=4, side_dish=3, salad=2)
+            user=self.user, main_dish=4, side_dish=3, salad=3)
         self.meal_planner = MealPlanner(user=self.user)
 
     def test_create_meal_planner(self):
@@ -166,3 +166,36 @@ class MealPlannerTests(TestCase):
             self.assertEqual(meals[i].main_dish, querysets['main_dish'][i])
             self.assertEqual(meals[i].side_dish, querysets['side_dish'][i])
             self.assertEqual(meals[i].salad, querysets['salad'][i])
+
+    def test_generate_plan(self):
+        """Test generating a meal plan."""
+        # ingredients to requested
+        ing_1 = 'ing_1'
+        ing_2 = 'ing_2'
+        create_ing_in_pantry(name=ing_1, user=self.user)
+        create_recipe_ing(recipe=self.recipes['main_dish'][0], name=ing_1)
+        create_recipe_ing(recipe=self.recipes['side_dish'][0], name=ing_1)
+        create_recipe_ing(recipe=self.recipes['salad'][0], name=ing_2)
+        create_recipe_ing(recipe=self.recipes['main_dish'][1], name=ing_1)
+        create_recipe_ing(recipe=self.recipes['main_dish'][1], name=ing_2)
+        create_recipe_ing(recipe=self.recipes['side_dish'][1], name=ing_1)
+        create_recipe_ing(recipe=self.recipes['salad'][1], name=ing_2)
+
+        # ingredients in common between base meals and the other meal
+        ing_3 = 'ing_3'
+        ing_4 = 'ing_4'
+        create_recipe_ing(recipe=self.recipes['main_dish'][0], name=ing_3)
+        create_recipe_ing(recipe=self.recipes['side_dish'][1], name=ing_4)
+        create_recipe_ing(recipe=self.recipes['main_dish'][2], name=ing_4)
+        create_recipe_ing(recipe=self.recipes['side_dish'][2], name=ing_4)
+        create_recipe_ing(recipe=self.recipes['salad'][2], name=ing_3)
+        create_recipe_ing(recipe=self.recipes['salad'][2], name=ing_4)
+
+        meal_plan = self.meal_planner.generate_plan([ing_1, ing_2], 3)
+
+        self.assertEqual(meal_plan.meals.count(), 3)
+        for i in range(2):
+            meal = meal_plan.meals.filter(day=i + 1).first()
+            self.assertEqual(meal.main_dish, self.recipes['main_dish'][i])
+            self.assertEqual(meal.side_dish, self.recipes['side_dish'][i])
+            self.assertEqual(meal.salad, self.recipes['salad'][i])
