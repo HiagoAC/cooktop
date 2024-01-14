@@ -3,9 +3,9 @@ Tests for the meal_planner module.
 """
 
 from datetime import timedelta
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-from django.contrib.auth import get_user_model
 from unittest.mock import patch
 
 from app.utils_test import (
@@ -150,3 +150,19 @@ class MealPlannerTests(TestCase):
 
             self.assertEqual(recipe_1, queryset[i])
             self.assertEqual(recipe_1, recipe_2)
+
+    def test_make_meals(self):
+        """
+        - Test making meals with a main dish, a side dish and a salad with
+        _make_meals.
+        - It tests the case where there are enough recipes of each type in the
+        queryset.
+        """
+        querysets = self.meal_planner.user_recipes
+        number_meals = min(qs.count() for qs in querysets.values())
+        meals = self.meal_planner._make_meals(querysets, number_meals)
+
+        for i in range(number_meals):
+            self.assertEqual(meals[i].main_dish, querysets['main_dish'][i])
+            self.assertEqual(meals[i].side_dish, querysets['side_dish'][i])
+            self.assertEqual(meals[i].salad, querysets['salad'][i])

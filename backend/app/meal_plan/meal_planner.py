@@ -85,3 +85,26 @@ class MealPlanner():
         """
         qs_index = index % len(queryset)
         return queryset[qs_index]
+
+    def _make_meals(
+            self,
+            querysets: Dict[str, QuerySet[Recipe]],
+            number_meals: int,
+            ) -> List[Meal]:
+        """
+        Make a specified number of meals based on a filtered queryset of
+        recipes.
+        """
+        meals = list()
+        for i in range(number_meals):
+            meal = Meal.objects.create(day=i+1)
+            for recipe_type, queryset in querysets.items():
+                if not queryset.exists():
+                    dish = self._pick_random_recipe(
+                        self.user_recipes[recipe_type])
+                else:
+                    dish = self._pick_recipe_by_index(queryset, i)
+                setattr(meal, recipe_type, dish)
+            meals.append(meal)
+
+        return meals

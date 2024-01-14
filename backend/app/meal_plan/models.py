@@ -19,19 +19,22 @@ class Meal(models.Model):
         'recipe.Recipe',
         on_delete=models.CASCADE,
         related_name='main_dish',
-        null=True
+        null=True,
+        default=None
         )
     side_dish = models.ForeignKey(
         'recipe.Recipe',
         on_delete=models.CASCADE,
         related_name='side_dish',
-        null=True
+        null=True,
+        default=None
         )
     salad = models.ForeignKey(
         'recipe.Recipe',
         on_delete=models.CASCADE,
         related_name='salad',
-        null=True
+        null=True,
+        default=None
         )
     day = models.PositiveSmallIntegerField()
 
