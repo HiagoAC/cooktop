@@ -75,3 +75,13 @@ class MealPlanner():
         """Pick a random recipe from a queryset."""
         random_id = choice(queryset.values_list('id', flat=True))
         return queryset.get(id=random_id)
+
+    def _pick_recipe_by_index(
+            self, queryset: QuerySet[Recipe], index: int) -> Recipe:
+        """
+        Pick recipe in the given of the queryset. Indices out of queryset
+        range are accessed circularly. Ex: len(queryset) = 1,
+        len(queryset) + 1 = 2, ...
+        """
+        qs_index = index % len(queryset)
+        return queryset[qs_index]

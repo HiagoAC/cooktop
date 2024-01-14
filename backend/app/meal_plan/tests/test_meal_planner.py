@@ -136,3 +136,17 @@ class MealPlannerTests(TestCase):
             self.meal_planner.user_recipes['main_dish'])
 
         self.assertEqual(recipe, picked_recipe)
+
+    def test_pick_recipe_by_index(self):
+        """
+        Test picking a recipe in a queryset by indeces in and out of range
+        with _pick_recipe_by_index.
+        """
+        queryset = self.meal_planner.user_recipes['side_dish']
+        for i in range(len(queryset)):
+            recipe_1 = self.meal_planner._pick_recipe_by_index(queryset, i)
+            recipe_2 = self.meal_planner._pick_recipe_by_index(
+                queryset, i + len(queryset))
+
+            self.assertEqual(recipe_1, queryset[i])
+            self.assertEqual(recipe_1, recipe_2)
