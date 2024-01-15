@@ -1,5 +1,5 @@
 """
-Schemas for the apis in ingredient app.
+Schemas for the apis in recipe app.
 """
 
 from django.db.models import Q
