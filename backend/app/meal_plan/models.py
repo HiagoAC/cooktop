@@ -44,4 +44,4 @@ class MealPlan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     meals = models.ManyToManyField('Meal')
     servings_per_meal = models.PositiveSmallIntegerField(default=2)
-    creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateField(auto_now_add=True)
