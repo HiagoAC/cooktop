@@ -5,7 +5,6 @@ Tests for the recipes API.
 import json
 
 from decimal import Decimal
-from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -22,7 +21,6 @@ from recipe.models import Recipe, Tag
 from ingredient.models import Ingredient, RecipeIngredient, MeasurementUnits
 
 
-User = get_user_model()
 RECIPE_URL = reverse('api:recipes')
 
 
