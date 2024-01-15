@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 from app.utils_test import create_user, auth_header
 from ingredient.models import Ingredient
-from meal_plan.models import MealPlan
+from meal_plan.models import Preferences, MealPlan
 
 
 PLAN_URL = reverse('api:meal_plans')
@@ -116,3 +116,50 @@ class PrivateMealPlansAPITests(TestCase):
         self.assertEqual(response.status_code, 201)
         mock_generate_plan.assert_called_once_with(**payload)
         self.assertIn('meals', content)
+
+    @patch('meal_plan.api.MealPlanner.generate_plan')
+    def test_create_meal_plan_with_preferences(self, mock_generate_plan):
+        """Test creating a meal plan using user's preferences."""
+        preferences = Preferences.objects.create(
+            user=self.user, cookings_per_week=5, servings_per_meal=3)
+        meal_plan = MealPlan.objects.create(user=self.user)
+        mock_generate_plan.return_value = meal_plan
+        ing_1, ing_2 = 'ing_1', 'ing_2'
+        Ingredient.objects.create(name=ing_1)
+        Ingredient.objects.create(name=ing_2)
+        requested_ingredients = ['ing_1', 'ing_2']
+        response = self.client.post(
+            PLAN_URL,
+            data=json.dumps({'requested_ingredients': requested_ingredients}),
+            content_type='application/json',
+            **self.headers
+        )
+        content = json.loads(response.content.decode('utf-8'))
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        mock_generate_plan.assert_called_once_with(
+            requested_ingredients=requested_ingredients,
+            cookings=preferences.cookings_per_week,
+            servings_per_meal=preferences.servings_per_meal
+            )
+        self.assertIn('meals', content)
+
+    def test_get_meal_plan_detail(self):
+        """Test getting meal plan detail."""
+        pass
+
+    def test_update_meal_plan(self):
+        """Test updating a meal plan."""
+        pass
+
+    def test_get_another_user_recipe(self):
+        """
+        Test getting another user's meal plan is not allowed.
+        """
+        pass
+
+    def test_update_another_user_meal_plan(self):
+        """
+        Test updating another user's meal plan is not allowed.
+        """
+        pass
