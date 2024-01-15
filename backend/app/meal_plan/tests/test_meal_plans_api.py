@@ -67,3 +67,25 @@ class PrivateMealPlansAPITests(TestCase):
             })
 
         self.assertEqual(content, expected)
+
+    def test_retrieve_meal_plan_list_another_user(self):
+        """
+        Test retrieving meal plan list does not return meal plans of other
+        users.
+        """
+        plan = MealPlan.objects.create(user=self.user)
+        MealPlan.objects.create(
+            user=create_user(email='another_user@example.com'))
+
+        response = self.client.get(PLAN_URL, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        expected = [{
+                'id': plan.id,
+                'creation_date': plan.creation_date.strftime('%Y-%m-%d')
+            }]
+
+        self.assertEqual(content, expected)

@@ -15,5 +15,6 @@ meal_plan_router = Router()
                       url_name='meal_plans')
 def meal_plan_list(request):
     """Retrieve all meal plans in the system."""
-    queryset = MealPlan.objects.all().order_by('-creation_date')
+    user = request.auth
+    queryset = MealPlan.objects.filter(user=user).order_by('-creation_date')
     return queryset
