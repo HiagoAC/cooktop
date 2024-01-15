@@ -8,8 +8,10 @@ from datetime import timedelta
 from django.test import Client, TestCase
 from django.utils import timezone
 from django.urls import reverse
+from unittest.mock import patch
 
 from app.utils_test import create_user, auth_header
+from ingredient.models import Ingredient
 from meal_plan.models import MealPlan
 
 
@@ -89,3 +91,28 @@ class PrivateMealPlansAPITests(TestCase):
             }]
 
         self.assertEqual(content, expected)
+
+    @patch('meal_plan.api.MealPlanner.generate_plan')
+    def test_create_meal_plan(self, mock_generate_plan):
+        """Test creating a meal plan."""
+        meal_plan = MealPlan.objects.create(user=self.user)
+        mock_generate_plan.return_value = meal_plan
+        ing_1, ing_2 = 'ing_1', 'ing_2'
+        Ingredient.objects.create(name=ing_1)
+        Ingredient.objects.create(name=ing_2)
+        payload = {
+            'requested_ingredients': ['ing_1', 'ing_2'],
+            'cookings': 4,
+            'servings_per_meal': 5
+        }
+        response = self.client.post(
+            PLAN_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers
+        )
+        content = json.loads(response.content.decode('utf-8'))
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        mock_generate_plan.assert_called_once_with(**payload)
+        self.assertIn('meals', content)

@@ -35,7 +35,7 @@ class RecipeIngredientSchema(ModelSchema):
 
 
 class RecipeIn(ModelSchema):
-    """Input schema for recipe detail."""
+    """Input schema for recipe."""
     ingredients: List[RecipeIngredientSchema] = []
     tags: List[str] = []
 
