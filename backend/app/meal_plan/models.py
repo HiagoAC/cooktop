@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Preferences(models.Model):
     """General user's preferences for meal plans."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     servings_per_meal = models.PositiveSmallIntegerField(null=True)
     cookings_per_week = models.PositiveSmallIntegerField(null=True)
 
