@@ -7,13 +7,15 @@ from ninja.errors import ValidationError
 from user.auth_handler import AuthHandler, InvalidAccessTokenError
 from user.api import user_router, token_router
 from ingredient.api import pantry_router
+from meal_plan.api import meal_plan_router
 from recipe.api import tag_router, recipe_router
 
 api = NinjaAPI(urls_namespace='api', auth=AuthHandler())
 
 
+api.add_router('meal-plans/', meal_plan_router)
 api.add_router('pantry/', pantry_router)
-api.add_router('recipe/', recipe_router)
+api.add_router('recipes/', recipe_router)
 api.add_router('tags/', tag_router)
 api.add_router('tokens/', token_router)
 api.add_router('users/', user_router)
