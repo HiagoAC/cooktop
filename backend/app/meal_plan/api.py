@@ -3,7 +3,9 @@ API views for the meal_plan app.
 """
 
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from ninja import Router
+from ninja.errors import HttpError
 from typing import List
 
 from meal_plan.meal_planner import MealPlanner
@@ -11,6 +13,14 @@ from meal_plan.models import Preferences, MealPlan
 from meal_plan.schemas import MealPlanListSchema, MealPlanIn, MealPlanOut
 
 meal_plan_router = Router()
+
+
+def get_meal_plan_detail(meal_plan_id: int, user):
+    """Return meal plan if it belongs to user."""
+    meal_plan = get_object_or_404(MealPlan, id=meal_plan_id)
+    if meal_plan.user != user:
+        raise HttpError(401, "Unauthorized")
+    return meal_plan
 
 
 @meal_plan_router.get('/', response=List[MealPlanListSchema],
@@ -38,4 +48,12 @@ def create_recipe(request, payload: MealPlanIn):
             data['servings_per_meal'] = preferences.servings_per_meal
 
     meal_plan = meal_planner.generate_plan(**data)
+    return meal_plan
+
+
+@meal_plan_router.get('/{meal_plan_id}', response=MealPlanOut,
+                      url_name='meal_plan_detail')
+def meal_plan_detail(request, meal_plan_id: int):
+    """Retrieve details of a meal plan."""
+    meal_plan = get_meal_plan_detail(meal_plan_id, request.auth)
     return meal_plan

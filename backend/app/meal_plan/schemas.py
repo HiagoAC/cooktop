@@ -26,21 +26,9 @@ class MealPlanIn(Schema):
 
 class MealSchema(Schema):
     """Schema for meals in meal plan."""
-    main_dish: RecipeOut
-    side_dish: RecipeOut
-    salad: RecipeOut
-
-    @staticmethod
-    def resolve_main_dish(obj):
-        return RecipeOut.from_orm(obj.main_dish)
-
-    @staticmethod
-    def resolve_side_dish(obj):
-        return RecipeOut.from_orm(obj.side_dish)
-
-    @staticmethod
-    def resolve_salad(obj):
-        return RecipeOut.from_orm(obj.salad)
+    main_dish: RecipeOut | None
+    side_dish: RecipeOut | None
+    salad: RecipeOut | None
 
 
 class MealPlanOut(ModelSchema):
@@ -55,5 +43,9 @@ class MealPlanOut(ModelSchema):
     def resolve_meals(obj):
         meals = dict()
         for meal in obj.meals.all().order_by('day'):
-            meals[meal.day] = MealSchema.from_orm(meal)
+            meals[meal.day] = {
+                'main_dish': meal.main_dish,
+                'side_dish': meal.side_dish,
+                'salad': meal.salad
+            }
         return meals

@@ -10,9 +10,10 @@ from django.utils import timezone
 from django.urls import reverse
 from unittest.mock import patch
 
-from app.utils_test import create_user, auth_header
+from app.utils_test import auth_header, create_meal, create_user
 from ingredient.models import Ingredient
 from meal_plan.models import Preferences, MealPlan
+from meal_plan.schemas import MealPlanOut
 
 
 PLAN_URL = reverse('api:meal_plans')
@@ -146,7 +147,21 @@ class PrivateMealPlansAPITests(TestCase):
 
     def test_get_meal_plan_detail(self):
         """Test getting meal plan detail."""
-        pass
+        meal_plan = MealPlan.objects.create(user=self.user)
+        for day in range(1, 3):
+            meal_plan.meals.add(create_meal(user=self.user, day=day))
+        response = self.client.get(
+            plan_detail_url(meal_plan.id), **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+        expected = MealPlanOut.from_orm(meal_plan).dict()
+        # Adapt formats in expected to match response
+        expected['creation_date'] = expected['creation_date']\
+            .strftime('%Y-%m-%d')
+        expected['meals'] = {
+            str(day): meal for day, meal in expected['meals'].items()}
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(content, expected)
 
     def test_update_meal_plan(self):
         """Test updating a meal plan."""
