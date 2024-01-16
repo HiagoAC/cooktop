@@ -12,7 +12,7 @@ from time import time
 from typing import Dict, List
 
 from ingredient.models import Ingredient, IngredientInPantry, RecipeIngredient
-from meal_plan.models import Meal
+from meal_plan.models import Meal, MealPlan
 from recipe.models import Recipe, Tag
 from user.auth_handler import JWT_SECRET, JWT_ALGO
 
@@ -142,3 +142,14 @@ def create_meal(user, **params):
     meal_data.update(params)
     meal = Meal.objects.create(**meal_data)
     return meal
+
+
+def create_sample_meal_plan(user, cookings):
+    """
+    Create and return a sample meal plan with meals.
+    This sample does not generate a meal plan with MealPlanner.
+    """
+    meal_plan = MealPlan.objects.create(user=user)
+    for day in range(1, cookings):
+        meal_plan.meals.add(create_meal(user=user, day=day))
+    return meal_plan

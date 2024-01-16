@@ -10,10 +10,16 @@ from django.utils import timezone
 from django.urls import reverse
 from unittest.mock import patch
 
-from app.utils_test import auth_header, create_meal, create_user
+from app.utils_test import (
+    auth_header,
+    create_recipe,
+    create_sample_meal_plan,
+    create_user
+)
 from ingredient.models import Ingredient
 from meal_plan.models import Preferences, MealPlan
 from meal_plan.schemas import MealPlanOut
+from recipe.models import Recipe
 
 
 PLAN_URL = reverse('api:meal_plans')
@@ -22,6 +28,20 @@ PLAN_URL = reverse('api:meal_plans')
 def plan_detail_url(meal_plan_id):
     """Return a meal_plan detail URL."""
     return reverse('api:meal_plan_detail', args=[meal_plan_id])
+
+
+def create_meal_plan_expected_response(meal_plan: MealPlan):
+    """
+    Return a dictionary in the format of the expected response for
+    meal_plan_detail.
+    """
+    expected = MealPlanOut.from_orm(meal_plan).dict()
+    # Adapt formats in expected to match response
+    expected['creation_date'] = expected['creation_date']\
+        .strftime('%Y-%m-%d')
+    expected['meals'] = {
+        str(day): meal for day, meal in expected['meals'].items()}
+    return expected
 
 
 class PublicMealPlansAPITests(TestCase):
@@ -147,27 +167,40 @@ class PrivateMealPlansAPITests(TestCase):
 
     def test_get_meal_plan_detail(self):
         """Test getting meal plan detail."""
-        meal_plan = MealPlan.objects.create(user=self.user)
-        for day in range(1, 3):
-            meal_plan.meals.add(create_meal(user=self.user, day=day))
+        meal_plan = create_sample_meal_plan(user=self.user, cookings=3)
         response = self.client.get(
             plan_detail_url(meal_plan.id), **self.headers)
         content = json.loads(response.content.decode('utf-8'))
-        expected = MealPlanOut.from_orm(meal_plan).dict()
-        # Adapt formats in expected to match response
-        expected['creation_date'] = expected['creation_date']\
-            .strftime('%Y-%m-%d')
-        expected['meals'] = {
-            str(day): meal for day, meal in expected['meals'].items()}
+        expected = create_meal_plan_expected_response(meal_plan)
         # 200 - OK
         self.assertEqual(response.status_code, 200)
         self.assertEqual(content, expected)
 
     def test_update_meal_plan(self):
-        """Test updating a meal plan."""
+        """Test updating recipes in a meal plan."""
+        meal_plan = create_sample_meal_plan(user=self.user, cookings=3)
+        new_recipe = create_recipe(
+            user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
+        day, recipe_type = 2, 'main_dish'
+        new_data = {'meals': {str(day): {recipe_type: new_recipe.id}}}
+        response = self.client.patch(
+            plan_detail_url(meal_plan.id),
+            data=json.dumps(new_data),
+            content_type='application/json',
+            **self.headers,
+        )
+        meal_plan.refresh_from_db()
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        recipe_in_meal = getattr(
+            meal_plan.meals.filter(day=day).first(), recipe_type)
+        self.assertEqual(recipe_in_meal, new_recipe)
+
+    def test_update_meal_plan_invalid_meal(self):
+        """Test updating meal plan with a meal of wrong type."""
         pass
 
-    def test_get_another_user_recipe(self):
+    def test_get_another_user_meal_plan(self):
         """
         Test getting another user's meal plan is not allowed.
         """
@@ -176,5 +209,11 @@ class PrivateMealPlansAPITests(TestCase):
     def test_update_another_user_meal_plan(self):
         """
         Test updating another user's meal plan is not allowed.
+        """
+        pass
+
+    def test_update_meal_plan_with_another_user_recipe(self):
+        """
+        Test updating meal plan with another user's recipe is not allowed.
         """
         pass

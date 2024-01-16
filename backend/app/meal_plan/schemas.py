@@ -49,3 +49,8 @@ class MealPlanOut(ModelSchema):
                 'salad': meal.salad
             }
         return meals
+
+
+class MealPlanPatch(Schema):
+    """Input schema for meal_plans patch."""
+    meals: Dict[int, Dict[str, int]]

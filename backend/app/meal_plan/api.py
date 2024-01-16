@@ -10,7 +10,13 @@ from typing import List
 
 from meal_plan.meal_planner import MealPlanner
 from meal_plan.models import Preferences, MealPlan
-from meal_plan.schemas import MealPlanListSchema, MealPlanIn, MealPlanOut
+from meal_plan.schemas import (
+    MealPlanListSchema,
+    MealPlanIn,
+    MealPlanOut,
+    MealPlanPatch
+)
+from recipe.api import get_recipe_detail
 
 meal_plan_router = Router()
 
@@ -56,4 +62,24 @@ def create_recipe(request, payload: MealPlanIn):
 def meal_plan_detail(request, meal_plan_id: int):
     """Retrieve details of a meal plan."""
     meal_plan = get_meal_plan_detail(meal_plan_id, request.auth)
+    return meal_plan
+
+
+@meal_plan_router.patch('/{meal_plan_id}', response=MealPlanOut)
+@transaction.atomic
+def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
+    """Update recipes in a meal plan."""
+    user = request.auth
+    meal_plan = get_meal_plan_detail(meal_plan_id, user)
+    for day, meal in payload.dict()['meals'].items():
+        for recipe_type, recipe_id in meal.items():
+            if meal_plan.meals.filter(day=day).exists():
+                meal_in_plan = meal_plan.meals.filter(day=day).first()
+                setattr(
+                    meal_in_plan,
+                    recipe_type,
+                    get_recipe_detail(recipe_id, user)
+                )
+                meal_in_plan.save()
+    meal_plan.refresh_from_db()
     return meal_plan
