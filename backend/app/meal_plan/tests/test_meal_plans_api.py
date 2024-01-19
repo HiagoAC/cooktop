@@ -198,7 +198,29 @@ class PrivateMealPlansAPITests(TestCase):
 
     def test_update_meal_plan_invalid_meal(self):
         """Test updating meal plan with a meal of wrong type."""
-        pass
+        meal_plan = create_sample_meal_plan(user=self.user)
+        day = 1
+        meal = meal_plan.meals.filter(day=day).first()
+        main_dish = meal.main_dish
+        side_dish = meal.side_dish
+        salad = meal.salad
+        new_data = {'meals': {str(day): {
+            'main_dish': side_dish.id,
+            'side_dish': salad.id,
+            'salad': main_dish.id
+            }}}
+        response = self.client.patch(
+            plan_detail_url(meal_plan.id),
+            data=json.dumps(new_data),
+            content_type='application/json',
+            **self.headers,
+        )
+        meal.refresh_from_db()
+        # 422 - Unprocessable Entity
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(meal.main_dish, main_dish)
+        self.assertEqual(meal.side_dish, side_dish)
+        self.assertEqual(meal.salad, salad)
 
     def test_get_another_user_meal_plan(self):
         """

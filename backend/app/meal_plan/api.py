@@ -17,6 +17,7 @@ from meal_plan.schemas import (
     MealPlanPatch
 )
 from recipe.api import get_recipe_detail
+from recipe.models import Recipe
 
 meal_plan_router = Router()
 
@@ -70,15 +71,23 @@ def meal_plan_detail(request, meal_plan_id: int):
 def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
     """Update recipes in a meal plan."""
     user = request.auth
+    recipe_types = {
+        'main_dish': Recipe.RecipeTypes.MAIN_DISH,
+        'side_dish': Recipe.RecipeTypes.SIDE_DISH,
+        'salad': Recipe.RecipeTypes.SALAD
+    }
     meal_plan = get_meal_plan_detail(meal_plan_id, user)
     for day, meal in payload.dict()['meals'].items():
         for recipe_type, recipe_id in meal.items():
             if meal_plan.meals.filter(day=day).exists():
                 meal_in_plan = meal_plan.meals.filter(day=day).first()
+                recipe = get_recipe_detail(recipe_id, user)
+                if recipe.recipe_type != recipe_types[recipe_type]:
+                    raise HttpError(422, "Wrong recipe type.")
                 setattr(
                     meal_in_plan,
                     recipe_type,
-                    get_recipe_detail(recipe_id, user)
+                    recipe
                 )
                 meal_in_plan.save()
     meal_plan.refresh_from_db()

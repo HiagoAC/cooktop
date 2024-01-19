@@ -144,7 +144,7 @@ def create_meal(user, **params):
     return meal
 
 
-def create_sample_meal_plan(user, cookings):
+def create_sample_meal_plan(user, cookings=3):
     """
     Create and return a sample meal plan with meals.
     This sample does not generate a meal plan with MealPlanner.
