@@ -167,7 +167,7 @@ class PrivateMealPlansAPITests(TestCase):
 
     def test_get_meal_plan_detail(self):
         """Test getting meal plan detail."""
-        meal_plan = create_sample_meal_plan(user=self.user, cookings=3)
+        meal_plan = create_sample_meal_plan(user=self.user)
         response = self.client.get(
             plan_detail_url(meal_plan.id), **self.headers)
         content = json.loads(response.content.decode('utf-8'))
@@ -226,16 +226,54 @@ class PrivateMealPlansAPITests(TestCase):
         """
         Test getting another user's meal plan is not allowed.
         """
-        pass
+        meal_plan = create_sample_meal_plan(
+            user=create_user(email='another_user@example.com'))
+        response = self.client.get(
+            plan_detail_url(meal_plan.id), **self.headers)
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
 
     def test_update_another_user_meal_plan(self):
         """
         Test updating another user's meal plan is not allowed.
         """
-        pass
+        meal_plan = create_sample_meal_plan(
+            user=create_user(email='another_user@example.com'))
+        recipe = create_recipe(
+            user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
+        day = 1
+        main_dish = meal_plan.meals.filter(day=day).first()
+        new_data = {'meals': {str(day): {'main_dish': recipe.id}}}
+        response = self.client.patch(
+            plan_detail_url(recipe.id),
+            data=json.dumps(new_data),
+            content_type='application/json',
+            **self.headers
+        )
+        meal_plan.refresh_from_db()
+        # 404 - NOT FOUND
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(meal_plan.meals.filter(day=day).first(), main_dish)
 
     def test_update_meal_plan_with_another_user_recipe(self):
         """
         Test updating meal plan with another user's recipe is not allowed.
         """
-        pass
+        meal_plan = create_sample_meal_plan(user=self.user)
+        recipe = create_recipe(
+            user=create_user(email='another_user@example.com'),
+            recipe_type=Recipe.RecipeTypes.MAIN_DISH
+            )
+        day = 1
+        main_dish = meal_plan.meals.filter(day=day).first()
+        new_data = {'meals': {str(day): {'main_dish': recipe.id}}}
+        response = self.client.patch(
+            plan_detail_url(recipe.id),
+            data=json.dumps(new_data),
+            content_type='application/json',
+            **self.headers
+        )
+        meal_plan.refresh_from_db()
+        # 404 - NOT FOUND
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(meal_plan.meals.filter(day=day).first(), main_dish)
