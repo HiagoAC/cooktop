@@ -45,3 +45,9 @@ class MealPlan(models.Model):
     meals = models.ManyToManyField('Meal')
     servings_per_meal = models.PositiveSmallIntegerField(default=2)
     creation_date = models.DateField(auto_now_add=True)
+
+    def delete(self):
+        """Delete meal plan and meals associated with it."""
+        for meal in self.meals.all():
+            meal.delete()
+        super().delete()

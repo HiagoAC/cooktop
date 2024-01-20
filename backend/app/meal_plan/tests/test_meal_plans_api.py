@@ -17,7 +17,7 @@ from app.utils_test import (
     create_user
 )
 from ingredient.models import Ingredient
-from meal_plan.models import Preferences, MealPlan
+from meal_plan.models import Meal, Preferences, MealPlan
 from meal_plan.schemas import MealPlanOut
 from recipe.models import Recipe
 
@@ -277,3 +277,34 @@ class PrivateMealPlansAPITests(TestCase):
         # 404 - NOT FOUND
         self.assertEqual(response.status_code, 404)
         self.assertEqual(meal_plan.meals.filter(day=day).first(), main_dish)
+
+    def test_delete_meal_plan(self):
+        """Test deleting a meal plan."""
+        meal_plan = create_sample_meal_plan(user=self.user)
+        meal_ids = [meal.id for meal in meal_plan.meals.all()]
+        response = self.client.delete(
+            plan_detail_url(meal_plan.id), **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(MealPlan.objects.filter(id=meal_plan.id).exists())
+        for meal_id in meal_ids:
+            self.assertFalse(Meal.objects.filter(id=meal_id).exists())
+
+    def test_delete_another_user_meal_plan(self):
+        """
+        Test deleting another user's meal plan is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        meal_plan = create_sample_meal_plan(user=another_user)
+        meal_ids = [meal.id for meal in meal_plan.meals.all()]
+
+        response = self.client.delete(
+            plan_detail_url(meal_plan.id), **self.headers)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(
+            MealPlan.objects.filter(id=meal_plan.id).exists())
+        for meal_id in meal_ids:
+            self.assertTrue(Meal.objects.filter(id=meal_id).exists())

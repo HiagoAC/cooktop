@@ -92,3 +92,11 @@ def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
                 meal_in_plan.save()
     meal_plan.refresh_from_db()
     return meal_plan
+
+
+@meal_plan_router.delete('/{meal_plan_id}', response={204: None})
+def delete_meal_plan(request, meal_plan_id: int):
+    """Delete a meal plan."""
+    meal_plan = get_meal_plan_detail(meal_plan_id, user=request.auth)
+    meal_plan.delete()
+    return 204, None
