@@ -3,6 +3,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from ingredient.models import IngredientInPantry, RecipeIngredient
+
 User = get_user_model()
 
 
@@ -45,3 +47,22 @@ class MealPlan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     servings_per_meal = models.PositiveSmallIntegerField(default=2)
     creation_date = models.DateField(auto_now_add=True)
+
+    def subtract_from_pantry(self):
+        """Subtract the quantity of ingredients in meal plan from pantry."""
+        meals = Meal.objects.filter(meal_plan=self)
+        for meal in meals:
+            for recipe in ('main_dish', 'side_dish', 'salad'):
+                recipe_ings = RecipeIngredient.objects.filter(
+                    recipe=getattr(meal, recipe))
+                for recipe_ing in recipe_ings:
+                    ingredient = recipe_ing.ingredient
+                    if (IngredientInPantry.objects.filter(
+                            ingredient=ingredient).exists()):
+                        ing_pantry = IngredientInPantry.objects.get(
+                            ingredient=ingredient)
+                        ing_pantry.subtract_quantity(
+                            sub_quantity=(recipe_ing.quantity *
+                                          self.servings_per_meal),
+                            sub_unit=recipe_ing.measurement_unit
+                            )
