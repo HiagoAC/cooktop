@@ -53,6 +53,6 @@ DISPLAY_UNITS = {
     'tablespoon': DisplayUnit('tablespoon', 'volume', '14.79'),
     'cup': DisplayUnit('cup', 'volume', '236.59'),
     'gram': DisplayUnit('gram', 'weight', '1.00'),
-    'ml': DisplayUnit('ml', 'weight', '1.00'),
+    'ml': DisplayUnit('ml', 'volume', '1.00'),
     'unit': DisplayUnit('unit', 'unit', '1.00')
 }
