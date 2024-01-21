@@ -90,6 +90,7 @@ class MealPlanner():
             self,
             querysets: Dict[str, QuerySet[Recipe]],
             number_meals: int,
+            meal_plan: MealPlan,
             ) -> List[Meal]:
         """
         Make a specified number of meals based on a filtered queryset of
@@ -97,7 +98,7 @@ class MealPlanner():
         """
         meals = list()
         for i in range(number_meals):
-            meal = Meal.objects.create(day=i+1)
+            meal = Meal.objects.create(day=i+1, meal_plan=meal_plan)
             for recipe_type, queryset in querysets.items():
                 if not queryset.exists():
                     dish = self._pick_random_recipe(
@@ -127,12 +128,19 @@ class MealPlanner():
         if servings_per_meal <= 0:
             raise ValueError("Servings per meal must be greater than 0.")
 
+        # Create meal_plan
+        meal_plan = MealPlan.objects.create(
+            user=self.user, servings_per_meal=servings_per_meal)
+
         # Get base meals with required ingredients and pantry ingredients.
         filtered_recipes = self._filter_user_recipes_by_ingredients(
             requested_ingredients)
         filtered_recipes = self._reorder_by_expiring_ings(filtered_recipes)
         base_meals = self._make_meals(
-            querysets=filtered_recipes, number_meals=min(2, cookings))
+            querysets=filtered_recipes,
+            number_meals=min(2, cookings),
+            meal_plan=meal_plan
+            )
 
         # Get list of ingredients in base meals
         base_ings = list()
@@ -150,7 +158,8 @@ class MealPlanner():
             querysets[key] = get_recipes_by_ings(querysets[key], base_ings)
         other_meals = self._make_meals(
             querysets=querysets,
-            number_meals=cookings - len(base_meals)
+            number_meals=cookings - len(base_meals),
+            meal_plan=meal_plan
             )
 
         # Adjust day in other_meals.
@@ -158,11 +167,5 @@ class MealPlanner():
         for meal in other_meals:
             meal.day = day
             day += 1
-
-        # Create meal_plan
-        meal_plan = MealPlan.objects.create(
-            user=self.user, servings_per_meal=servings_per_meal)
-        meal_plan.meals.add(*base_meals)
-        meal_plan.meals.add(*other_meals)
 
         return meal_plan

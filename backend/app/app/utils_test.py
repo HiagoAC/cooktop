@@ -128,16 +128,18 @@ def create_recipes_dict(
     return recipes
 
 
-def create_meal(user, **params):
+def create_meal(meal_plan, **params):
     """Create and return a meal."""
+    user = meal_plan.user
     meal_data = {
+        'meal_plan': meal_plan,
+        'day': 1,
         'main_dish': create_recipe(
                 user=user, recipe_type=Recipe.RecipeTypes.MAIN_DISH),
         'side_dish': create_recipe(
                 user=user, recipe_type=Recipe.RecipeTypes.SIDE_DISH),
         'salad': create_recipe(
                 user=user, recipe_type=Recipe.RecipeTypes.SALAD),
-        'day': 1
     }
     meal_data.update(params)
     meal = Meal.objects.create(**meal_data)
@@ -151,5 +153,5 @@ def create_sample_meal_plan(user, cookings=3):
     """
     meal_plan = MealPlan.objects.create(user=user)
     for day in range(1, cookings):
-        meal_plan.meals.add(create_meal(user=user, day=day))
+        create_meal(meal_plan=meal_plan, day=day)
     return meal_plan

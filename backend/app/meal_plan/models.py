@@ -15,6 +15,8 @@ class Preferences(models.Model):
 
 class Meal(models.Model):
     """A meal composed by a main dish, a side dish, and a salad."""
+    meal_plan = models.ForeignKey('MealPlan', on_delete=models.CASCADE)
+    day = models.PositiveSmallIntegerField()
     main_dish = models.ForeignKey(
         'recipe.Recipe',
         on_delete=models.CASCADE,
@@ -36,18 +38,10 @@ class Meal(models.Model):
         null=True,
         default=None
         )
-    day = models.PositiveSmallIntegerField()
 
 
 class MealPlan(models.Model):
     """User's meal plan for the week."""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    meals = models.ManyToManyField('Meal')
     servings_per_meal = models.PositiveSmallIntegerField(default=2)
     creation_date = models.DateField(auto_now_add=True)
-
-    def delete(self):
-        """Delete meal plan and meals associated with it."""
-        for meal in self.meals.all():
-            meal.delete()
-        super().delete()

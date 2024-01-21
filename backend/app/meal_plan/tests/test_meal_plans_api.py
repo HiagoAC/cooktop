@@ -193,14 +193,15 @@ class PrivateMealPlansAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
         recipe_in_meal = getattr(
-            meal_plan.meals.filter(day=day).first(), recipe_type)
+            Meal.objects.filter(
+                meal_plan=meal_plan, day=day).first(), recipe_type)
         self.assertEqual(recipe_in_meal, new_recipe)
 
     def test_update_meal_plan_invalid_meal(self):
         """Test updating meal plan with a meal of wrong type."""
         meal_plan = create_sample_meal_plan(user=self.user)
         day = 1
-        meal = meal_plan.meals.filter(day=day).first()
+        meal = Meal.objects.filter(day=day).first()
         main_dish = meal.main_dish
         side_dish = meal.side_dish
         salad = meal.salad
@@ -242,7 +243,7 @@ class PrivateMealPlansAPITests(TestCase):
         recipe = create_recipe(
             user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
         day = 1
-        main_dish = meal_plan.meals.filter(day=day).first()
+        main_dish = Meal.objects.filter(day=day).first()
         new_data = {'meals': {str(day): {'main_dish': recipe.id}}}
         response = self.client.patch(
             plan_detail_url(recipe.id),
@@ -253,7 +254,8 @@ class PrivateMealPlansAPITests(TestCase):
         meal_plan.refresh_from_db()
         # 404 - NOT FOUND
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(meal_plan.meals.filter(day=day).first(), main_dish)
+        self.assertEqual(Meal.objects.filter(
+            meal_plan=meal_plan, day=day).first(), main_dish)
 
     def test_update_meal_plan_with_another_user_recipe(self):
         """
@@ -265,7 +267,7 @@ class PrivateMealPlansAPITests(TestCase):
             recipe_type=Recipe.RecipeTypes.MAIN_DISH
             )
         day = 1
-        main_dish = meal_plan.meals.filter(day=day).first()
+        main_dish = Meal.objects.filter(day=day).first()
         new_data = {'meals': {str(day): {'main_dish': recipe.id}}}
         response = self.client.patch(
             plan_detail_url(recipe.id),
@@ -276,12 +278,14 @@ class PrivateMealPlansAPITests(TestCase):
         meal_plan.refresh_from_db()
         # 404 - NOT FOUND
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(meal_plan.meals.filter(day=day).first(), main_dish)
+        self.assertEqual(Meal.objects.filter(
+            meal_plan=meal_plan, day=day).first(), main_dish)
 
     def test_delete_meal_plan(self):
         """Test deleting a meal plan."""
         meal_plan = create_sample_meal_plan(user=self.user)
-        meal_ids = [meal.id for meal in meal_plan.meals.all()]
+        meal_ids = [
+            meal.id for meal in Meal.objects.filter(meal_plan=meal_plan)]
         response = self.client.delete(
             plan_detail_url(meal_plan.id), **self.headers)
 
@@ -297,7 +301,8 @@ class PrivateMealPlansAPITests(TestCase):
         """
         another_user = create_user(email='another_user@example.com')
         meal_plan = create_sample_meal_plan(user=another_user)
-        meal_ids = [meal.id for meal in meal_plan.meals.all()]
+        meal_ids = [
+            meal.id for meal in Meal.objects.filter(meal_plan=meal_plan)]
 
         response = self.client.delete(
             plan_detail_url(meal_plan.id), **self.headers)

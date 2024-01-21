@@ -9,7 +9,7 @@ from ninja.errors import HttpError
 from typing import List
 
 from meal_plan.meal_planner import MealPlanner
-from meal_plan.models import Preferences, MealPlan
+from meal_plan.models import Preferences, Meal, MealPlan
 from meal_plan.schemas import (
     MealPlanListSchema,
     MealPlanIn,
@@ -79,8 +79,8 @@ def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
     meal_plan = get_meal_plan_detail(meal_plan_id, user)
     for day, meal in payload.dict()['meals'].items():
         for recipe_type, recipe_id in meal.items():
-            if meal_plan.meals.filter(day=day).exists():
-                meal_in_plan = meal_plan.meals.filter(day=day).first()
+            if Meal.objects.filter(meal_plan=meal_plan, day=day).exists():
+                meal_in_plan = Meal.objects.filter(day=day).first()
                 recipe = get_recipe_detail(recipe_id, user)
                 if recipe.recipe_type != recipe_types[recipe_type]:
                     raise HttpError(422, "Wrong recipe type.")

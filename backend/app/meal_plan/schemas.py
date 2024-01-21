@@ -5,7 +5,7 @@ Schemas for the apis in meal_plan app.
 from ninja import ModelSchema, Schema
 from typing import Dict, List
 
-from meal_plan.models import MealPlan
+from meal_plan.models import Meal, MealPlan
 from recipe.schemas import RecipeOut
 
 
@@ -37,12 +37,12 @@ class MealPlanOut(ModelSchema):
 
     class Config:
         model = MealPlan
-        model_exclude = ['user', 'meals']
+        model_exclude = ['user']
 
     @staticmethod
     def resolve_meals(obj):
         meals = dict()
-        for meal in obj.meals.all().order_by('day'):
+        for meal in Meal.objects.filter(meal_plan=obj).order_by('day'):
             meals[meal.day] = {
                 'main_dish': meal.main_dish,
                 'side_dish': meal.side_dish,

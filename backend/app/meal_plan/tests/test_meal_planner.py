@@ -15,6 +15,7 @@ from app.utils_test import (
     create_recipes_dict,
     create_user
 )
+from meal_plan.models import Meal, MealPlan
 from meal_plan.meal_planner import MealPlanner
 from recipe.models import Recipe
 
@@ -160,9 +161,13 @@ class MealPlannerTests(TestCase):
         """
         querysets = self.meal_planner.user_recipes
         number_meals = min(qs.count() for qs in querysets.values())
-        meals = self.meal_planner._make_meals(querysets, number_meals)
+        meal_plan = MealPlan.objects.create(user=self.user)
+        meals = self.meal_planner._make_meals(
+            querysets, number_meals, meal_plan)
 
         for i in range(number_meals):
+            self.assertEqual(meals[i].meal_plan, meal_plan)
+            self.assertEqual(meals[i].day, i + 1)
             self.assertEqual(meals[i].main_dish, querysets['main_dish'][i])
             self.assertEqual(meals[i].side_dish, querysets['side_dish'][i])
             self.assertEqual(meals[i].salad, querysets['salad'][i])
@@ -195,13 +200,13 @@ class MealPlannerTests(TestCase):
 
         meal_plan = self.meal_planner.generate_plan([ing_1, ing_2], 3)
 
-        self.assertEqual(meal_plan.meals.count(), 3)
+        self.assertEqual(Meal.objects.filter(meal_plan=meal_plan).count(), 3)
 
         # correct order of indices of self.recipes[recipe_type] for the
         # generated meal plan.
         order = [1, 2, 0]
         for i in range(2):
-            meal = meal_plan.meals.filter(day=i + 1).first()
+            meal = Meal.objects.filter(meal_plan=meal_plan, day=i + 1).first()
             self.assertEqual(
                 meal.main_dish, self.recipes['main_dish'][order[i]])
             self.assertEqual(
