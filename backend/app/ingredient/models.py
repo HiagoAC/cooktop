@@ -72,12 +72,14 @@ class IngredientInPantry(models.Model):
             self.quantity = self.quantity - sub_quantity
         else:
             unit_name = MeasurementUnits(self.measurement_unit).label
-            raise ValueError(f'Cannot subtract quantity with different'
-                             f'measurement units. Convert the subtract'
+            raise ValueError(f'Cannot subtract quantity with different '
+                             f'measurement units. Convert the subtract '
                              f'quantity to {unit_name}'
                              f'({self.measurement_unit})')
         if self.quantity <= 0:
             self.delete()
+        else:
+            self.save()
 
         return self.quantity
 
