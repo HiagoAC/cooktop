@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'ingredient',
     'meal_plan',
     'recipe',
+    'shopping_list',
     'user',
 ]
 
