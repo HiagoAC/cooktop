@@ -42,7 +42,7 @@ class PublicPantryAPITests(TestCase):
         Test that retrieving pantry ingredient detail unauthenticated is
         unauthorized.
         """
-        ing_pantry = create_ing_in_pantry()
+        ing_pantry = create_ing_in_pantry(user=create_user())
         response = self.client.get(pantry_detail_url(ing_pantry.id))
 
         # 401 - UNAUTHORIZED

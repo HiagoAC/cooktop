@@ -45,13 +45,10 @@ def create_sample_image():
     return image_io
 
 
-def create_ing_in_pantry(name='food name', quantity=100, measurement_unit='ml',
-                         expiration=None, user=None, ingredient=None):
+def create_ing_in_pantry(user, name='food name', quantity=100,
+                         measurement_unit='ml', expiration=None):
     """Returns an instance of IngredientInPantry."""
-    if not user:
-        user = create_user()
-    if not ingredient:
-        ingredient = Ingredient.objects.create(name=name)
+    ingredient, _ = Ingredient.objects.get_or_create(name=name)
     ing_in_pantry = IngredientInPantry.objects.create(
         user=user,
         ingredient=ingredient,
