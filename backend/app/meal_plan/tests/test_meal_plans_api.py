@@ -30,6 +30,11 @@ def plan_detail_url(meal_plan_id):
     return reverse('api:meal_plan_detail', args=[meal_plan_id])
 
 
+def plan_subtract_url(meal_plan_id):
+    """Return a meal_plan subtract_from_pantry URL."""
+    return reverse('api:meal_plan_subtract', args=[meal_plan_id])
+
+
 def create_meal_plan_expected_response(meal_plan: MealPlan):
     """
     Return a dictionary in the format of the expected response for
@@ -313,3 +318,34 @@ class PrivateMealPlansAPITests(TestCase):
             MealPlan.objects.filter(id=meal_plan.id).exists())
         for meal_id in meal_ids:
             self.assertTrue(Meal.objects.filter(id=meal_id).exists())
+
+    @patch('meal_plan.api.MealPlan.subtract_from_pantry')
+    def test_subtract_ingredients_from_pantry(
+            self, mock_subtract_from_meal_plan):
+        """
+        Test endpoint to subtract ingredients of all meals in meal plan from
+        pantry.
+        """
+        meal_plan = MealPlan.objects.create(user=self.user)
+        response = self.client.post(
+            plan_subtract_url(meal_plan.id), **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        mock_subtract_from_meal_plan.assert_called_once()
+
+    @patch('meal_plan.api.MealPlan.subtract_from_pantry')
+    def test_subtract_ingredients_from_pantry_another_user(
+            self, mock_subtract_from_meal_plan):
+        """
+        Test subtracting ingredients from pantry of meals in a meal plan of
+        another user is not allowed.
+        """
+        meal_plan = MealPlan.objects.create(
+            user=create_user(email='another_user'))
+        response = self.client.post(
+            plan_subtract_url(meal_plan.id), **self.headers)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        mock_subtract_from_meal_plan.assert_not_called()

@@ -100,3 +100,16 @@ def delete_meal_plan(request, meal_plan_id: int):
     meal_plan = get_meal_plan_detail(meal_plan_id, user=request.auth)
     meal_plan.delete()
     return 204, None
+
+
+@meal_plan_router.post('/{meal_plan_id}/subtract-from-pantry',
+                       response={204: None}, url_name='meal_plan_subtract')
+@transaction.atomic
+def subtract_ingredients_from_pantry(request, meal_plan_id: int):
+    """
+    Subtract ingredients of all meals in meal plan from pantry if they have
+    not been subtracted yet.
+    """
+    meal_plan = get_meal_plan_detail(meal_plan_id, user=request.auth)
+    meal_plan.subtract_from_pantry()
+    return 204, None
