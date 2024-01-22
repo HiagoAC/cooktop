@@ -109,8 +109,9 @@ class PrivateRecipesAPITests(TestCase):
         """Test filtering recipes by tags."""
         tag_1 = Tag.objects.create(name='tag_1')
         tag_2 = Tag.objects.create(name='tag_2')
-        recipe_1 = create_recipe(user=self.user, tags=[tag_1.name, tag_2.name])
-        recipe_2 = create_recipe(user=self.user, tags=[tag_1.name])
+        recipe_1 = create_recipe(
+            user=self.user, tags=[tag_1.name, tag_2.name], title='A')
+        recipe_2 = create_recipe(user=self.user, tags=[tag_1.name], title='B')
         create_recipe(user=self.user, tags=[tag_2.name])
 
         params = {'tags': f'{tag_1.name},another_tag'}
