@@ -33,23 +33,52 @@ class PreferencesModelTests(TestCase):
 class MealModelTests(TestCase):
     """Tests for the Meal model."""
 
+    def setUp(self):
+        self.user = create_user()
+        self.meal_plan = MealPlan.objects.create(user=self.user)
+
     def test_create_meal(self):
         """Test creating a meal."""
-        user = create_user()
         params = {
-            'meal_plan': MealPlan.objects.create(user=user),
+            'meal_plan': self.meal_plan,
             'day': 1,
             'main_dish': create_recipe(
-                user=user, recipe_type=Recipe.RecipeTypes.MAIN_DISH),
+                user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH),
             'side_dish': create_recipe(
-                user=user, recipe_type=Recipe.RecipeTypes.SIDE_DISH),
+                user=self.user, recipe_type=Recipe.RecipeTypes.SIDE_DISH),
             'salad': create_recipe(
-                user=user, recipe_type=Recipe.RecipeTypes.SALAD),
+                user=self.user, recipe_type=Recipe.RecipeTypes.SALAD),
         }
         meal = Meal.objects.create(**params)
 
         for attr, value in params.items():
             self.assertEqual(getattr(meal, attr), value)
+        self.assertFalse(meal.is_subtracted)
+
+    def test_ingredients_are_not_subtracted_twice(self):
+        """
+        Test that ingredients in a meal are not subtracted twice from pantry.
+        """
+        meal = create_meal(self.meal_plan)
+        ing_name = 'ing'
+        recipe_ing = create_recipe_ing(
+            recipe=meal.main_dish,
+            name=ing_name,
+            quantity='50.00',
+            display_unit='gram'
+            )
+        original_quantity = 100
+        ing_pantry = create_ing_in_pantry(
+            name=ing_name, quantity=100, measurement_unit='g', user=self.user)
+
+        for _ in range(2):
+            meal.subtract_from_pantry(servings_per_meal=1)
+            meal.refresh_from_db()
+            ing_pantry.refresh_from_db()
+
+            self.assertTrue(meal.is_subtracted)
+            self.assertEqual(
+                ing_pantry.quantity, original_quantity - recipe_ing.quantity)
 
 
 class MealPlanModelTests(TestCase):

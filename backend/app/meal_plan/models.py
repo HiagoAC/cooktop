@@ -40,9 +40,12 @@ class Meal(models.Model):
         null=True,
         default=None
         )
+    is_subtracted = models.BooleanField(default=False)
 
     def subtract_from_pantry(self, servings_per_meal):
         """Subtract the quantity of ingredients in meal from pantry."""
+        if self.is_subtracted:
+            return
         for recipe in ('main_dish', 'side_dish', 'salad'):
             recipe_ings = RecipeIngredient.objects.filter(
                 recipe=getattr(self, recipe))
@@ -56,6 +59,8 @@ class Meal(models.Model):
                         sub_quantity=recipe_ing.quantity * servings_per_meal,
                         sub_unit=recipe_ing.measurement_unit
                         )
+        self.is_subtracted = True
+        self.save()
 
 
 class MealPlan(models.Model):
