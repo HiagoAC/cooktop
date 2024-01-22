@@ -41,6 +41,22 @@ class Meal(models.Model):
         default=None
         )
 
+    def subtract_from_pantry(self, servings_per_meal):
+        """Subtract the quantity of ingredients in meal from pantry."""
+        for recipe in ('main_dish', 'side_dish', 'salad'):
+            recipe_ings = RecipeIngredient.objects.filter(
+                recipe=getattr(self, recipe))
+            for recipe_ing in recipe_ings:
+                ingredient = recipe_ing.ingredient
+                if (IngredientInPantry.objects.filter(
+                        ingredient=ingredient).exists()):
+                    ing_pantry = IngredientInPantry.objects.get(
+                        ingredient=ingredient)
+                    ing_pantry.subtract_quantity(
+                        sub_quantity=recipe_ing.quantity * servings_per_meal,
+                        sub_unit=recipe_ing.measurement_unit
+                        )
+
 
 class MealPlan(models.Model):
     """User's meal plan for the week."""
@@ -52,17 +68,4 @@ class MealPlan(models.Model):
         """Subtract the quantity of ingredients in meal plan from pantry."""
         meals = Meal.objects.filter(meal_plan=self)
         for meal in meals:
-            for recipe in ('main_dish', 'side_dish', 'salad'):
-                recipe_ings = RecipeIngredient.objects.filter(
-                    recipe=getattr(meal, recipe))
-                for recipe_ing in recipe_ings:
-                    ingredient = recipe_ing.ingredient
-                    if (IngredientInPantry.objects.filter(
-                            ingredient=ingredient).exists()):
-                        ing_pantry = IngredientInPantry.objects.get(
-                            ingredient=ingredient)
-                        ing_pantry.subtract_quantity(
-                            sub_quantity=(recipe_ing.quantity *
-                                          self.servings_per_meal),
-                            sub_unit=recipe_ing.measurement_unit
-                            )
+            meal.subtract_from_pantry(self.servings_per_meal)
