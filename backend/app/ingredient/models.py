@@ -68,11 +68,6 @@ class IngredientManagementBase(models.Model):
             display_unit=display_unit
         )
 
-    @classmethod
-    def get_ingredient_management_models(cls):
-        """Return a list of ingredient management models."""
-        return cls._ingredient_management_models
-
     def delete(self):
         """
         Delete self and associated Ingredient instace if it is not associated
@@ -80,7 +75,7 @@ class IngredientManagementBase(models.Model):
         """
         ingredient = self.ingredient
         super().delete()
-        subclasses = self.__class__.get_ingredient_management_models()
+        subclasses = self.__class__._ingredient_management_models
         used = False
         for subclass in subclasses:
             if subclass.objects.filter(ingredient=ingredient).exists():
@@ -154,3 +149,19 @@ class RecipeIngredient(IngredientManagementBase):
 
     def __str__(self):
         return f'{str(self.ingredient)} in {str(self.recipe)}'
+
+
+class ShoppingListItem(IngredientManagementBase):
+    """Item of user's shopping list."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'ingredient'],
+                name='unique_shopping_list_item'
+                )
+            ]
+
+    def __str__(self):
+        return f'{str(self.ingredient)} in {str(self.user)}\'s shopping list.'

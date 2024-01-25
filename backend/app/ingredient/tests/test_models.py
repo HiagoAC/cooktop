@@ -7,7 +7,11 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
-from app.utils_test import create_ing_in_pantry, create_user
+from app.utils_test import (
+    create_ing_in_pantry,
+    create_shopping_list_item,
+    create_user
+)
 from ingredient.measurement_units import MeasurementUnits
 from ingredient.models import Ingredient, IngredientInPantry, RecipeIngredient
 from recipe.models import Recipe
@@ -224,3 +228,20 @@ class RecipeIngredientModelTests(TestCase):
 
         # Ingredient used by an ingredient_in_pantry
         self.assertTrue(Ingredient.objects.filter(id=ing.id).exists())
+
+
+class ShoppingListItemModelTests(TestCase):
+    """Tests for the ShoppingListItem model."""
+
+    def setUp(self):
+        self.user = create_user()
+
+    def test_create_shopping_list_item_same_user_and_ingredient(self):
+        """
+        Test that creating two ShoppingListItem objects with same user and
+        ingredient raises IntegrityError.
+        """
+        create_shopping_list_item(user=self.user)
+        with self.assertRaises(IntegrityError):
+            create_shopping_list_item(
+                user=self.user, quantity=200, measurement_unit='g')
