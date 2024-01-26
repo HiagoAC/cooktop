@@ -9,7 +9,7 @@ from app.utils_test import (
     create_recipe_ing,
     create_user
 )
-from ingredient.models import IngredientInPantry
+from ingredient.models import IngredientInPantry, ShoppingListItem
 from recipe.models import Recipe
 from meal_plan.models import Preferences, Meal, MealPlan
 
@@ -53,7 +53,7 @@ class MealModelTests(TestCase):
 
         for attr, value in params.items():
             self.assertEqual(getattr(meal, attr), value)
-        self.assertFalse(meal.is_subtracted)
+        self.assertFalse(meal.is_subtracted_pantry)
 
     def test_ingredients_are_not_subtracted_twice(self):
         """
@@ -76,7 +76,7 @@ class MealModelTests(TestCase):
             meal.refresh_from_db()
             ing_pantry.refresh_from_db()
 
-            self.assertTrue(meal.is_subtracted)
+            self.assertTrue(meal.is_subtracted_pantry)
             self.assertEqual(
                 ing_pantry.quantity, original_quantity - recipe_ing.quantity)
 
@@ -96,6 +96,55 @@ class MealPlanModelTests(TestCase):
 
         self.assertEqual(servings_per_meal, meal_plan.servings_per_meal)
 
+    def test_add_to_shopping_list(self):
+        """Test adding ingredients of meal plan to shopping list."""
+        main_dish = create_recipe(
+            user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
+        salad = create_recipe(
+            user=self.user, recipe_type=Recipe.RecipeTypes.SALAD)
+        ing_1, ing_2 = 'ing_1', 'ing_2'
+        rec1_ing1 = create_recipe_ing(
+            recipe=main_dish,
+            name=ing_1,
+            quantity=10,
+            display_unit='ml'
+            )
+        rec2_ing1 = create_recipe_ing(
+            recipe=salad,
+            name=ing_1,
+            quantity=30,
+            display_unit='ml'
+            )
+        rec1_ing2 = create_recipe_ing(
+            recipe=salad,
+            name=ing_2,
+            quantity=100,
+            display_unit='gram'
+            )
+        quantities = {
+            'ing_1': ((rec1_ing1.quantity + rec2_ing1.quantity) *
+                      self.meal_plan.servings_per_meal),
+            'ing_2': rec1_ing2.quantity * self.meal_plan.servings_per_meal
+            }
+        create_meal(
+            meal_plan=self.meal_plan,
+            day=1,
+            main_dish=main_dish
+            )
+        create_meal(
+            meal_plan=self.meal_plan,
+            day=2,
+            side_dish=salad
+            )
+        self.meal_plan.add_to_shopping_list()
+
+        for ing, quantity in quantities.items():
+            self.assertTrue(ShoppingListItem.objects.filter(
+                ingredient__name=ing, user=self.user).exists())
+            item = ShoppingListItem.objects.get(
+                ingredient__name=ing, user=self.user)
+            self.assertEqual(item.quantity, quantity)
+
     def test_subtract_from_pantry(self):
         """Test subtracting ingredients of meal plan from pantry."""
         main_dish = create_recipe(
@@ -111,14 +160,14 @@ class MealPlanModelTests(TestCase):
             quantity=10,
             display_unit='ml'
             )
-        rec2_ing2 = create_recipe_ing(
+        rec2_ing1 = create_recipe_ing(
             recipe=side_dish,
             name=ing_1.ingredient.name,
             quantity=30,
             display_unit='ml'
             )
         final_quant_ing_1 = ing_1.quantity - \
-            ((rec1_ing1.quantity + rec2_ing2.quantity) *
+            ((rec1_ing1.quantity + rec2_ing1.quantity) *
              self.meal_plan.servings_per_meal)
         # Ingredient not in pantry
         create_recipe_ing(

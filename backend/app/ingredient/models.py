@@ -47,26 +47,49 @@ class IngredientManagementBase(models.Model):
         IngredientManagementBase._ingredient_management_models.append(cls)
 
     @classmethod
-    def create_with_display_unit(cls, recipe, ingredient, display_unit,
-                                 quantity):
+    def create_with_display_unit(cls, **kwargs):
         """
         Create an instance with quantity in display unit.
         measurement_unit used internally and converted quantity are set
         accordingly.
         """
+        display_unit = kwargs.get('display_unit')
+        quantity = kwargs.pop('quantity')
         if display_unit not in DISPLAY_UNITS:
             raise ValidationError('Invalid display_unit.')
 
         measurement_unit = DISPLAY_UNITS[display_unit].get_standard_unit()
-        quantity = DISPLAY_UNITS[display_unit].convert_quantity(quantity)
+        converted_quantity = DISPLAY_UNITS[display_unit].convert_quantity(
+            quantity)
 
         return cls.objects.create(
-            recipe=recipe,
-            ingredient=ingredient,
-            quantity=quantity,
             measurement_unit=measurement_unit,
-            display_unit=display_unit
-        )
+            quantity=converted_quantity,
+            **kwargs
+            )
+
+    def add_quantity(self, quantity_to_add, unit):
+        """
+        Add quantity of ingredient.
+        - ValueError is raised if this method is called with a measurement
+        unit different from the one of the object or if the quantity of the
+        object has not been set.
+        """
+        if self.quantity is None:
+            raise ValueError("Quantity not set for this ingredient.")
+        if quantity_to_add < 0:
+            raise ValueError("This method should be called with a positive\
+                              value for quantity.")
+        if self.measurement_unit == unit:
+            self.quantity = self.quantity + quantity_to_add
+        else:
+            unit_name = MeasurementUnits(self.measurement_unit).label
+            raise ValueError(f'Cannot add quantity with different '
+                             f'measurement units. Convert the add '
+                             f'quantity to {unit_name}'
+                             f'({self.measurement_unit})')
+        self.save()
+        return self.quantity
 
     def delete(self):
         """
@@ -91,7 +114,7 @@ class IngredientManagementBase(models.Model):
 
     def subtract_quantity(self, sub_quantity, sub_unit):
         """
-        Subtracts quantity of ingredient.
+        Subtract quantity of ingredient.
         - If subtracted quantity is greater or equal to the ingredient's
         quantity the instance is deleted.
         - ValueError is raised if this method is called with a measurement
