@@ -5,6 +5,7 @@ API views for the ingredient app.
 from ninja import Router
 from typing import List
 
+from app.utils_api import get_instance_detail
 from ingredient.api_utils import (
     get_ing_pantry_detail,
     get_or_create_ingredient,
@@ -94,3 +95,11 @@ def shopping_list(request):
                 .filter(user=user)
                 .order_by('ingredient__name'))
     return list(queryset)
+
+
+@shopping_list_router.get('/{item_id}', response=ShoppingListItemOut,
+                          url_name='shopping_item_detail')
+def shopping_item_detail(request, item_id: int):
+    """Retrieve details of shopping list item."""
+    item = get_instance_detail(item_id, ShoppingListItem, user=request.auth)
+    return item

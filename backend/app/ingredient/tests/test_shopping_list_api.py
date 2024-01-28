@@ -35,16 +35,16 @@ class PublicPantryAPITests(TestCase):
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
 
-    # def test_unauthenticated_detail_request(self):
-    #     """
-    #     Test that retrieving shopping item detail unauthenticated is
-    #     unauthorized.
-    #     """
-    #     item = create_shopping_list_item(user=create_user())
-    #     response = self.client.get(shopping_item_detail_url(item.id))
+    def test_unauthenticated_detail_request(self):
+        """
+        Test that retrieving shopping item detail unauthenticated is
+        unauthorized.
+        """
+        item = create_shopping_list_item(user=create_user())
+        response = self.client.get(shopping_item_detail_url(item.id))
 
-    #     # 401 - UNAUTHORIZED
-    #     self.assertEqual(response.status_code, 401)
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
 
 
 class PrivatePantryAPITests(TestCase):
@@ -86,4 +86,23 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = [ShoppingListItemOut.from_orm(item).dict()]
+        self.assertEqual(content, expected)
+
+    def test_get_shopping_item_detail(self):
+        """Test getting shopping item detail."""
+        item = create_shopping_list_item(
+            user=self.user,
+            name='a food',
+            quantity=100,
+            display_unit='cup',
+        )
+        response = self.client.get(
+            shopping_item_detail_url(item.id), **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+
+        expected = ShoppingListItemOut.from_orm(item).dict()
+
         self.assertEqual(content, expected)
