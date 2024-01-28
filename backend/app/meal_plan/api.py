@@ -3,11 +3,11 @@ API views for the meal_plan app.
 """
 
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from ninja import Router
 from ninja.errors import HttpError
 from typing import List
 
+from app.utils_api import get_instance_detail
 from meal_plan.meal_planner import MealPlanner
 from meal_plan.models import Preferences, Meal, MealPlan
 from meal_plan.schemas import (
@@ -16,18 +16,9 @@ from meal_plan.schemas import (
     MealPlanOut,
     MealPlanPatch
 )
-from recipe.api import get_recipe_detail
 from recipe.models import Recipe
 
 meal_plan_router = Router()
-
-
-def get_meal_plan_detail(meal_plan_id: int, user):
-    """Return meal plan if it belongs to user."""
-    meal_plan = get_object_or_404(MealPlan, id=meal_plan_id)
-    if meal_plan.user != user:
-        raise HttpError(401, "Unauthorized")
-    return meal_plan
 
 
 @meal_plan_router.get('/', response=List[MealPlanListSchema],
@@ -62,7 +53,7 @@ def create_recipe(request, payload: MealPlanIn):
                       url_name='meal_plan_detail')
 def meal_plan_detail(request, meal_plan_id: int):
     """Retrieve details of a meal plan."""
-    meal_plan = get_meal_plan_detail(meal_plan_id, request.auth)
+    meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
     return meal_plan
 
 
@@ -76,12 +67,12 @@ def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
         'side_dish': Recipe.RecipeTypes.SIDE_DISH,
         'salad': Recipe.RecipeTypes.SALAD
     }
-    meal_plan = get_meal_plan_detail(meal_plan_id, user)
+    meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
     for day, meal in payload.dict()['meals'].items():
         for recipe_type, recipe_id in meal.items():
             if Meal.objects.filter(meal_plan=meal_plan, day=day).exists():
                 meal_in_plan = Meal.objects.filter(day=day).first()
-                recipe = get_recipe_detail(recipe_id, user)
+                recipe = get_instance_detail(recipe_id, Recipe, user)
                 if recipe.recipe_type != recipe_types[recipe_type]:
                     raise HttpError(422, "Wrong recipe type.")
                 setattr(
@@ -97,7 +88,7 @@ def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
 @meal_plan_router.delete('/{meal_plan_id}', response={204: None})
 def delete_meal_plan(request, meal_plan_id: int):
     """Delete a meal plan."""
-    meal_plan = get_meal_plan_detail(meal_plan_id, user=request.auth)
+    meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
     meal_plan.delete()
     return 204, None
 
@@ -110,6 +101,6 @@ def subtract_ingredients_from_pantry(request, meal_plan_id: int):
     Subtract ingredients of all meals in meal plan from pantry if they have
     not been subtracted yet.
     """
-    meal_plan = get_meal_plan_detail(meal_plan_id, user=request.auth)
+    meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
     meal_plan.subtract_from_pantry()
     return 204, None

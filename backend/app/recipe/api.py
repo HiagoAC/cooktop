@@ -3,12 +3,11 @@ API views for the recipe app.
 """
 
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from ninja import File, Query, Router
-from ninja.errors import HttpError
 from ninja.files import UploadedFile
 from typing import List
 
+from app.utils_api import get_instance_detail
 from ingredient.api_utils import get_or_create_ingredient
 from ingredient.models import RecipeIngredient
 from recipe.models import Recipe, Tag
@@ -24,14 +23,6 @@ from recipe.utils import get_recipes_by_ings
 
 tag_router = Router()
 recipe_router = Router()
-
-
-def get_recipe_detail(recipe_id: int, user):
-    """Return recipe if it belongs to user."""
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    if recipe.user != user:
-        raise HttpError(401, "Unauthorized")
-    return recipe
 
 
 def set_recipe_ingredients(recipe, recipe_ings):
@@ -108,7 +99,7 @@ def create_recipe(request, payload: RecipeIn):
                    url_name='recipe_detail')
 def recipe_detail(request, recipe_id: int):
     """Retrieve details of a recipe."""
-    recipe = get_recipe_detail(recipe_id, request.auth)
+    recipe = get_instance_detail(recipe_id, Recipe, request.auth)
     return recipe
 
 
@@ -116,7 +107,7 @@ def recipe_detail(request, recipe_id: int):
 @transaction.atomic
 def recipe_update(request, recipe_id: int, payload: RecipePatch):
     """Update a recipe."""
-    recipe = get_recipe_detail(recipe_id, request.auth)
+    recipe = get_instance_detail(recipe_id, Recipe, request.auth)
     for attr, value in payload.dict(exclude_unset=True).items():
         if attr == 'tags':
             set_recipe_tags(recipe, tags=value)
@@ -132,7 +123,7 @@ def recipe_update(request, recipe_id: int, payload: RecipePatch):
 @recipe_router.delete('/{recipe_id}', response={204: None})
 def delete_recipe(request, recipe_id: int):
     """Delete a recipe."""
-    recipe = get_recipe_detail(recipe_id, user=request.auth)
+    recipe = get_instance_detail(recipe_id, Recipe, request.auth)
     recipe.delete()
     return 204, None
 
@@ -141,7 +132,7 @@ def delete_recipe(request, recipe_id: int):
 def upload_recipe_image(
         request, recipe_id: int, img: UploadedFile = File(...)):
     """Upload an image to a recipe."""
-    recipe = get_recipe_detail(recipe_id, user=request.auth)
+    recipe = get_instance_detail(recipe_id, Recipe, request.auth)
     recipe.image.save(img.name, img)
     return {'success': True}
 
@@ -149,6 +140,6 @@ def upload_recipe_image(
 @recipe_router.delete('/{recipe_id}/image', response={204: None})
 def delete_image(request, recipe_id: int):
     """Delete a recipe image."""
-    recipe = get_recipe_detail(recipe_id, user=request.auth)
+    recipe = get_instance_detail(recipe_id, Recipe, request.auth)
     recipe.image.delete()
     return 204, None
