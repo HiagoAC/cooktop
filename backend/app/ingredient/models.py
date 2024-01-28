@@ -29,7 +29,7 @@ class Ingredient(models.Model):
 class IngredientManagementBase(models.Model):
     """Base model for ingredients in different contexts."""
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=6, default=0, decimal_places=2)
+    quantity = models.DecimalField(max_digits=9, default=0, decimal_places=2)
     measurement_unit = models.CharField(
         max_length=3,
         choices=MeasurementUnits.choices,

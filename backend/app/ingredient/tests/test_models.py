@@ -244,4 +244,4 @@ class ShoppingListItemModelTests(TestCase):
         create_shopping_list_item(user=self.user)
         with self.assertRaises(IntegrityError):
             create_shopping_list_item(
-                user=self.user, quantity=200, measurement_unit='g')
+                user=self.user, quantity=200, display_unit='gram')
