@@ -71,6 +71,7 @@ def create_shopping_list_item(user, name='food name', **params):
         'quantity': '2.00',
         'display_unit': 'cup',
     }
+    data.update(params)
     item = ShoppingListItem.create_with_display_unit(
         user=user,
         ingredient=ingredient,
