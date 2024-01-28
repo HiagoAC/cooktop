@@ -2,10 +2,8 @@
 Schemas for the apis in ingredient app.
 """
 from datetime import date
-from ninja import ModelSchema, Schema
+from ninja import Schema
 from pydantic import NonNegativeFloat
-
-from ingredient.models import ShoppingListItem
 
 
 class PantryListSchema(Schema):
@@ -35,15 +33,16 @@ class PantryDetailOut(PantryDetailIn):
     id: int
 
 
-class ShoppingListItemOut(ModelSchema):
-    """Output schema for shopping_list endpoints."""
+class ShoppingListItemIn(Schema):
+    """Input schema for shopping_list endpoints."""
     name: str
     quantity: NonNegativeFloat
     unit: str
 
-    class Meta:
-        model = ShoppingListItem
-        fields = ['id']
+
+class ShoppingListItemOut(ShoppingListItemIn):
+    """Output schema for shopping_list endpoints."""
+    id: int
 
     @staticmethod
     def resolve_name(obj):

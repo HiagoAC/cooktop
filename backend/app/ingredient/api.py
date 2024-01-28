@@ -17,6 +17,7 @@ from ingredient.schemas import (
     PantryDetailIn,
     PantryDetailOut,
     PantryDetailPatch,
+    ShoppingListItemIn,
     ShoppingListItemOut
     )
 
@@ -103,3 +104,17 @@ def shopping_item_detail(request, item_id: int):
     """Retrieve details of shopping list item."""
     item = get_instance_detail(item_id, ShoppingListItem, user=request.auth)
     return item
+
+
+@shopping_list_router.post('/', response={201: ShoppingListItemOut})
+def add_item_to_shopping_list(request, payload: ShoppingListItemIn):
+    """Add ingredient to user's pantry."""
+    user = request.auth
+    item_data = payload.dict()
+    name = item_data.pop('name')
+    ing = get_or_create_ingredient(name, user)
+    item_data['ingredient'] = ing
+    item_data['user'] = user
+    item_data['display_unit'] = item_data.pop('unit')
+    item = ShoppingListItem.create_with_display_unit(**item_data)
+    return 201, item

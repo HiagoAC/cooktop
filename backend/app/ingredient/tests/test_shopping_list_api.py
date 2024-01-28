@@ -1,6 +1,7 @@
 """
 Tests for the shopping list API.
 """
+from decimal import Decimal
 import json
 
 from django.test import Client, TestCase
@@ -106,3 +107,25 @@ class PrivatePantryAPITests(TestCase):
         expected = ShoppingListItemOut.from_orm(item).dict()
 
         self.assertEqual(content, expected)
+
+    def test_add_item_to_shopping_list(self):
+        """Test adding item to shopping list is successful."""
+        payload = {
+            'name': 'a food',
+            'quantity': '2.0',
+            'unit': 'cup',
+        }
+        response = self.client.post(
+            SHOPPING_LIST_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('id', content)
+        payload['quantity'] = Decimal(payload['quantity'])
+        for key, value in payload.items():
+            self.assertEqual(value, content[key])
