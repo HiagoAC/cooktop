@@ -11,7 +11,12 @@ from PIL import Image
 from time import time
 from typing import Dict, List
 
-from ingredient.models import Ingredient, IngredientInPantry, RecipeIngredient
+from ingredient.models import (
+    Ingredient,
+    IngredientInPantry,
+    RecipeIngredient,
+    ShoppingListItem
+)
 from meal_plan.models import Meal, MealPlan
 from recipe.models import Recipe, Tag
 from user.auth_handler import JWT_SECRET, JWT_ALGO
@@ -59,15 +64,17 @@ def create_ing_in_pantry(user, name='food name', quantity=100,
     return ing_in_pantry
 
 
-def create_shopping_list_item(user, name='food name', quantity=100,
-                              measurement_unit='ml'):
+def create_shopping_list_item(user, name='food name', **params):
     """Returns an instance of ShoppingListItem."""
     ingredient, _ = Ingredient.objects.get_or_create(name=name)
-    item = IngredientInPantry.objects.create(
+    data = {
+        'quantity': '2.00',
+        'display_unit': 'cup',
+    }
+    item = ShoppingListItem.create_with_display_unit(
         user=user,
         ingredient=ingredient,
-        quantity=quantity,
-        measurement_unit=measurement_unit,
+        **data
     )
     return item
 

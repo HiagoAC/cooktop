@@ -10,15 +10,17 @@ from ingredient.api_utils import (
     get_or_create_ingredient,
     response_ing_in_pantry
     )
-from ingredient.models import IngredientInPantry
+from ingredient.models import IngredientInPantry, ShoppingListItem
 from ingredient.schemas import (
     PantryListSchema,
     PantryDetailIn,
     PantryDetailOut,
-    PantryDetailPatch
+    PantryDetailPatch,
+    ShoppingListItemOut
     )
 
 pantry_router = Router()
+shopping_list_router = Router()
 
 
 @pantry_router.get('/', response=List[PantryListSchema],
@@ -81,3 +83,14 @@ def pantry_delete(request, ing_pantry_id: int):
     ing_pantry = get_ing_pantry_detail(ing_pantry_id, user=request.auth)
     ing_pantry.delete()
     return 204, None
+
+
+@shopping_list_router.get('/', response=List[ShoppingListItemOut],
+                          url_name='shopping_list')
+def shopping_list(request):
+    """Retrieve user's shopping list."""
+    user = request.auth
+    queryset = (ShoppingListItem.objects
+                .filter(user=user)
+                .order_by('ingredient__name'))
+    return list(queryset)
