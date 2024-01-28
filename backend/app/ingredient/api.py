@@ -123,7 +123,7 @@ def add_item_to_shopping_list(request, payload: ShoppingListItemIn):
 
 
 @shopping_list_router.patch('/{item_id}', response=ShoppingListItemOut)
-def shopping_list_update(
+def shopping_list_item_update(
         request, item_id: int, payload: ShoppingListItemPatch):
     """Update ingredient in user's shopping list."""
     item = get_instance_detail(item_id, ShoppingListItem, user=request.auth)
@@ -143,3 +143,10 @@ def shopping_list_update(
             upload_data['unit']].convert_quantity(upload_data['quantity'])
     item.save()
     return item
+
+
+@shopping_list_router.delete('/{item_id}', response={204: None})
+def shopping_list_item_delete(request, item_id: int):
+    item = get_instance_detail(item_id, ShoppingListItem, user=request.auth)
+    item.delete()
+    return 204, None

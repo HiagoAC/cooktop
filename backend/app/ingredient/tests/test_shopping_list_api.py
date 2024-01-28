@@ -8,7 +8,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from app.utils_test import auth_header, create_shopping_list_item, create_user
-from ingredient.models import Ingredient
+from ingredient.models import Ingredient, ShoppingListItem
 from ingredient.schemas import ShoppingListItemOut
 
 SHOPPING_LIST_URL = reverse('api:shopping_list')
@@ -179,3 +179,14 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(item.ingredient.name, payload['name'])
         self.assertEqual(ing.name, original_name)
+
+    def test_delete_shopping_list_item(self):
+        """Test deleting shopping list item."""
+        item = create_shopping_list_item(user=self.user)
+        response = self.client.delete(
+            shopping_item_detail_url(item.id), **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(
+            ShoppingListItem.objects.filter(id=item.id).exists())
