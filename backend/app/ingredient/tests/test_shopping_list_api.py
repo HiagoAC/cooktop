@@ -95,7 +95,7 @@ class PrivatePantryAPITests(TestCase):
         item = create_shopping_list_item(
             user=self.user,
             name='a food',
-            quantity=100,
+            quantity='100.00',
             display_unit='cup',
         )
         response = self.client.get(
@@ -113,7 +113,7 @@ class PrivatePantryAPITests(TestCase):
         """Test adding item to shopping list is successful."""
         payload = {
             'name': 'a food',
-            'quantity': '2.0',
+            'quantity': '2.00',
             'unit': 'cup',
         }
         response = self.client.post(
@@ -136,11 +136,11 @@ class PrivatePantryAPITests(TestCase):
         item = create_shopping_list_item(
             user=self.user,
             name='a food',
-            quantity=100,
+            quantity='3.00',
             display_unit='cup',
         )
         payload = {
-            'quantity': '200.0',
+            'quantity': '200.00',
             'unit': 'gram'
         }
         response = self.client.patch(
@@ -189,4 +189,53 @@ class PrivatePantryAPITests(TestCase):
         # 204 - NO CONTENT
         self.assertEqual(response.status_code, 204)
         self.assertFalse(
+            ShoppingListItem.objects.filter(id=item.id).exists())
+
+    def test_get_another_user_shopping_list_item(self):
+        """
+        Test getting another user's shopping list item is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        item = create_shopping_list_item(user=another_user)
+
+        response = self.client.get(
+            shopping_item_detail_url(item.id), **self.headers)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+
+    def test_update_another_user_shopping_list_item(self):
+        """
+        Test updating another user's shopping list item is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        original_quantity = '3.00'
+        item = create_shopping_list_item(
+            user=another_user, quantity=original_quantity)
+
+        response = self.client.patch(
+            shopping_item_detail_url(item.id),
+            data=json.dumps({'quantity': '4.00'}),
+            content_type='application/json',
+            **self.headers
+        )
+        item.refresh_from_db()
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(
+            item.get_display_quantity(), Decimal(original_quantity))
+
+    def test_delete_another_user_shopping_list_item(self):
+        """
+        Test deleting another user's shopping list item is not allowed.
+        """
+        another_user = create_user(email='another_user@example.com')
+        item = create_shopping_list_item(user=another_user)
+
+        response = self.client.delete(
+            shopping_item_detail_url(item.id), **self.headers)
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(
             ShoppingListItem.objects.filter(id=item.id).exists())
