@@ -249,7 +249,7 @@ class PrivatePantryAPITests(TestCase):
             content_type='application/json',
             **self.headers
         )
-
+        ing_in_pantry.refresh_from_db()
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
         self.assertEqual(ing_in_pantry.quantity, original_quantity)
