@@ -6,6 +6,7 @@ from ninja import Router
 from typing import List
 
 from app.utils_api import get_instance_detail
+from ingredient.measurement_units import DISPLAY_UNITS
 from ingredient.api_utils import (
     get_ing_pantry_detail,
     get_or_create_ingredient,
@@ -18,7 +19,8 @@ from ingredient.schemas import (
     PantryDetailOut,
     PantryDetailPatch,
     ShoppingListItemIn,
-    ShoppingListItemOut
+    ShoppingListItemOut,
+    ShoppingListItemPatch
     )
 
 pantry_router = Router()
@@ -108,7 +110,7 @@ def shopping_item_detail(request, item_id: int):
 
 @shopping_list_router.post('/', response={201: ShoppingListItemOut})
 def add_item_to_shopping_list(request, payload: ShoppingListItemIn):
-    """Add ingredient to user's pantry."""
+    """Add ingredient to user's shopping list."""
     user = request.auth
     item_data = payload.dict()
     name = item_data.pop('name')
@@ -118,3 +120,26 @@ def add_item_to_shopping_list(request, payload: ShoppingListItemIn):
     item_data['display_unit'] = item_data.pop('unit')
     item = ShoppingListItem.create_with_display_unit(**item_data)
     return 201, item
+
+
+@shopping_list_router.patch('/{item_id}', response=ShoppingListItemOut)
+def shopping_list_update(
+        request, item_id: int, payload: ShoppingListItemPatch):
+    """Update ingredient in user's shopping list."""
+    item = get_instance_detail(item_id, ShoppingListItem, user=request.auth)
+    upload_data = payload.dict(exclude_unset=True)
+    if 'name' in upload_data:
+        ing = get_or_create_ingredient(
+            item.ingredient.name, user=request.auth)
+        item.ingredient = ing
+        ing.name = upload_data['name']
+        ing.save()
+    if 'unit' in upload_data:
+        item.display_unit = upload_data['unit']
+        item.measurement_unit = DISPLAY_UNITS[
+            upload_data['unit']].get_standard_unit()
+    if 'quantity' in upload_data:
+        item.quantity = DISPLAY_UNITS[
+            upload_data['unit']].convert_quantity(upload_data['quantity'])
+    item.save()
+    return item

@@ -8,6 +8,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from app.utils_test import auth_header, create_shopping_list_item, create_user
+from ingredient.models import Ingredient
 from ingredient.schemas import ShoppingListItemOut
 
 SHOPPING_LIST_URL = reverse('api:shopping_list')
@@ -129,3 +130,52 @@ class PrivatePantryAPITests(TestCase):
         payload['quantity'] = Decimal(payload['quantity'])
         for key, value in payload.items():
             self.assertEqual(value, content[key])
+
+    def test_update_shopping_item(self):
+        """Test updating shopping list item."""
+        item = create_shopping_list_item(
+            user=self.user,
+            name='a food',
+            quantity=100,
+            display_unit='cup',
+        )
+        payload = {
+            'quantity': '200.0',
+            'unit': 'gram'
+        }
+        response = self.client.patch(
+            shopping_item_detail_url(item.id),
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        item.refresh_from_db()
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            item.get_display_quantity(), Decimal(payload['quantity']))
+        self.assertEqual(item.display_unit, payload['unit'])
+
+    def test_update_shopping_item_name(self):
+        """
+        Test updating name of a shopping list item properly changes reference
+        to Ingredient.
+        """
+        original_name = 'a food'
+        item = create_shopping_list_item(
+            user=self.user, name=original_name)
+        ing = Ingredient.objects.get(name=original_name)
+        payload = {'name': 'new name'}
+        response = self.client.patch(
+            shopping_item_detail_url(item.id),
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        item.refresh_from_db()
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(item.ingredient.name, payload['name'])
+        self.assertEqual(ing.name, original_name)

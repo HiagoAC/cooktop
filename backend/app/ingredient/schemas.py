@@ -55,3 +55,10 @@ class ShoppingListItemOut(ShoppingListItemIn):
     @staticmethod
     def resolve_unit(obj):
         return obj.display_unit
+
+
+class ShoppingListItemPatch(Schema):
+    """Input schema for shopping_list_detail patch."""
+    name: str | None = None
+    quantity: NonNegativeFloat | None = None
+    unit: str | None = None
