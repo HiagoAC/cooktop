@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/HiagoAC/cooktop/graph/badge.svg?token=OX0ANQTKPG)](https://codecov.io/gh/HiagoAC/cooktop)
+[![Backend CI](https://github.com/HiagoAC/cooktop/actions/workflows/backend-ci.yaml/badge.svg)](https://github.com/HiagoAC/cooktop/actions/workflows/backend-ci.yaml)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=HiagoAC_cooktop&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=HiagoAC_cooktop)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=HiagoAC_cooktop&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=HiagoAC_cooktop)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=HiagoAC_cooktop&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=HiagoAC_cooktop)
