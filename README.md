@@ -6,9 +6,7 @@
 
 # Cooktop
 
-Cooktop is a recipe management and meal planning application. It was developed to make everyday cooking a more pleasant experience. It helps users to reduce food wastage and spend less time cooking and buying groceries. This application will be *available on Android, iOS, and the Web. 
-
-\* Under development
+Cooktop is a meal planning tool developed to make everyday cooking cheaper, faster and more efficient. It generates meal plans that help users minimize food wastage while reducing both cooking and grocery shopping time. In addition to meal planning, Cooktop also integrates recipe, grocery shopping, and pantry management into a single application.
 
 ## Main Features
 
@@ -20,11 +18,11 @@ Then, you can query for recipes based on ingredients, cooking time, tags, etc. I
 
 ### Managing Pantry
 
-Optionally, you can add ingredients you have. You can add when you want use each ingredient and the quantity you have.
+In the pantry section, you can keep track of what you have in stock. When adding items, you have the option to include an expiration date to it. So, expiring ingredients can be prioritized in the meal plans. The quantity of ingredients in the pantry can also be adjusted automatically based on the groceries you buy and what is used in your meals.
 
 ### Generating Meal Plans
 
-This feature was the motivation for this application. Every week the app generates a meal plan based on your cooking habits and preferences. The app finds a variety of recipes while trying to reuse as many ingredients as possible especially the ones you already have at home. You can also request ingredients to be cointained in the plan. It is also possible to replace recipes if you wish. There are several reasons to planning meals this way: 
+This feature was the main motivation for building this application. You select how many times you want to cook, how many servings you need, and ingredients you want to use. Then, Cooktop generates a plan based on that and your pantry. The app finds a variety of recipes while trying to reuse as many ingredients as possible especially those already in your pantry. It is also possible to replace recipes once the plan is ready if you wish. There are several reasons to planning meals this way:
 * Reducing shopping time: You save time shopping because there are fewer things you have to buy. This is because you will already have many of the ingredients in the plan, and you can purchase other ingredients in larger quantities since they are being used in several recipes. 
 * Reducing food wastage: Cooking food with a great variety of ingredients and having a large amount of unused items increases the chances of food spoilage. This plan minimizes this.
 * Saving cooking time: Reusing ingredients means there are higher chances of batch cooking. For example, the same may be chopped or marinate in the different recipes. You can do it when you cook the first meal and not have to do it again when cooking the second one on another day.
@@ -32,18 +30,13 @@ This feature was the motivation for this application. Every week the app generat
 
 ### Generating Shopping List
 
-After a meal plan for the week is set, a shopping list is generated. The list can also be edited manually.
+Once the weekly meal plan is established, Cooktop automatically generates a corresponding shopping list. Additionally, users have the flexibility to manually edit the list according to their preferences.
 
 ## Technologies Used
 - Backend:
     - Programming Language: Python
     - Web Framework: Django
     - REST Framework: Django Ninja
+- Database: PostgreSQL
 - Containerization: Docker
-- CI/CD: GitHub Actions 
-
-<!--
-## Software Architecture and Design
-
-## Author
--->
+- CI/CD: GitHub Actions
