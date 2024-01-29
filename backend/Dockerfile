@@ -12,7 +12,7 @@ EXPOSE 8000
 ARG DEV=false
 RUN apt-get update && \
     # Pillow dependenciens
-    apt-get install -y libjpeg-dev zlib1g-dev && \ 
+    apt-get --no-install-recommends install -y libjpeg-dev zlib1g-dev && \ 
     pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
