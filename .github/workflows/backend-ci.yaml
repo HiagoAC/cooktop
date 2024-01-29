@@ -38,7 +38,7 @@ jobs:
           echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> env-dev/db.env
           cat env-dev/db.env
       - name: Test
-        run: docker-compose run --rm backend sh -c "wait-for-it --service db:5432 -- coverage run --source='.' manage.py test"
+        run: docker-compose run --rm backend sh -c "wait-for-it --service db:5432 -- coverage run --source='.' manage.py test && coverage xml -o /vol/web/coverage.xml"
       - name: Upload coverage report
         uses: codecov/codecov-action@v2
         with:
