@@ -1,3 +1,7 @@
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=HiagoAC_cooktop&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=HiagoAC_cooktop)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=HiagoAC_cooktop&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=HiagoAC_cooktop)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=HiagoAC_cooktop&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=HiagoAC_cooktop)
+
 # Cooktop
 
 Cooktop is a recipe management and meal planning application. It was developed to make everyday cooking a more pleasant experience. It helps users to reduce food wastage and spend less time cooking and buying groceries. This application will be *available on Android, iOS, and the Web. 
