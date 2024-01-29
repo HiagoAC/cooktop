@@ -23,18 +23,19 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> backend/app/user/.env
           echo JWT_ALGO=${{ secrets.JWT_ALGO }} >> backend/app/user/.env
           cat .env
+          mkdir -p env-dev
           touch env-dev/backend.env
           echo DB_HOST=${{ secrets.DB_HOST }} >> env-dev/backend.env
           echo DB_NAME=${{ secrets.DB_NAME }} >> env-dev/backend.env
           echo DB_USER=${{ secrets.DB_USER }} >> env-dev/backend.env
           echo DB_PASS=${{ secrets.DB_PASS }} >> env-dev/backend.env
           echo DJANGO_SECRET=${{ secrets.DJANGO_SECRET }} >> env-dev/backend.env
-          cat backend.env
+          cat env-dev/backend.env
           touch env-dev/db.env
           echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> env-dev/db.env
           echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> env-dev/db.env
           echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> env-dev/db.env
-          cat db.env
+          cat env-dev/db.env
       - name: Test
         run: docker-compose run --rm backend sh -c "wait-for-it --service db:5432 -- coverage run --source='.' manage.py test"
       - name: Upload coverage report
