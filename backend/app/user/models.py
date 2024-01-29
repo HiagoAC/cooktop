@@ -79,11 +79,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return f'{self.first_name} {self.last_name}'
 
-    def send_email(self):
-        """ Send an email to user."""
-        # TODO
-        pass
-
 
 class RefreshToken(models.Model):
     """Last refresh token of each user."""
