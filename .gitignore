@@ -165,3 +165,4 @@ backend/.commands.txt
 backend/.technical_considerations.txt
 .github/workflows/.technical_considerations.txt
 out/
+frontend/.commands.txt
