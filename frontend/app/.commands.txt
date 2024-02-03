@@ -1,0 +1,5 @@
+#Add vitest for tests
+npm install --save-dev vitest
+
+#Install ESLint/Prettier and necessary plugins
+npm install --save-dev eslint eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-jsx-a11y eslint-config-prettier eslint-plugin-prettier prettier
