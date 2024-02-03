@@ -8,6 +8,12 @@ EXPOSE 5173
 
 RUN npm update && \
     npm install -g vite@latest && \
-    npm install
+    npm install && \
+    useradd --system nonroot && \
+    mkdir -p /home/nonroot && \
+    chmod -R 755 /home/nonroot && \
+    chown -R nonroot:nonroot /home/nonroot
 
 COPY ./app /app
+
+USER nonroot
