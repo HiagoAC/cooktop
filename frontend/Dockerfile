@@ -7,8 +7,8 @@ WORKDIR /app
 EXPOSE 5173
 
 RUN npm update && \
-    npm install -g vite@latest && \
-    npm install && \
+    npm install --ignore-scripts -g vite@latest && \
+    npm install --ignore-scripts && \
     useradd --system nonroot && \
     mkdir -p /home/nonroot && \
     chmod -R 755 /home/nonroot && \
