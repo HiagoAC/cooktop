@@ -7,13 +7,14 @@ import { Pantry } from './pages/Pantry'
 import { Me } from './pages/Me'
 import { About } from './pages/About'
 import { Navbar } from './components/Navbar'
+import './styles/App.css';
 
 
 function App() {
   return (
     <>
       <Navbar />
-      <Container className='mb-4'>
+      <Container className="mb-4 .main_container">
         <Routes>
           <Route path='/' element={<MealPlan />} />
           <Route path='/recipes' element={<Recipes />} />
