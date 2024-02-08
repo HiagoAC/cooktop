@@ -13,9 +13,6 @@ import hamburgerIcon from '../assets/hamburger_icon.svg';
 
 export function Navbar() {
     const [show, setShow] = useState(false);
-  
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
 
     return (
         <BaseNavbar expand="lg" className="navbar">
@@ -23,16 +20,16 @@ export function Navbar() {
                 <BaseNavbar.Brand href="/">
                     Cooktop
                 </BaseNavbar.Brand>
-                <Nav className="me-auto">
+                <Nav className="me-auto d-none d-lg-flex">
                     <Nav.Link href="/">Meal Plan</Nav.Link>
                     <Nav.Link href="/recipes">Recipes</Nav.Link>
                     <Nav.Link href="/shopping-list">Shopping List</Nav.Link>
                     <Nav.Link href="/pantry">Pantry</Nav.Link>
                 </Nav>
-                <Button className="button-hamburger" onClick={handleShow}>
+                <Button className="button-hamburger" onClick={() => setShow(true)}>
                     <img src={hamburgerIcon} alt="dropdown" className="icon" />
                 </Button>
-                <Offcanvas show={show} onHide={handleClose} placement="end">
+                <Offcanvas show={show} onHide={() => setShow(false)} placement="end">
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title></Offcanvas.Title>
                 </Offcanvas.Header>
