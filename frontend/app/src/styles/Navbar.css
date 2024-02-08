@@ -4,32 +4,3 @@
     background-color: var(--accent-color);
     height: 50px;
 }
-
-.offcanvas-list {
-    font-weight: bold;
-}
-
-.offcanvas-list .list-group-item.active,
-.offcanvas-list .list-group-item:focus {
-    background-color: var(--accent-color) !important;
-}
-
-.button-hamburger {
-    outline: none !important;
-    border: none !important;
-    background-color: transparent !important;
-    height: 100%;
-    max-width: 50px;
-    display: flex;
-    align-items: center;
-}
-
-.button-hamburger:hover,
-.button-hamburger:focus {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-}
-
-.icon {
-    width: 100%;
-    height: auto;
-}
