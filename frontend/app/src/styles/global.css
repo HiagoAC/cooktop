@@ -3,3 +3,8 @@
     --base-color: #fffdf3;
     --info-color: #e6bc00;
   }
+
+.page-title {
+  font-size: 3em;
+  text-align: center;
+}

@@ -1,0 +1,18 @@
+@import url('./global.css');
+
+.button-col {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.custom-button {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: black !important;
+}
+
+.custom-button:hover,
+.custom-button:focus {
+    opacity: 0.8;
+}

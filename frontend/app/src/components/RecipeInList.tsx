@@ -28,14 +28,14 @@ export function RecipeInList({ id, title, time_minutes, tags, image }:
                         <div className="icon-container">
                             <img
                                 src={clockIcon}
-                                alt="pre time"
+                                alt="prep time"
                                 className="clock-icon"
                             />
                         </div> {time_minutes} min
                     </span>
                     <Stack direction="horizontal" gap={1} className="mt-2">
                         {tags.map(tag => (
-                        <Badge bg="custom" className="custom-badge">{tag}</Badge>
+                            <Badge bg="custom" className="custom-badge">{tag}</Badge>
                         ))}
                     </Stack>
                 </Card.Text>
