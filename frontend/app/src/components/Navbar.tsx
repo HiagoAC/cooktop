@@ -4,13 +4,13 @@ import {
     Navbar as BaseNavbar,
 } from 'react-bootstrap';
 import '../styles/Navbar.css';
-import { Offcanvas } from './Offcanvas'
+import { Offcanvas } from './Offcanvas';
 
 
 export function Navbar() {
 
     return (
-        <BaseNavbar expand="lg" className="navbar">
+        <BaseNavbar expand="lg" sticky="top" className="navbar">
             <Container>
                 <BaseNavbar.Brand href="/">
                     Cooktop
