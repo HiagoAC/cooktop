@@ -39,6 +39,7 @@ export function RecipeInList({ id, title, time_minutes, tags, image }:
                         ))}
                     </Stack>
                 </Card.Text>
+                <a href="#" className="stretched-link"></a>
             </Card.Body>
         </Card>
 }
