@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Badge, Card, Stack } from 'react-bootstrap';
 import '../styles/RecipeInList.css';
 import clockIcon from '../assets/clock_icon.svg';
@@ -21,7 +22,7 @@ export function RecipeInList({ id, title, time_minutes, tags, image }:
                 height="200px"
                 className="card-img"
             />
-            <Card.Body className="d-flex flex-column">
+            <Card.Body className="d-flex flex-column" key={id}>
                 <Card.Title>{title}</Card.Title>
                 <Card.Text>
                     <span>
@@ -39,7 +40,7 @@ export function RecipeInList({ id, title, time_minutes, tags, image }:
                         ))}
                     </Stack>
                 </Card.Text>
-                <a href="#" className="stretched-link"></a>
+                <Link to={`/recipes/${id.toString()}`} className="stretched-link" />
             </Card.Body>
         </Card>
 }
