@@ -1,7 +1,8 @@
-import { Card, Col, Image, Row, Stack } from 'react-bootstrap';
+import { Card, Col, Image, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import recipes from '../data/recipe_detail.json';
 import '../styles/RecipeDetail.css';
+import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
 import { RecipeIngredientList } from '../components/RecipeIngredientList';
 import { RecipeInfoCard } from '../components/RecipeInfoCard';
 
@@ -41,19 +42,7 @@ export function RecipeDetail() {
                     </Card>
                 </Col>
                 <Col md={8}>
-                    <Card className="p-3 mt-2">
-                        <Card.Title>Directions</Card.Title>
-                        <Card.Body>
-                            <Stack direction="vertical" gap={1} className="mt-2">
-                                {recipe.directions.map((direction: string, index: number) => (
-                                    <div key={index} className="mb-3">
-                                        <h6>Step {index + 1}</h6>
-                                        {direction}
-                                    </div>
-                                ))}
-                            </Stack>
-                        </Card.Body>
-                    </Card>
+                    <RecipeDirectionsCard directions={recipe.directions}/>
                 </Col>
             </Row>
         </>
