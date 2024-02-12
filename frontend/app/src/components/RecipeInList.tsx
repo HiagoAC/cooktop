@@ -5,7 +5,7 @@ import '../styles/RecipeInList.css';
 import clockIcon from '../assets/clock_icon.svg';
 
 
-type RecipeInListProps = {
+type Props = {
     id: number,
     title: string,
     time_minutes: number,
@@ -15,7 +15,7 @@ type RecipeInListProps = {
 
 
 export function RecipeInList({ id, title, time_minutes, tags, image }:
-    RecipeInListProps) {
+    Props) {
         return <Card>
             <Card.Img
                 variant="top"
