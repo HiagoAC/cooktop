@@ -1,0 +1,24 @@
+.image-container {
+    height: 300px;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.plus-minus-button {
+    outline: none !important;
+    border: none !important;
+    background-color: transparent !important;
+    height: 100%;
+    max-width: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.plus-minus-icon {
+    width: 100%;
+    height: auto;
+}
