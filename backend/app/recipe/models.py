@@ -33,11 +33,11 @@ class Recipe(models.Model):
 
     # required
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=63)
     directions = ArrayField(models.TextField(max_length=1023))
 
     # optional
-    description = models.TextField(blank=True, default='')
+    description = models.TextField(max_length=300, blank=True, default='')
     servings = models.PositiveSmallIntegerField(default=1)
     time_minutes = models.PositiveSmallIntegerField(null=True, default=None)
     recipe_type = models.CharField(
