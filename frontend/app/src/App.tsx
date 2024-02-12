@@ -17,9 +17,9 @@ function RecipeRoutes() {
   return (
     <Routes>
       <Route path='/' element={<Recipes />} />
-      <Route path='/:id' element={<RecipeDetail />} />
       <Route path='/add' element={<RecipeAdd />} />
       <Route path='/search' element={<RecipeSearch />} />
+      <Route path='/:id' element={<RecipeDetail />} />
     </Routes>
   );
 }
@@ -31,8 +31,8 @@ function App() {
       <Navbar />
       <Container className="pb-4 main_container">
         <Routes>
-          <Route path='/' element={<MealPlan />} />
-          <Route path='/recipes' element={<RecipeRoutes />} />
+          <Route path='/' element={<MealPlan />} /> 
+          <Route path='/recipes/*' element={<RecipeRoutes />} />
           <Route path='/shopping-list' element={<ShoppingList />} />
           <Route path='/pantry' element={<Pantry />} />
           <Route path='/me' element={<Me />} />
