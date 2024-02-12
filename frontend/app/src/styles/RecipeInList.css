@@ -15,7 +15,3 @@
     height: 100%;
     object-fit: contain;
 }
-
-.custom-badge {
-   background-color: var(--info-color);
-}
