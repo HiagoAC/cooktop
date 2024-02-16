@@ -55,9 +55,10 @@ export function RecipeIngredientList({ingredients}: Props) {
             <Card.Body>
                 <Stack direction="vertical" gap={1} >
                     {ingredients.map((
-                        ingredient: { name: string; quantity: number; unit: string;}
+                        ingredient: { name: string; quantity: number; unit: string;},
+                        index: number
                         ) => (
-                        <div className="text-wrap fs-5">
+                        <div className="text-wrap fs-5" key={index}>
                             {ingredient.name}:  {ingredient.quantity * serving} {ingredient.unit}
                         </div>
                     ))}
