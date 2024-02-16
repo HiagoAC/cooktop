@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { Button, Card, Stack } from 'react-bootstrap';
 import plusCircleIcon from '../assets/plus_circle_icon.svg';
@@ -55,10 +56,9 @@ export function RecipeIngredientList({ingredients}: Props) {
             <Card.Body>
                 <Stack direction="vertical" gap={1} >
                     {ingredients.map((
-                        ingredient: { name: string; quantity: number; unit: string;},
-                        index: number
+                        ingredient: { name: string; quantity: number; unit: string;}
                         ) => (
-                        <div className="text-wrap fs-5" key={index}>
+                        <div className="text-wrap fs-5" key={uuidv4()}>
                             {ingredient.name}:  {ingredient.quantity * serving} {ingredient.unit}
                         </div>
                     ))}

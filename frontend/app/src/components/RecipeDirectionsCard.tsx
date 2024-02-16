@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Card, Stack } from 'react-bootstrap';
 
 
@@ -14,7 +15,7 @@ export function RecipeDirectionsCard({directions}: Props) {
             <Card.Body>
                 <Stack direction="vertical" gap={1} className="mt-2">
                     {directions.map((direction: string, index: number) => (
-                        <div key={index} className="mb-3">
+                        <div key={uuidv4()} className="mb-3">
                             <h6>Step {index + 1}</h6>
                             {direction}
                         </div>
