@@ -1,0 +1,15 @@
+@import url('./global.css');
+
+.custom-badge {
+    background-color: var(--info-color);
+    display: flex;
+    align-items: center;
+}
+
+.close-button {
+    font-size: 0.75em;
+    width: 0.75em;
+    height: 0.75em;
+    margin-left: 5px;
+    opacity: 1;
+}

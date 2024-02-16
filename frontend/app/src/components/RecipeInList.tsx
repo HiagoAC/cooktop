@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
-import { TagBadgeStack } from './TagBadgeStack';
+import { BadgeStack } from './BadgeStack';
 import '../styles/RecipeInList.css';
 import clockIcon from '../assets/clock_icon.svg';
 
@@ -35,7 +35,7 @@ export function RecipeInList({ id, title, time_minutes, tags, image }:
                             />
                         </div> {time_minutes} min
                     </span>
-                    <TagBadgeStack tags={tags} />
+                    <BadgeStack items={tags} />
                 </Card.Text>
                 <Link to={`/recipes/${id.toString()}`} className="stretched-link" />
             </Card.Body>

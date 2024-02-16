@@ -1,5 +1,5 @@
 import { Card } from 'react-bootstrap';
-import { TagBadgeStack } from './TagBadgeStack';
+import { BadgeStack } from './BadgeStack';
 import '../styles/RecipeInfoCard.css';
 
 
@@ -26,7 +26,7 @@ export function RecipeInfoCard(
             </Card.Subtitle>
             <Card.Body>
                 <span>{description}</span>
-                <TagBadgeStack tags={tags} />
+                <BadgeStack items={tags} />
             </Card.Body>
         </Card>
     )

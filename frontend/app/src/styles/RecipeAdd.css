@@ -1,0 +1,12 @@
+@import url('./global.css');
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-card {
+    width: 100%;
+    max-width: 1000px;
+}
