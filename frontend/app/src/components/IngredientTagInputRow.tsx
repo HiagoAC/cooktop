@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Button, Col, Form, InputGroup, Row, Stack } from 'react-bootstrap';
 import { ReactElement, useState } from 'react';
 import { Badge } from './Badge';
@@ -11,15 +12,37 @@ export function IngredientTagInputRow() {
     const [addedIngredients, setAddedIngredients] = useState<ReactElement[]>([]);
 
     const addTagBadge = (): void => {
-        const badge = <Badge item={formTag} withDeleteButton={true} />;
+        const badge = <Badge
+            item={formTag}
+            withDeleteButton={true}
+            onDelete={deleteTagBadge}
+            key={uuidv4()}
+        />;
         setAddedTags(prevBadges => [...prevBadges, badge]);
         setFormTag('');
     };
 
+    const deleteTagBadge = (item: string): void => {
+        setAddedTags(prevBadges => {
+            return prevBadges.filter(badge => badge.props.item !== item);
+        });
+    };
+
     const addIngredientBadge = (): void => {
-        const badge = <Badge item={formIngredient} withDeleteButton={true} />;
+        const badge = <Badge
+            item={formIngredient}
+            withDeleteButton={true}
+            onDelete={deleteIngredientBadge}
+            key={uuidv4()}
+        />;
         setAddedIngredients(prevBadges => [...prevBadges, badge]);
         setFormIngredient('');
+    };
+
+    const deleteIngredientBadge = (item: string): void => {
+        setAddedIngredients(prevBadges => {
+            return prevBadges.filter(badge => badge.props.item !== item);
+        });
     };
 
     return (
