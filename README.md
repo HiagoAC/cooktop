@@ -37,6 +37,9 @@ Once the weekly meal plan is established, Cooktop automatically generates a corr
     - Programming Language: Python
     - Web Framework: Django
     - REST Framework: Django Ninja
+- Frontend:
+    - Programming Language: TypeScript
+    - UI Library: React
 - Database: PostgreSQL
 - Containerization: Docker
 - CI/CD: GitHub Actions
