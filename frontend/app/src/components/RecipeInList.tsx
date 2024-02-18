@@ -5,11 +5,11 @@ import '../styles/RecipeInList.css';
 import clockIcon from '../assets/clock_icon.svg';
 
 
-type Props = {
+interface Props {
     id: number,
     title: string,
     time_minutes: number,
-    tags: Array<string>,
+    tags: string[],
     image: string
 }
 

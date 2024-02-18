@@ -3,8 +3,8 @@ import { Stack } from 'react-bootstrap';
 import { Badge } from './Badge'
 
 
-type BadgeStackProps = {
-    items?: Array<string>
+interface BadgeStackProps {
+    items?: string[]
 }
 
 

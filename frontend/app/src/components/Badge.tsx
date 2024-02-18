@@ -2,7 +2,7 @@ import { CloseButton , Badge as BaseBadge } from 'react-bootstrap';
 import '../styles/Badge.css';
 
 
-type BadgeProps = {
+interface BadgeProps {
     item: string,
     withDeleteButton?: boolean
 }

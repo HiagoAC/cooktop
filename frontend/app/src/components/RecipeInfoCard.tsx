@@ -3,12 +3,12 @@ import { BadgeStack } from './BadgeStack';
 import '../styles/RecipeInfoCard.css';
 
 
-type Props = {
+interface Props {
     title: string,
     recipe_type: string,
     time_minutes: number,
     description: string,
-    tags: Array<string>,
+    tags: string[],
 }
 
 

@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Card, Stack } from 'react-bootstrap';
 
 
-type Props = {
-    directions: Array<string>,
+interface Props {
+    directions: string[],
 }
 
 

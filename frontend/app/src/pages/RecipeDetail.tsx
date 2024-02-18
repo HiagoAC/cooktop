@@ -6,14 +6,14 @@ import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
 import { RecipeIngredientList } from '../components/RecipeIngredientList';
 import { RecipeInfoCard } from '../components/RecipeInfoCard';
 
-type Params = {
-    id: string;
-};
+interface Params {
+    id?: string;
+}
 
 
 export function RecipeDetail() {
     const { id } = useParams<Params>();
-    if (!id || !recipes.hasOwnProperty(id)) {
+    if (!id || !Object.prototype.hasOwnProperty.call(recipes, id)) {
         return <div>Recipe not found</div>
     };
     const recipe = recipes[id];

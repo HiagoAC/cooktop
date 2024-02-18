@@ -13,8 +13,8 @@ interface IngredientInfo {
 }
 
 
-type Props = {
-    ingredients: Array<IngredientInfo>,
+interface Props {
+    ingredients: IngredientInfo[],
 }
 
 
