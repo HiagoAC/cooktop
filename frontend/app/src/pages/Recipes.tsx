@@ -1,5 +1,5 @@
 import { Button, Row, Col } from 'react-bootstrap';
-import recipes from '../data/recipes.json';
+import { recipes, RecipeListInfo } from '../data/recipes';
 import { RecipeInList } from '../components/RecipeInList';
 import '../styles/Recipes.css';
 
@@ -21,7 +21,7 @@ export function Recipes() {
                 </Col>
             </Row>
             <Row lg={3} md={2} xs={1} className="g-4">
-                {recipes.map(recipe => (
+                {recipes.map((recipe: RecipeListInfo) => (
                     <Col key={recipe.id}><RecipeInList {...recipe} /></Col>
                 ))}
             </Row>

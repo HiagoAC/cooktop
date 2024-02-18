@@ -1,4 +1,12 @@
-[
+export interface RecipeListInfo {
+    id: number;
+    title: string;
+    time_minutes: number;
+    tags: string[];
+    image: string;
+}
+
+export const recipes: RecipeListInfo[] = [
     {
         "id": 1,
         "title": "Shrimp and Chicken Pancit Canton",

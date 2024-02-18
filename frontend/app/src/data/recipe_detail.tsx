@@ -1,4 +1,23 @@
-{
+interface Ingredient {
+    name: string;
+    quantity: string;
+    unit: string;
+}
+
+interface Recipe {
+    title: string;
+    time_minutes: number;
+    tags: string[];
+    image: string;
+    directions: string[];
+    description: string;
+    recipe_type: string;
+    notes: string;
+    ingredients: Ingredient[];
+}
+
+
+export const recipesDetail: Record<string, Recipe> = {
     "1": 
         {
             "title": "Shrimp and Chicken Pancit Canton",

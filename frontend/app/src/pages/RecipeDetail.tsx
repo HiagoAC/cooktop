@@ -1,6 +1,6 @@
 import { Card, Col, Image, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import recipes from '../data/recipe_detail.json';
+import recipes from '../data/recipe_detail';
 import '../styles/RecipeDetail.css';
 import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
 import { RecipeIngredientList } from '../components/RecipeIngredientList';
