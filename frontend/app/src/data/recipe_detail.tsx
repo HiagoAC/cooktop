@@ -4,7 +4,7 @@ interface Ingredient {
     unit: string;
 }
 
-interface Recipe {
+export interface Recipe {
     title: string;
     time_minutes: number;
     tags: string[];

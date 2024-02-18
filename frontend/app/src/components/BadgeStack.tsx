@@ -11,8 +11,8 @@ interface BadgeStackProps {
 export function BadgeStack({items = [] }: BadgeStackProps) {
     return (
         <Stack direction="horizontal" gap={1} className="mt-2">
-            {items.map(item => (
-                <Badge key={uuidv4() as string} item={item} />
+            {items.map((item: string) => (
+                <Badge key={uuidv4()} item={item} />
             ))}
         </Stack>
     )
