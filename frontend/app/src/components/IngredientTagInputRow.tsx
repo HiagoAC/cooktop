@@ -1,7 +1,7 @@
 import { Button, Col, Form, InputGroup, Row, Stack } from 'react-bootstrap';
 import { ReactElement, useState } from 'react';
 import { Badge } from './Badge';
-import '../styles/RecipeForm.css';
+import '../styles/IngredientTagInputRow.css';
 
 
 export function IngredientTagInputRow() {

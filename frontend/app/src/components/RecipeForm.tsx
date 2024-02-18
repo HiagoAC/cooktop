@@ -1,6 +1,5 @@
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { IngredientTagInputRow } from './IngredientTagInputRow';
-import '../styles/RecipeForm.css';
 
 
 export function RecipeForm() {
