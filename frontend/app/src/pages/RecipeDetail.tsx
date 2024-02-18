@@ -1,6 +1,6 @@
 import { Card, Col, Image, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import recipes from '../data/recipe_detail';
+import { recipesDetail, Recipe } from '../data/recipe_detail';
 import '../styles/RecipeDetail.css';
 import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
 import { RecipeIngredientList } from '../components/RecipeIngredientList';
@@ -13,10 +13,10 @@ interface Params {
 
 export function RecipeDetail() {
     const { id } = useParams<Params>();
-    if (!id || !Object.prototype.hasOwnProperty.call(recipes, id)) {
+    if (!id || !Object.prototype.hasOwnProperty.call(recipesDetail, id)) {
         return <div>Recipe not found</div>
     };
-    const recipe = recipes[id];
+    const recipe: Recipe = recipesDetail[id];
 
     return (
         <>
