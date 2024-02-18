@@ -58,7 +58,7 @@ export function RecipeIngredientList({ingredients}: Props) {
                     {ingredients.map((
                         ingredient: IngredientInfo
                         ) => (
-                        <div className="text-wrap fs-5" key={uuidv4()}>
+                        <div className="text-wrap fs-5" key={uuidv4() as string}>
                             {ingredient.name}:  {ingredient.quantity * serving} {ingredient.unit}
                         </div>
                     ))}
