@@ -37,9 +37,15 @@ Once the weekly meal plan is established, Cooktop automatically generates a corr
     - Programming Language: Python
     - Web Framework: Django
     - REST Framework: Django Ninja
+    - Linting: Flake8
 - Frontend:
     - Programming Language: TypeScript
     - UI Library: React
+    - Linting: ESLint
 - Database: PostgreSQL
 - Containerization: Docker
 - CI/CD: GitHub Actions
+
+## Progress
+
+This application is currently under development. The backend application for this first version is complete. I am now implementing the user interface. The application is expected to be released by the end of April(2024). Once it is launched, I will add the link to it here.
