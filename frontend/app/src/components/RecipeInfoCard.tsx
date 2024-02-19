@@ -1,6 +1,7 @@
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import { BadgeStack } from './BadgeStack';
 import '../styles/RecipeInfoCard.css';
+import editIcon from '../assets/edit_icon.svg';
 
 
 interface Props {
@@ -21,8 +22,17 @@ export function RecipeInfoCard(
             <Card.Title className="info-card-title">
                 {title}
             </Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">
-                {recipe_type} &middot; {time_minutes} minutes
+            <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
+                <Button className="edit-button">
+                    <img
+                        src={editIcon}
+                        alt="prep time"
+                        className="edit-icon"
+                    />
+                </Button>
+                <span>
+                    {recipe_type} &middot; {time_minutes} minutes
+                </span>
             </Card.Subtitle>
             <Card.Body>
                 <span>{description}</span>

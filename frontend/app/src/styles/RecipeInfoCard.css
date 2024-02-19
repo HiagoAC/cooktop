@@ -5,3 +5,18 @@
 .info-card-title {
     font-size: 30px !important;
 }
+
+.edit-button {
+    outline: none !important;
+    border: none !important;
+    background-color: transparent !important;
+    height: 100%;
+    max-width: 50px;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.edit-icon {
+    width: 70%;
+    height: auto;
+}
