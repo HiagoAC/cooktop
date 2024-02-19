@@ -22,8 +22,10 @@ export function RecipeInfoCard(
             <Card.Title className="info-card-title">
                 {title}
             </Card.Title>
-            <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
-                <Button className="edit-button">
+            <Card.Subtitle
+                className="mb-2 text-muted d-flex align-items-center"
+            >
+                <Button className="edit-button" href="/recipes/1/edit">
                     <img
                         src={editIcon}
                         alt="prep time"

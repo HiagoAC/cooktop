@@ -1,4 +1,5 @@
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { DirectionsFormGroup } from './DirectionsFormGroup';
 import { IngredientTagInputRow } from './IngredientTagInputRow';
 
 
@@ -14,10 +15,20 @@ export function RecipeForm() {
                 <Form.Label>Title</Form.Label>
                 <Form.Control type="text" placeholder="Title" />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="description">
-                <Form.Label>Description</Form.Label>
-                <Form.Control as="textarea" rows={2} placeholder="Description" />
-            </Form.Group>
+            <Row md={2} xs={1}>
+                <Col>
+                    <Form.Group className="mb-3" controlId="description">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control as="textarea" rows={2} placeholder="Description" />
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group className="mb-3" controlId="notes">
+                        <Form.Label>Notes</Form.Label>
+                        <Form.Control as="textarea" rows={2} placeholder="Notes" />
+                    </Form.Group>
+                </Col>
+            </Row>
             <Row md={2} xs={1}>
                 <Col>
                     <Form.Group className="mb-3" controlId="prepTime">
@@ -42,7 +53,8 @@ export function RecipeForm() {
                     </Form.Group>
                 </Col>
             </Row>
-        <IngredientTagInputRow />
+            <IngredientTagInputRow />
+            <DirectionsFormGroup />
         </Form>
     )
 }

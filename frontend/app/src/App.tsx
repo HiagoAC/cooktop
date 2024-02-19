@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap'
 import { MealPlan } from './pages/MealPlan'
 import { Recipes } from './pages/Recipes'
 import { RecipeDetail } from './pages/RecipeDetail'
+import { RecipeEdit } from './pages/RecipeEdit'
 import { RecipeAdd } from './pages/RecipeAdd'
 import { RecipeSearch } from './pages/RecipeSearch'
 import { ShoppingList } from './pages/ShoppingList'
@@ -20,6 +21,7 @@ function RecipeRoutes() {
       <Route path='/add' element={<RecipeAdd />} />
       <Route path='/search' element={<RecipeSearch />} />
       <Route path='/:id' element={<RecipeDetail />} />
+      <Route path='/:id/edit' element={<RecipeEdit />} />
     </Routes>
   );
 }
