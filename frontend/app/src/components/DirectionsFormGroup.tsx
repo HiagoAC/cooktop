@@ -21,9 +21,6 @@ export function DirectionsFormGroup({initDirections}: Props) {
             </ListGroup.Item>
         ]);
     };
-    /*
-    directions length not updating. Step 1, Step 1, Step 1, ...
-    */
     useEffect(() => {
         if (initDirections) {
             initDirections.forEach((direction) => {
