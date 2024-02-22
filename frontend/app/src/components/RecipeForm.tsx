@@ -1,6 +1,6 @@
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { DirectionsFormGroup } from './DirectionsFormGroup';
-import { IngredientTagInputRow } from './IngredientTagInputRow';
+import { IngredientsFormGroup } from './IngredientsFormGroup';
 import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
 
@@ -72,7 +72,7 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                     <Form.Group className="mb-3" controlId="recipeType">
                         <Form.Label>Type</Form.Label>
                         <Form.Select
-                            aria-label="Default select example"
+                            aria-label="Recipe Type"
                             defaultValue={recipe ? recipe.recipe_type : "default"}
                         >
                             <option key="default" disabled>Recipe Type</option>
@@ -90,44 +90,21 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
             </Row>
             {recipe? (
                 <>
-                    <Row md={2} xs={1}>
-                        <Col>
-                            <BadgeStackFormGroup
-                                label="Ingredients"
-                                placeholder="Type a new ingredient and press add."
-                            />
-                        </Col>
-                        <Col>
-                            <BadgeStackFormGroup
-                                items={recipe.tags}
-                                label="Tags"
-                                placeholder="Type a new tag and press add."
-                            />
-                        </Col>
-                    </Row>
-                    <DirectionsFormGroup />
-                    <IngredientTagInputRow
-                        ingredients={recipe.ingredients}
-                        tags={recipe.tags}
+                    <IngredientsFormGroup ingredients={recipe.ingredients}/>
+                    <BadgeStackFormGroup
+                        items={recipe.tags}
+                        label="Tags"
+                        placeholder="Type a new tag and press add."
                     />
                     <DirectionsFormGroup initDirections={recipe.directions} />
                 </>
             ) : (
                 <>
-                    <Row md={2} xs={1}>
-                        <Col>
-                            <BadgeStackFormGroup
-                                label="Ingredients"
-                                placeholder="Type a new ingredient and press add."
-                            />
-                        </Col>
-                        <Col>
-                            <BadgeStackFormGroup
-                                label="Tags"
-                                placeholder="Type a new tag and press add."
-                            />
-                        </Col>
-                    </Row>
+                    <IngredientsFormGroup />
+                    <BadgeStackFormGroup
+                        label="Tags"
+                        placeholder="Type a new tag and press add."
+                    />
                     <DirectionsFormGroup />
                 </>
             )}
