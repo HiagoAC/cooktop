@@ -1,6 +1,7 @@
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { DirectionsFormGroup } from './DirectionsFormGroup';
 import { IngredientTagInputRow } from './IngredientTagInputRow';
+import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
 
 
@@ -89,6 +90,22 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
             </Row>
             {recipe? (
                 <>
+                    <Row md={2} xs={1}>
+                        <Col>
+                            <BadgeStackFormGroup
+                                label="Ingredients"
+                                placeholder="Type a new ingredient and press add."
+                            />
+                        </Col>
+                        <Col>
+                            <BadgeStackFormGroup
+                                items={recipe.tags}
+                                label="Tags"
+                                placeholder="Type a new tag and press add."
+                            />
+                        </Col>
+                    </Row>
+                    <DirectionsFormGroup />
                     <IngredientTagInputRow
                         ingredients={recipe.ingredients}
                         tags={recipe.tags}
@@ -97,7 +114,20 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                 </>
             ) : (
                 <>
-                    <IngredientTagInputRow />
+                    <Row md={2} xs={1}>
+                        <Col>
+                            <BadgeStackFormGroup
+                                label="Ingredients"
+                                placeholder="Type a new ingredient and press add."
+                            />
+                        </Col>
+                        <Col>
+                            <BadgeStackFormGroup
+                                label="Tags"
+                                placeholder="Type a new tag and press add."
+                            />
+                        </Col>
+                    </Row>
                     <DirectionsFormGroup />
                 </>
             )}

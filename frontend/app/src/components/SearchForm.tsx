@@ -1,5 +1,5 @@
-import { Form } from 'react-bootstrap';
-import { IngredientTagInputRow } from './IngredientTagInputRow';
+import { Col, Form, Row } from 'react-bootstrap';
+import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 
 
 export function SearchForm() {
@@ -9,7 +9,20 @@ export function SearchForm() {
                 <Form.Label>Search by Title</Form.Label>
                 <Form.Control type="text" placeholder="Title" />
             </Form.Group>
-            <IngredientTagInputRow />
+            <Row md={2} xs={1}>
+                <Col>
+                    <BadgeStackFormGroup
+                        label="Ingredients"
+                        placeholder="Type a new ingredient and press add."
+                    />
+                </Col>
+                <Col>
+                    <BadgeStackFormGroup
+                        label="Tags"
+                        placeholder="Type a new tag and press add."
+                    />
+                </Col>
+            </Row>
         </Form>
     )
 }
