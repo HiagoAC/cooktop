@@ -1,21 +1,36 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Button, Card, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import '../styles/DirectionsFormGroup.css';
 
 
-export function DirectionsFormGroup() {
-    const [formStep, setFormStep] = useState<string>('');
+interface Props {
+    initDirections?: string[]
+}
+
+export function DirectionsFormGroup({initDirections}: Props) {
+    const [formDirection, setFormDirection] = useState<string>('');
     const [directions, setDirections] = useState<ReactElement[]>([]);
 
-    const addStep = (): void => {
-        const step =  <ListGroup.Item key={uuidv4()}>
-            <div>Step {directions.length + 1}</div>
-            <div>{formStep}</div>
-        </ListGroup.Item>
-        setDirections(prevDirections => [...prevDirections, step]);
-        setFormStep('');
+    const addDirection = (direction: string): void => {
+        setDirections(prevDirections => [
+            ...prevDirections,
+            <ListGroup.Item key={uuidv4()}>
+                <div>Step {prevDirections.length + 1}</div>
+                <div>{direction}</div>
+            </ListGroup.Item>
+        ]);
     };
+    /*
+    directions length not updating. Step 1, Step 1, Step 1, ...
+    */
+    useEffect(() => {
+        if (initDirections) {
+            initDirections.forEach((direction) => {
+                addDirection(direction);
+            });
+        }
+    }, []);
 
     return (
         <Form.Group className="mb-3" controlId="directions">
@@ -29,10 +44,13 @@ export function DirectionsFormGroup() {
                 <Form.Control
                     as="textarea"
                     placeholder="Type a step and press add."
-                    value={formStep}
-                    onChange={(e) => setFormStep(e.target.value)}
+                    value={formDirection}
+                    onChange={(e) => setFormDirection(e.target.value)}
                 />
-                <Button variant="outline-secondary" onClick={() => addStep()}>
+                <Button
+                    variant="outline-secondary"
+                    onClick={() => addDirection(formDirection)}
+                >
                     + 
                 </Button>
             </InputGroup>

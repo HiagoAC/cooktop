@@ -1,44 +1,44 @@
 import { Button, Card } from 'react-bootstrap';
 import { BadgeStack } from './BadgeStack';
+import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
 import '../styles/RecipeInfoCard.css';
 import editIcon from '../assets/edit_icon.svg';
-
+import { Link } from 'react-router-dom';
 
 interface Props {
-    title: string,
-    recipe_type: string,
-    time_minutes: number,
-    description: string,
-    tags: string[],
+    id: string,
+    recipe: Recipe
 }
 
-
-export function RecipeInfoCard(
-    {title, recipe_type, time_minutes, description, tags}
-    : Props) {
+export function RecipeInfoCard({id, recipe}: Props) {
 
     return (
         <Card className="info-card p-3">
             <Card.Title className="info-card-title">
-                {title}
+                {recipe.title}
             </Card.Title>
             <Card.Subtitle
                 className="mb-2 text-muted d-flex align-items-center"
             >
-                <Button className="edit-button" href="/recipes/1/edit">
+                <Button className="edit-button">
                     <img
                         src={editIcon}
                         alt="prep time"
                         className="edit-icon"
                     />
+                    <Link
+                        to={`/recipes/${id}/edit`}
+                        state={{ recipe: recipe }}
+                        className="stretched-link"
+                    />
                 </Button>
                 <span>
-                    {recipe_type} &middot; {time_minutes} minutes
+                    {recipeTypeLabels[recipe.recipe_type]} &middot; {recipe.time_minutes} minutes
                 </span>
             </Card.Subtitle>
             <Card.Body>
-                <span>{description}</span>
-                <BadgeStack items={tags} />
+                <span>{recipe.description}</span>
+                <BadgeStack items={recipe.tags} />
             </Card.Body>
         </Card>
     )

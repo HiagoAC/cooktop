@@ -1,20 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { Button, Card, Stack } from 'react-bootstrap';
+import { Ingredient } from '../data/recipe_detail';
 import plusCircleIcon from '../assets/plus_circle_icon.svg';
 import minusCircleIcon from '../assets/minus_circle_icon.svg';
 import '../styles/RecipeIngredientList.css'
 
 
-interface IngredientInfo {
-    name: string,
-    quantity: number,
-    unit: string
-}
-
-
 interface Props {
-    ingredients: IngredientInfo[],
+    ingredients: Ingredient[],
 }
 
 

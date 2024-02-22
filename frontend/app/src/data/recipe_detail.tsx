@@ -1,8 +1,16 @@
-interface Ingredient {
+export interface Ingredient {
     name: string;
     quantity: string;
     unit: string;
 }
+
+export const recipeTypeLabels: { [key: string]: string } = {
+    'mai': 'Main Dish',
+    'sid': 'Side Dish',
+    'sal': 'Salad',
+    'des': 'Dessert',
+    'sna': 'Snack'
+};
 
 export interface Recipe {
     title: string;
@@ -30,7 +38,7 @@ export const recipesDetail: Record<string, Recipe> = {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis."
             ],
             "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-            "recipe_type": "main dish",
+            "recipe_type": "mai",
             "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis.",
             "ingredients": [
                 {"name": "ing 1", "quantity": "5", "unit": "g"},
@@ -50,7 +58,7 @@ export const recipesDetail: Record<string, Recipe> = {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis."
             ],
             "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo.",
-            "recipe_type": "main dish",
+            "recipe_type": "mai",
             "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis.",
             "ingredients": [
                 {"name": "ing 1", "quantity": "5", "unit": "g"},
@@ -70,7 +78,7 @@ export const recipesDetail: Record<string, Recipe> = {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis."
         ],
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo.",
-        "recipe_type": "main dish",
+        "recipe_type": "mai",
         "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis.",
         "ingredients": [
             {"name": "ing 1", "quantity": "5", "unit": "g"},
@@ -90,7 +98,7 @@ export const recipesDetail: Record<string, Recipe> = {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis."
             ],
             "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo.",
-            "recipe_type": "main dish",
+            "recipe_type": "mai",
             "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis.",
             "ingredients": [
                 {"name": "ing 1", "quantity": "5", "unit": "g"},
@@ -110,7 +118,7 @@ export const recipesDetail: Record<string, Recipe> = {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis."
             ],
             "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo.",
-            "recipe_type": "main dish",
+            "recipe_type": "mai",
             "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis.",
             "ingredients": [
                 {"name": "ing 1", "quantity": "5", "unit": "g"},
@@ -130,7 +138,7 @@ export const recipesDetail: Record<string, Recipe> = {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis."
         ],
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo.",
-        "recipe_type": "main dish",
+        "recipe_type": "mai",
         "notes": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam egestas ut ex non commodo. Maecenas egestas gravida enim vel viverra. Aenean convallis ac sapien et auctor. Donec dignissim vulputate gravida. Quisque cursus sodales convallis. Phasellus non interdum dolor, ac consectetur nibh. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque posuere blandit est, in tristique nulla sagittis at. Mauris cursus mi mollis, sodales sapien eu, interdum risus. Nunc suscipit non massa dapibus viverra. Cras faucibus bibendum quam, eu scelerisque leo. Curabitur eleifend quam suscipit accumsan iaculis. Sed tempus tellus eu sagittis venenatis.",
         "ingredients": [
             {"name": "ing 1", "quantity": "5", "unit": "g"},

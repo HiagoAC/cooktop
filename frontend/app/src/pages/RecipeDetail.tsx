@@ -6,10 +6,10 @@ import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
 import { RecipeIngredientList } from '../components/RecipeIngredientList';
 import { RecipeInfoCard } from '../components/RecipeInfoCard';
 
+
 interface Params {
     id?: string;
 }
-
 
 export function RecipeDetail() {
     const { id } = useParams<Params>();
@@ -30,7 +30,7 @@ export function RecipeDetail() {
                     />
                 </Col>
                 <Col>
-                    <RecipeInfoCard {...recipe}/>
+                    <RecipeInfoCard id={id} recipe={recipe}/>
                 </Col>
             </Row>
             <Row md={2} xs={1} className="align-top g-2 mt-2">

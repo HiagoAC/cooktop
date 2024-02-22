@@ -1,19 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Col, Form, InputGroup, Row, Stack } from 'react-bootstrap';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Badge } from './Badge';
+import { Ingredient } from '../data/recipe_detail';
 import '../styles/IngredientTagInputRow.css';
 
 
-export function IngredientTagInputRow() {
+interface Props {
+    ingredients?: Ingredient[],
+    tags?: string[]
+}
+
+export function IngredientTagInputRow({ingredients, tags}: Props) {
     const [formTag, setFormTag] = useState<string>('');
     const [addedTags, setAddedTags] = useState<ReactElement[]>([]);
     const [formIngredient, setFormIngredient] = useState<string>('');
     const [addedIngredients, setAddedIngredients] = useState<ReactElement[]>([]);
 
-    const addTagBadge = (): void => {
+
+    const addTagBadge = (tag: string): void => {
         const badge = <Badge
-            item={formTag}
+            item={tag}
             withDeleteButton={true}
             onDelete={deleteTagBadge}
             key={uuidv4()}
@@ -28,9 +35,9 @@ export function IngredientTagInputRow() {
         });
     };
 
-    const addIngredientBadge = (): void => {
+    const addIngredientBadge = (ingredient: string): void => {
         const badge = <Badge
-            item={formIngredient}
+            item={ingredient}
             withDeleteButton={true}
             onDelete={deleteIngredientBadge}
             key={uuidv4()}
@@ -45,6 +52,20 @@ export function IngredientTagInputRow() {
         });
     };
 
+    useEffect(() => {
+        if (tags) {
+            tags.forEach(tag => {
+                addTagBadge(tag);
+            })
+        }
+    
+        if (ingredients) {
+            ingredients.forEach(ingredient => {
+                addIngredientBadge(ingredient.name);
+            })
+        }
+    }, []);
+
     return (
         <Row  md={2} xs={1}>
             <Col>
@@ -57,7 +78,7 @@ export function IngredientTagInputRow() {
                             value={formIngredient}
                             onChange={(e) => setFormIngredient(e.target.value)}
                         />
-                        <Button variant="outline-secondary" onClick={() => addIngredientBadge()}>
+                        <Button variant="outline-secondary" onClick={() => addIngredientBadge(formIngredient)}>
                             + 
                         </Button>
                     </InputGroup>
@@ -76,7 +97,7 @@ export function IngredientTagInputRow() {
                                 value={formTag}
                                 onChange={(e) => setFormTag(e.target.value)}
                         />
-                        <Button variant="outline-secondary" onClick={() => addTagBadge()}>
+                        <Button variant="outline-secondary" onClick={() => addTagBadge(formTag)}>
                             + 
                         </Button>
                     </InputGroup>

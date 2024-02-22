@@ -1,31 +1,55 @@
 import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { DirectionsFormGroup } from './DirectionsFormGroup';
 import { IngredientTagInputRow } from './IngredientTagInputRow';
+import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
 
 
-export function RecipeForm() {
+interface Props {
+    recipe?: Recipe,
+    withUrlField: boolean
+} 
+
+
+export function RecipeForm({recipe, withUrlField = true}: Props) {
 
     return (
         <Form className="p-3">
-            <Form.Group className="mb-3" controlId="addFromURL">
-                <Form.Label>Add Recipe from URL</Form.Label>
-                <Form.Control type="url" placeholder="type a URL" />
-            </Form.Group>
+            {
+                withUrlField &&
+                <Form.Group className="mb-3" controlId="addFromURL">
+                    <Form.Label>Add Recipe from URL</Form.Label>
+                    <Form.Control type="url" placeholder="type a URL" />
+                </Form.Group>
+            }
             <Form.Group className="mb-3" controlId="title">
                 <Form.Label>Title</Form.Label>
-                <Form.Control type="text" placeholder="Title" />
+                <Form.Control
+                    type="text"
+                    placeholder="Title"
+                    defaultValue={recipe ? recipe.title : ''}
+                />
             </Form.Group>
             <Row md={2} xs={1}>
                 <Col>
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label>Description</Form.Label>
-                        <Form.Control as="textarea" rows={2} placeholder="Description" />
+                        <Form.Control
+                            as="textarea"
+                            rows={2}
+                            placeholder="Description"
+                            defaultValue={recipe ? recipe.description : ''}
+                        />
                     </Form.Group>
                 </Col>
                 <Col>
                     <Form.Group className="mb-3" controlId="notes">
                         <Form.Label>Notes</Form.Label>
-                        <Form.Control as="textarea" rows={2} placeholder="Notes" />
+                        <Form.Control
+                            as="textarea"
+                            rows={2}
+                            placeholder="Notes"
+                            defaultValue={recipe ? recipe.notes : ''}
+                        />
                     </Form.Group>
                 </Col>
             </Row>
@@ -34,7 +58,11 @@ export function RecipeForm() {
                     <Form.Group className="mb-3" controlId="prepTime">
                         <Form.Label>Preparation Time</Form.Label>
                         <InputGroup>
-                            <Form.Control type="number" placeholder="Preparation Time" />
+                            <Form.Control
+                                type="number"
+                                placeholder="Preparation Time"
+                                defaultValue={recipe ? recipe.time_minutes : ''}
+                            />
                             <InputGroup.Text>minutes</InputGroup.Text>
                         </InputGroup>
                     </Form.Group>
@@ -42,19 +70,37 @@ export function RecipeForm() {
                 <Col>
                     <Form.Group className="mb-3" controlId="recipeType">
                         <Form.Label>Type</Form.Label>
-                        <Form.Select aria-label="Default select example">
-                            <option>Recipe Type</option>
-                            <option value="mai">main dish</option>
-                            <option value="sid">side dish</option>
-                            <option value="sal">salad</option>
-                            <option value="des">dessert</option>
-                            <option value="sna">snack</option>
+                        <Form.Select
+                            aria-label="Default select example"
+                            defaultValue={recipe ? recipe.recipe_type : "default"}
+                        >
+                            <option key="default" disabled>Recipe Type</option>
+                            {['mai', 'sid', 'sal', 'des', 'sna'].map((recipe_type) => (
+                                <option
+                                    key={recipe_type}
+                                    value={recipe_type}
+                                >
+                                    {recipeTypeLabels[recipe_type]}
+                                </option>
+                            ))}
                         </Form.Select>
                     </Form.Group>
                 </Col>
             </Row>
-            <IngredientTagInputRow />
-            <DirectionsFormGroup />
+            {recipe? (
+                <>
+                    <IngredientTagInputRow
+                        ingredients={recipe.ingredients}
+                        tags={recipe.tags}
+                    />
+                    <DirectionsFormGroup initDirections={recipe.directions} />
+                </>
+            ) : (
+                <>
+                    <IngredientTagInputRow />
+                    <DirectionsFormGroup />
+                </>
+            )}
         </Form>
     )
 }
