@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Form, InputGroup, Row, Stack } from 'react-bootstrap';
+import { Button, Form, InputGroup, Stack } from 'react-bootstrap';
 import { ReactElement, useEffect, useState } from 'react';
 import { Badge } from './Badge';
-import '../styles/IngredientTagInputRow.css';
+import '../styles/BadgeStackFormGroup.css';
 
 
 interface Props {
