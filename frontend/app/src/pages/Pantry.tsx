@@ -23,7 +23,7 @@ export function Pantry() {
                 </Button>
                 <PantryIngredientModal
                     show={modalShow}
-                    title="Add a new ingredient"
+                    title="Add a new item"
                     buttonText="Save"
                     handleClose={handleModalClose}
                     handleClick={handleModalClose}
