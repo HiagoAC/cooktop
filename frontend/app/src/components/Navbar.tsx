@@ -3,14 +3,14 @@ import {
     Nav,
     Navbar as BaseNavbar,
 } from 'react-bootstrap';
-import '../styles/Navbar.css';
+import styles from '../styles/Navbar.module.css';
 import { Offcanvas } from './Offcanvas';
 
 
 export function Navbar() {
 
     return (
-        <BaseNavbar expand="lg" sticky="top" className="navbar">
+        <BaseNavbar expand="lg" sticky="top" className={`${styles.navbar}`}>
             <Container>
                 <BaseNavbar.Brand href="/">
                     Cooktop

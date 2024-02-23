@@ -1,10 +1,10 @@
 import { Card, Col, Image, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { recipesDetail, Recipe } from '../data/recipe_detail';
-import '../styles/RecipeDetail.css';
 import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
 import { RecipeIngredientList } from '../components/RecipeIngredientList';
 import { RecipeInfoCard } from '../components/RecipeInfoCard';
+import styles from '../styles/RecipeDetail.module.css';
 
 
 interface Params {
@@ -21,11 +21,11 @@ export function RecipeDetail() {
     return (
         <>
             <Row md={2} xs={1} className="d-flex align-items-center g-2 mt-2">
-                <Col className="image-container">
+                <Col className={`${styles.image_container}`}>
                     <Image
                         src={recipe.image}
                         alt={recipe.title}
-                        className="image"
+                        className={`${styles.image}`}
                         rounded
                     />
                 </Col>

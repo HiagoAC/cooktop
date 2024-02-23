@@ -4,18 +4,18 @@
     --info-color: #e6bc00;
   }
 
-.page-title {
+.page_title {
   font-size: 3em;
   text-align: center;
 }
 
-.custom-button {
+.custom_button {
   background-color: var(--accent-color) !important;
   border-color: var(--accent-color) !important;
   color: black !important;
 }
 
-.custom-button:hover,
-.custom-button:focus {
+.custom_button:hover,
+.custom_button:focus {
   opacity: 0.8;
 }

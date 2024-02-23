@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ReactElement, useEffect, useState } from 'react';
 import { Button, Card, Col, Form, ListGroup, Row } from 'react-bootstrap';
 import { Ingredient } from '../data/recipe_detail';
-import '../styles/DirectionsFormGroup.css';
+import styles from '../styles/DirectionsFormGroup.module.css';
 
 
 interface Props {
@@ -41,7 +41,7 @@ export function IngredientsFormGroup({initIngredients}: Props) {
     return (
         <Form.Group className="mb-3" controlId="directions">
             <Form.Label>Ingredients</Form.Label>
-            <Card className="directions-card mb-2">
+            <Card className={`mb-2 ${styles.directions_card}`}>
             <ListGroup variant="flush">
                 {ingredients}
             </ListGroup>

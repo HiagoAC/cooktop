@@ -1,5 +1,5 @@
 import { Button, Card } from 'react-bootstrap';
-import '../styles/FormCard.css';
+import styles from '../styles/FormCard.module.css';
 import React from 'react';
 
 
@@ -12,8 +12,8 @@ interface Props {
 
 export function FormCard({title, formComponent, buttonText}: Props) {
     return (
-        <div className="card-container">
-            <Card className="my-2 custom-card">
+        <div className={`${styles.card_container}`}>
+            <Card className={`my-2 ${styles.custom_card}`}>
                 <Card.Header className="d-flex justify-content-center">
                     <Card.Title>{title}</Card.Title>
                 </Card.Header>
@@ -21,7 +21,7 @@ export function FormCard({title, formComponent, buttonText}: Props) {
                     {formComponent}
                 </Card.Body>
                 <Card.Footer className="d-flex justify-content-center">
-                    <Button className="mx-4 custom-button">
+                    <Button className={`mx-4 ${styles.custom_button}`}>
                         {buttonText}
                     </Button>
                 </Card.Footer>

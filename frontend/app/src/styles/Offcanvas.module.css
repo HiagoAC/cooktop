@@ -1,15 +1,15 @@
 @import url('./global.css');
 
-.offcanvas-list {
+.offcanvas_list {
     font-weight: bold;
 }
 
-.offcanvas-list .list-group-item.active,
-.offcanvas-list .list-group-item:focus {
+.offcanvas_list .list_group_item.active,
+.offcanvas_list .list_group_item:focus {
     background-color: var(--accent-color) !important;
 }
 
-.button-hamburger {
+.button_hamburger {
     outline: none !important;
     border: none !important;
     background-color: transparent !important;
@@ -19,8 +19,8 @@
     align-items: center;
 }
 
-.button-hamburger:hover,
-.button-hamburger:focus {
+.button_hamburger:hover,
+.button_hamburger:focus {
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
 

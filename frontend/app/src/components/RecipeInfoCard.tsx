@@ -1,7 +1,7 @@
 import { Button, Card } from 'react-bootstrap';
 import { BadgeStack } from './BadgeStack';
 import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
-import '../styles/RecipeInfoCard.css';
+import styles from '../styles/RecipeInfoCard.module.css';
 import editIcon from '../assets/edit_icon.svg';
 import { Link } from 'react-router-dom';
 
@@ -13,18 +13,18 @@ interface Props {
 export function RecipeInfoCard({id, recipe}: Props) {
 
     return (
-        <Card className="info-card p-3">
-            <Card.Title className="info-card-title">
+        <Card className={`p-3 ${styles.info_card}`}>
+            <Card.Title className={`${styles.info_card_title}`}>
                 {recipe.title}
             </Card.Title>
             <Card.Subtitle
                 className="mb-2 text-muted d-flex align-items-center"
             >
-                <Button className="edit-button">
+                <Button className={`${styles.edit_button}`}>
                     <img
                         src={editIcon}
                         alt="edit"
-                        className="edit-icon"
+                        className={`${styles.edit_icon}`}
                     />
                     <Link
                         to={`/recipes/${id}/edit`}

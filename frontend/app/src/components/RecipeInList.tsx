@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 import { BadgeStack } from './BadgeStack';
-import '../styles/RecipeInList.css';
+import styles from '../styles/RecipeInList.module.css';
 import clockIcon from '../assets/clock_icon.svg';
 
 
@@ -21,17 +21,17 @@ export function RecipeInList({ id, title, time_minutes, tags, image }:
                 variant="top"
                 src={image}
                 height="200px"
-                className="card-img"
+                className={`${styles.card_img}`}
             />
             <Card.Body className="d-flex flex-column" key={id}>
                 <Card.Title>{title}</Card.Title>
                 <Card.Text>
                     <span>
-                        <div className="icon-container">
+                        <div className={`${styles.icon_container}`}>
                             <img
                                 src={clockIcon}
                                 alt="prep time"
-                                className="clock-icon"
+                                className={`${styles.clock_icon}`}
                             />
                         </div> {time_minutes} min
                     </span>

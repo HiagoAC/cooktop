@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button, Form, InputGroup, Stack } from 'react-bootstrap';
 import { ReactElement, useEffect, useState } from 'react';
 import { Badge } from './Badge';
-import '../styles/BadgeStackFormGroup.css';
+import styles from '../styles/BadgeStackFormGroup.module.css';
 
 
 interface Props {
@@ -54,7 +54,7 @@ export function BadgeStackFormGroup({items, label, placeholder}: Props) {
                     + 
                 </Button>
             </InputGroup>
-            <Stack direction="horizontal" gap={1} className="mt-2 custom-stack">
+            <Stack direction="horizontal" gap={1} className={`mt-2  ${styles.custom_stack}`}>
                 {addedItems}
             </Stack>
         </Form.Group>

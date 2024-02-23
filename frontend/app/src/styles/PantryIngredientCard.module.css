@@ -1,0 +1,14 @@
+.icon_button {
+    outline: none !important;
+    border: none !important;
+    background-color: transparent !important;
+    height: 100%;
+    max-width: 50px;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.icon {
+    width: 70%;
+    height: auto;
+}

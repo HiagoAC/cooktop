@@ -4,7 +4,7 @@ import { Button, Card, Stack } from 'react-bootstrap';
 import { Ingredient } from '../data/recipe_detail';
 import plusCircleIcon from '../assets/plus_circle_icon.svg';
 import minusCircleIcon from '../assets/minus_circle_icon.svg';
-import '../styles/RecipeIngredientList.css'
+import styles from '../styles/RecipeIngredientList.module.css'
 
 
 interface Props {
@@ -25,34 +25,34 @@ export function RecipeIngredientList({ingredients}: Props) {
             <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
                 <span>servings</span>
                 <Button
-                    className="plus-minus-button"
+                    className={`${styles.plus_minus_button}`}
                     onClick={() => updateServing(1)}
                 >
                     <img
                         src={plusCircleIcon}
                         alt="increase serving"
-                        className="plus-minus-icon"
+                        className={`${styles.plus_minus_icon}`}
                     />
                 </Button>
                 <span>{serving}</span>
                 <Button
-                    className="plus-minus-button"
+                    className={`${styles.plus_minus_button}`}
                     onClick={() => updateServing(-1)}
                 >
                     <img
                         src={minusCircleIcon}
                         alt="decrease serving"
-                        className="plus-minus-icon"
+                        className={`${styles.plus_minus_icon}`}
                     />
                 </Button>
             </Card.Subtitle>
             <Card.Body>
                 <Stack direction="vertical" gap={1} >
                     {ingredients.map((
-                        ingredient: IngredientInfo
+                        ingredient: Ingredient
                         ) => (
                         <div className="text-wrap fs-5" key={uuidv4()}>
-                            {ingredient.name}:  {ingredient.quantity * serving} {ingredient.unit}
+                            {ingredient.name}:  {Number(ingredient.quantity) * serving} {ingredient.unit}
                         </div>
                     ))}
                 </Stack>

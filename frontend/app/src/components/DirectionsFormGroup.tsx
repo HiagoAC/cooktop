@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ReactElement, useEffect, useState } from 'react';
 import { Button, Card, Form, InputGroup, ListGroup } from 'react-bootstrap';
-import '../styles/DirectionsFormGroup.css';
+import styles from '../styles/DirectionsFormGroup.module.css';
 
 
 interface Props {
@@ -32,7 +32,7 @@ export function DirectionsFormGroup({initDirections}: Props) {
     return (
         <Form.Group className="mb-3" controlId="directions">
             <Form.Label>Directions</Form.Label>
-            <Card className="directions-card mb-2">
+            <Card className={`mb-2 ${styles.directions_card}`}>
             <ListGroup variant="flush">
                 {directions}
             </ListGroup>

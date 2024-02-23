@@ -1,12 +1,12 @@
-.info-card {
+.info_card {
     height: 300px;
 }
 
-.info-card-title {
+.info_card_title {
     font-size: 30px !important;
 }
 
-.edit-button {
+.edit_button {
     outline: none !important;
     border: none !important;
     background-color: transparent !important;
@@ -16,7 +16,7 @@
     align-items: center !important;
 }
 
-.edit-icon {
+.edit_icon {
     width: 70%;
     height: auto;
 }

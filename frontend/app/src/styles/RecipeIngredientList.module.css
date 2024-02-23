@@ -1,4 +1,4 @@
-.plus-minus-button {
+.plus_minus_button {
     outline: none !important;
     border: none !important;
     background-color: transparent !important;
@@ -8,7 +8,7 @@
     align-items: center;
 }
 
-.plus-minus-icon {
+.plus_minus_icon {
     width: 100%;
     height: auto;
 }

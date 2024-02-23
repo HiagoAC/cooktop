@@ -4,7 +4,7 @@ import {
     ListGroup,
     Offcanvas as BaseOffcanvas,
 } from 'react-bootstrap';
-import '../styles/Offcanvas.css';
+import styles from '../styles/Offcanvas.module.css';
 import hamburgerIcon from '../assets/hamburger_icon.svg';
 
 
@@ -13,15 +13,15 @@ export function Offcanvas() {
 
     return (
         <>
-            <Button className="button-hamburger" onClick={() => setShow(true)}>
-                <img src={hamburgerIcon} alt="dropdown" className="icon" />
+            <Button className={`${styles.button_hamburger}`} onClick={() => setShow(true)}>
+                <img src={hamburgerIcon} alt="dropdown" className={`${styles.icon}`} />
             </Button>
             <BaseOffcanvas show={show} onHide={() => setShow(false)} placement="end">
             <BaseOffcanvas.Header closeButton>
                 <BaseOffcanvas.Title></BaseOffcanvas.Title>
             </BaseOffcanvas.Header>
             <BaseOffcanvas.Body>
-                <ListGroup variant="flush" className="offcanvas-list">
+                <ListGroup variant="flush" className={`${styles.offcanvas_list}`}>
                     <ListGroup.Item action href="/">Meal Plan</ListGroup.Item>
                     <ListGroup.Item action href="/recipes">Recipes</ListGroup.Item>
                     <ListGroup.Item action href="/shopping-list">Shopping List</ListGroup.Item>

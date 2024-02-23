@@ -1,6 +1,6 @@
 @import url('./global.css');
 
-.button-col {
+.button_col {
     display: flex;
     justify-content: center;
     align-content: center;

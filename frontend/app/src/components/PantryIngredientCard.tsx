@@ -2,7 +2,7 @@ import { Button, Card, Col, Row } from 'react-bootstrap';
 import { PantryIngredient } from '../data/pantry';
 import editIcon from '../assets/edit_icon.svg';
 import trashBinIcon from '../assets/trash_bin_icon.svg';
-import '../styles/PantryIngredientCard.css';
+import styles from '../styles/PantryIngredientCard.module.css';
 
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 export function PantryIngredientCard({ingredient}: Props) {
     return (
-        <Card body className="mb-2 card">
+        <Card body className={`mb-2 ${styles.card}`}>
             <Row>
                 <Col>
                     <div>
@@ -26,18 +26,18 @@ export function PantryIngredientCard({ingredient}: Props) {
                     </div>
                 </Col>
                 <Col className="d-flex justify-content-end">
-                    <Button className="edit-button">
+                    <Button className={`${styles.icon_button}`}>
                         <img
                             src={editIcon}
                             alt="edit"
-                            className="edit-icon"
+                            className={`${styles.icon}`}
                         />
                     </Button>
-                    <Button className="edit-button">
+                    <Button className={`${styles.icon_button}`}>
                         <img
                             src={trashBinIcon}
                             alt="delete"
-                            className="edit-icon"
+                            className={`${styles.icon}`}
                         />
                     </Button>
                 </Col>

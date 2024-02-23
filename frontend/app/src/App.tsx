@@ -11,7 +11,8 @@ import { Pantry } from './pages/Pantry'
 import { Me } from './pages/Me'
 import { About } from './pages/About'
 import { Navbar } from './components/Navbar'
-import './styles/App.css';
+import styles from './styles/App.module.css';
+import './styles/global.css';
 
 
 function RecipeRoutes() {
@@ -31,7 +32,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <Container className="pb-4 main_container">
+      <Container className={`pb-4 ${styles.main_container}`}>
         <Routes>
           <Route path='/' element={<MealPlan />} /> 
           <Route path='/recipes/*' element={<RecipeRoutes />} />
