@@ -23,7 +23,7 @@ export function RecipeInfoCard({id, recipe}: Props) {
                 <Button className="edit-button">
                     <img
                         src={editIcon}
-                        alt="prep time"
+                        alt="edit"
                         className="edit-icon"
                     />
                     <Link
