@@ -34,9 +34,9 @@ export function IngredientsFormGroup({initIngredients}: Props) {
         <Form.Group className="mb-3" controlId="ingredients">
             <Form.Label>Ingredients</Form.Label>
             <Card className={`mb-2 ${styles.ingredients_card}`}>
-            <ListGroup variant="flush">
-                {ingredients}
-            </ListGroup>
+                <ListGroup variant="flush">
+                    {ingredients}
+                </ListGroup>
             </Card>
             <IngredientInputFields withAddButton={true} handleAdd={addIngredient}/>
         </Form.Group>

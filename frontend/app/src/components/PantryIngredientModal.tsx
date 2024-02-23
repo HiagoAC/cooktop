@@ -1,5 +1,7 @@
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
+import styles from '../styles/PantryIngredientModal.module.css';
+
 
 interface Props {
     title: string;
@@ -22,7 +24,15 @@ export function PantryIngredientModal(
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <IngredientInputFields />
+                        <IngredientInputFields/>
+                        <InputGroup className={`my-3 ${styles.expiration_field}`}>
+                            <InputGroup.Text id="expiration-date">
+                                expiration date
+                            </InputGroup.Text>
+                            <Form.Control
+                                type="date"
+                            />
+                        </InputGroup>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
