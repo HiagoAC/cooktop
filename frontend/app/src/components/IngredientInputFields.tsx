@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
 interface Props {
-    withAddButton: boolean;
+    withAddButton?: boolean;
     handleAdd?: (name: string, quantity: number, unit: string) => void;
 }
 
