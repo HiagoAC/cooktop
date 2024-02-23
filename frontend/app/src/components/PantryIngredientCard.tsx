@@ -46,6 +46,7 @@ export function PantryIngredientCard({ingredient}: Props) {
                             buttonText="Save"
                             handleClose={handleModalClose}
                             handleClick={handleModalClose}
+                            pantryIngredient={ingredient}
                         />
                     <Button className={`${styles.icon_button}`}>
                         <img

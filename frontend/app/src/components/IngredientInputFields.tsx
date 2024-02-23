@@ -1,22 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Ingredient } from '../data/recipe_detail';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
 interface Props {
+    ingredient?: Ingredient | null;
     withAddButton?: boolean;
     handleAdd?: (name: string, quantity: number, unit: string) => void;
 }
 
 
-export function IngredientInputFields({withAddButton=false, handleAdd}: Props) {
+export function IngredientInputFields(
+    {ingredient, withAddButton=false, handleAdd}
+    : Props) {
     const [formName, setFormName] = useState<string>('');
     const [formQuantity, setFormQuantity] = useState<number>(1);
     const [formUnit, setFormUnit] = useState<string>('unit');
+
+    useEffect(() => {
+        if (ingredient) {
+            setFormName(ingredient.name);
+            setFormQuantity(Number(ingredient.quantity));
+            setFormUnit(ingredient.unit);
+        }
+    }, []);
 
     const handleUnitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setFormUnit(event.target.value);
     };
 
-    const measurementUnits = ['unit', 'teaspoon', 'tablespoon', 'cup', 'gram', 'ml'];
+    const measurementUnits = ['unit', 'teaspoon', 'tablespoon', 'cup', 'g', 'ml'];
 
     return (
         <Row lg={4} md={2} xs={1} className="g-1">
@@ -39,7 +51,7 @@ export function IngredientInputFields({withAddButton=false, handleAdd}: Props) {
             <Col>
                 <Form.Select
                     aria-label="Measurement Unit"
-                    defaultValue={"default"}
+                    value={formUnit}
                     onChange={handleUnitChange}
                 >
                     <option key="default" disabled>Measurement Unit</option>

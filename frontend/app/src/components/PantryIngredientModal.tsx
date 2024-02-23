@@ -1,19 +1,21 @@
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
+import { PantryIngredient } from '../data/pantry';
 import styles from '../styles/PantryIngredientModal.module.css';
 
 
 interface Props {
+    show: boolean;
     title: string;
     buttonText: string;
-    show: boolean;
+    pantryIngredient?: PantryIngredient;
     handleClose: () => void;
     handleClick: () => void;
 }
 
 
 export function PantryIngredientModal(
-    {show, title, buttonText, handleClose, handleClick}
+    {show, title, buttonText, pantryIngredient, handleClose, handleClick}
     : Props) {
   
     return (
@@ -24,12 +26,13 @@ export function PantryIngredientModal(
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <IngredientInputFields/>
+                        <IngredientInputFields ingredient={pantryIngredient? {...pantryIngredient} : null}/>
                         <InputGroup className={`my-3 ${styles.expiration_field}`}>
                             <InputGroup.Text id="expiration-date">
                                 expiration date
                             </InputGroup.Text>
                             <Form.Control
+                                defaultValue={pantryIngredient ? pantryIngredient.expiration : ""}
                                 type="date"
                             />
                         </InputGroup>
