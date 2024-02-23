@@ -3,7 +3,7 @@ export interface PantryIngredient {
     name: string;
     quantity: string;
     unit: string;
-    expiration: string
+    expiration?: string
 }
 
 
@@ -20,7 +20,6 @@ export const pantryIngredients: PantryIngredient[] = [
         "name": "ing 2",
         "quantity": "10",
         "unit": "unit",
-        "expiration": "2024-05-25",
     },
     {
         "id": "3",
