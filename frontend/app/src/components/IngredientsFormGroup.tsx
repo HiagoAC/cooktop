@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ReactElement, useEffect, useState } from 'react';
-import { Button, Card, Col, Form, ListGroup, Row } from 'react-bootstrap';
+import { Card, Form, ListGroup } from 'react-bootstrap';
+import { IngredientInputFields } from './IngredientInputFields';
 import { Ingredient } from '../data/recipe_detail';
-import styles from '../styles/DirectionsFormGroup.module.css';
+import styles from '../styles/IngredientsFormGroup.module.css';
 
 
 interface Props {
@@ -10,9 +11,6 @@ interface Props {
 }
 
 export function IngredientsFormGroup({initIngredients}: Props) {
-    const [formName, setFormName] = useState<string>('');
-    const [formQuantity, setFormQuantity] = useState<number>(1);
-    const [formUnit, setFormUnit] = useState<string>('unit');
     const [ingredients, setIngredients] = useState<ReactElement[]>([]);
 
     const addIngredient = (name: string, quantity: number, unit: string): void => {
@@ -24,10 +22,6 @@ export function IngredientsFormGroup({initIngredients}: Props) {
         ]);
     };
 
-    const handleUnitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setFormUnit(event.target.value);
-    };
-
     useEffect(() => {
         if (initIngredients) {
             initIngredients.forEach((ingredient) => {
@@ -36,59 +30,15 @@ export function IngredientsFormGroup({initIngredients}: Props) {
         }
     }, []);
 
-    const measurementUnits = ['unit', 'teaspoon', 'tablespoon', 'cup', 'gram', 'ml'];
-
     return (
-        <Form.Group className="mb-3" controlId="directions">
+        <Form.Group className="mb-3" controlId="ingredients">
             <Form.Label>Ingredients</Form.Label>
-            <Card className={`mb-2 ${styles.directions_card}`}>
+            <Card className={`mb-2 ${styles.ingredients_card}`}>
             <ListGroup variant="flush">
                 {ingredients}
             </ListGroup>
             </Card>
-            <Row lg={4} md={2} xs={1} className="g-1">
-                <Col>
-                    <Form.Control
-                        type="text"
-                        placeholder="Ingredient name"
-                        value={formName}
-                        onChange={(e) => setFormName(e.target.value)}
-                    />
-                </Col>
-                <Col>
-                    <Form.Control
-                        type="number"
-                        placeholder="Ingredient quantity."
-                        value={formQuantity}
-                        onChange={(e) => setFormQuantity(Number(e.target.value))}
-                    />
-                </Col>
-                <Col>
-                    <Form.Select
-                        aria-label="Measurement Unit"
-                        defaultValue={"default"}
-                        onChange={handleUnitChange}
-                    >
-                        <option key="default" disabled>Measurement Unit</option>
-                        {measurementUnits.map((measurementUnit) => (
-                            <option
-                                key={measurementUnit}
-                                value={measurementUnit}
-                            >
-                                {measurementUnit}
-                            </option>
-                        ))}
-                    </Form.Select>
-                </Col>
-                <Col>
-                    <Button
-                        variant="outline-secondary"
-                        onClick={() => addIngredient(formName, formQuantity, formUnit)} 
-                    >
-                    + 
-                    </Button>
-                </Col>
-            </Row>
+            <IngredientInputFields withAddButton={true} handleAdd={addIngredient}/>
         </Form.Group>
     )
 }
