@@ -4,11 +4,6 @@
     --info-color: #e6bc00;
   }
 
-.page_title {
-  font-size: 3em;
-  text-align: center;
-}
-
 .custom_button {
   background-color: var(--accent-color) !important;
   border-color: var(--accent-color) !important;
@@ -18,4 +13,14 @@
 .custom_button:hover,
 .custom_button:focus {
   opacity: 0.8;
+}
+
+.ingredient_list_container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.page_title {
+  font-size: 3em;
+  text-align: center;
 }
