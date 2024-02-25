@@ -1,5 +1,6 @@
 import { Button } from 'react-bootstrap';
-import { mealPlan } from '../data/meal_plan';
+import { MealCard } from '../components/MealCard';
+import { Meal, mealPlan } from '../data/meal_plan';
 import { formatDate } from '../utils/dateUtils';
 
 
@@ -22,6 +23,13 @@ export function MealPlan() {
                 >
                     Make New Plan
                 </Button>
+            </div>
+            <div>
+                {Object.keys(mealPlan.meals).map((day: string) => (
+                    <div key={day} className="mb-3">
+                        <MealCard day={Number(day)} meal={mealPlan.meals[Number(day)]} />
+                    </div>
+                ))}
             </div>
         </>
     )

@@ -23,5 +23,15 @@ export const mealPlan: MealPlan = {
             "side_dish": recipesDetail["2"],
             "salad": recipesDetail["3"]
         },
+        2: {
+            "main_dish": recipesDetail["1"],
+            "side_dish": recipesDetail["2"],
+            "salad": recipesDetail["3"]
+        },
+        3: {
+            "main_dish": recipesDetail["1"],
+            "side_dish": recipesDetail["2"],
+            "salad": recipesDetail["3"]
+        },
     }
 }
