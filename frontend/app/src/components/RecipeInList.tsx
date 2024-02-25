@@ -16,11 +16,11 @@ interface Props {
 
 export function RecipeInList({ id, title, time_minutes, tags, image }:
     Props) {
-        return <Card>
+        return <Card className={`${styles.recipe_card_container}`}>
             <Card.Img
                 variant="top"
                 src={image}
-                height="200px"
+                height="150px"
                 className={`${styles.card_img}`}
             />
             <Card.Body className="d-flex flex-column" key={id}>

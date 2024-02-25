@@ -21,7 +21,7 @@ export function Recipes() {
                     </Button>
                 </Col>
             </Row>
-            <Row lg={3} md={2} xs={1} className="g-4">
+            <Row lg={4} md={2} xs={1} className="g-4">
                 {recipes.map((recipe: RecipeListInfo) => (
                     <Col key={recipe.id}><RecipeInList {...recipe} /></Col>
                 ))}
