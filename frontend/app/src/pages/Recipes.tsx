@@ -3,6 +3,7 @@ import { recipes, RecipeListInfo } from '../data/recipes';
 import { RecipeInList } from '../components/RecipeInList';
 import styles from '../styles/Recipes.module.css';
 
+
 export function Recipes() {
     return (
         <>
