@@ -1,14 +1,20 @@
 import { Button } from 'react-bootstrap';
 import { mealPlan } from '../data/meal_plan';
+import { formatDate } from '../utils/dateUtils';
 
 
 export function MealPlan() {
-    const creationDate = mealPlan.creation_date;
+    const creationDateObject = new Date(mealPlan.creation_date);
+    const creationDate = formatDate(creationDateObject);
+
+    const endDateObject = new Date(mealPlan.creation_date);
+    endDateObject.setDate(endDateObject.getDate() + 7);
+    const endDate = formatDate(endDateObject);
 
     return (
         <>
             <div className="page_title mt-3">
-                MealPlan {`for ${creationDate}`}
+                MealPlan {`for ${creationDate} to ${endDate}`}
             </div>
             <div className="d-flex justify-content-center mt-2 mb-5 gap-4">
                 <Button
