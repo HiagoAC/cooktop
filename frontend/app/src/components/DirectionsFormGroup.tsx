@@ -20,6 +20,7 @@ export function DirectionsFormGroup({initDirections}: Props) {
                 <div>{direction}</div>
             </ListGroup.Item>
         ]);
+        setFormDirection('');
     };
     useEffect(() => {
         if (initDirections) {
