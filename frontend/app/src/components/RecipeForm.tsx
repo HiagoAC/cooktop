@@ -87,14 +87,20 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
             </Row>
             <Row md={2} xs={1}>
                 <Col md={7}>
-                    <DirectionsFormGroup initDirections={recipe? recipe.directions : []} />
+                    <IngredientsFormGroup ingredients={recipe? recipe.ingredients : []}/>
                 </Col>
                 <Col md={5}>
-                    <IngredientsFormGroup ingredients={recipe? recipe.ingredients : []}/>
+                    <Form.Group className="mb-3" controlId="uploadImage">
+                        <Form.Label>Upload image</Form.Label>
+                        <Form.Control type="file" />
+                    </Form.Group>
                 </Col>
             </Row>
             <Row md={2} xs={1}>
                 <Col md={7}>
+                    <DirectionsFormGroup initDirections={recipe? recipe.directions : []} />
+                </Col>
+                <Col md={5}>
                     <Form.Group className="mb-3" controlId="notes">
                         <Form.Label>Notes</Form.Label>
                         <Form.Control
@@ -103,12 +109,6 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                             placeholder="Notes"
                             defaultValue={recipe ? recipe.notes : ''}
                         />
-                    </Form.Group>
-                </Col>
-                <Col md={5}>
-                    <Form.Group className="mb-3" controlId="uploadImage">
-                        <Form.Label>Upload image</Form.Label>
-                        <Form.Control type="file" />
                     </Form.Group>
                 </Col>
             </Row>
