@@ -31,8 +31,8 @@ export function IngredientInputFields(
     const measurementUnits = ['unit', 'teaspoon', 'tablespoon', 'cup', 'g', 'ml'];
 
     return (
-        <Row lg={4} md={2} xs={1} className="g-1">
-            <Col>
+        <Row md={4} xs={1} className="g-1">
+            <Col md={6}>
                 <Form.Control
                     type="text"
                     placeholder="Ingredient name"
@@ -40,7 +40,7 @@ export function IngredientInputFields(
                     onChange={(e) => setFormName(e.target.value)}
                 />
             </Col>
-            <Col>
+            <Col md={2}>
                 <Form.Control
                     type="number"
                     placeholder="Ingredient quantity."
@@ -48,7 +48,7 @@ export function IngredientInputFields(
                     onChange={(e) => setFormQuantity(Number(e.target.value))}
                 />
             </Col>
-            <Col>
+            <Col md={3}>
                 <Form.Select
                     aria-label="Measurement Unit"
                     value={formUnit}
@@ -66,7 +66,7 @@ export function IngredientInputFields(
                 </Form.Select>
             </Col>
             {(withAddButton && handleAdd) ? (
-                <Col>
+                <Col md={1}>
                     <Button
                         variant="outline-secondary"
                         onClick={() => handleAdd(formName, formQuantity, formUnit)} 
