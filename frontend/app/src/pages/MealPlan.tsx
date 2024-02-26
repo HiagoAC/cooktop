@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap';
 import { MealCard } from '../components/MealCard';
-import { Meal, mealPlan } from '../data/meal_plan';
+import { mealPlan } from '../data/meal_plan';
 import { formatDate } from '../utils/dateUtils';
 
 
