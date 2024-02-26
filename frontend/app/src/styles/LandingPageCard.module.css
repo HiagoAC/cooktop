@@ -3,4 +3,5 @@
 .card {
     border-color: black !important;
     background-color: transparent !important;
+    flex-grow: 1;
 }

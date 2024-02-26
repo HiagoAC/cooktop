@@ -2,8 +2,8 @@
 
 .main_container {
     background-color: var(--accent-color);
-    width: 100vw;
-    height: calc(100vh - var(--navbar-height));
+    min-width: 100vw;
+    min-height: calc(100vh - var(--navbar-height));
     margin: 0;
 }
 
@@ -13,10 +13,5 @@
 
 .main_title {
     font-weight: bold;
-    font-size: 10vw;
-}
-
-.sub_title {
-    font-weight: bold;
-    font-size: 2vw;
+    font-size: 8vw;
 }
