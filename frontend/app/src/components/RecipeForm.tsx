@@ -22,53 +22,30 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                     <Form.Control type="url" placeholder="type a URL" />
                 </Form.Group>
             }
-            <Form.Group className="mb-3" controlId="title">
-                <Form.Label>Title</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Title"
-                    defaultValue={recipe ? recipe.title : ''}
-                />
-            </Form.Group>
-            <Row md={2} xs={1}>
-                <Col>
-                    <Form.Group className="mb-3" controlId="description">
-                        <Form.Label>Description</Form.Label>
+            <Row md={3} xs={1}>
+                <Col md={7}>
+                    <Form.Group className="mb-3" controlId="title">
+                        <Form.Label>Title</Form.Label>
                         <Form.Control
-                            as="textarea"
-                            rows={2}
-                            placeholder="Description"
-                            defaultValue={recipe ? recipe.description : ''}
+                            type="text"
+                            placeholder="Title"
+                            defaultValue={recipe ? recipe.title : ''}
                         />
                     </Form.Group>
                 </Col>
-                <Col>
-                    <Form.Group className="mb-3" controlId="notes">
-                        <Form.Label>Notes</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={2}
-                            placeholder="Notes"
-                            defaultValue={recipe ? recipe.notes : ''}
-                        />
-                    </Form.Group>
-                </Col>
-            </Row>
-            <Row md={2} xs={1}>
-                <Col>
+                <Col md={3}>
                     <Form.Group className="mb-3" controlId="prepTime">
                         <Form.Label>Preparation Time</Form.Label>
                         <InputGroup>
                             <Form.Control
                                 type="number"
-                                placeholder="Preparation Time"
-                                defaultValue={recipe ? recipe.time_minutes : ''}
+                                defaultValue={recipe ? recipe.time_minutes : '30'}
                             />
                             <InputGroup.Text>minutes</InputGroup.Text>
                         </InputGroup>
                     </Form.Group>
                 </Col>
-                <Col>
+                <Col md={2}>
                     <Form.Group className="mb-3" controlId="recipeType">
                         <Form.Label>Type</Form.Label>
                         <Form.Select
@@ -88,26 +65,53 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                     </Form.Group>
                 </Col>
             </Row>
-            {recipe? (
-                <>
-                    <IngredientsFormGroup ingredients={recipe.ingredients}/>
+            <Row md={2} xs={1}>
+                <Col md={7}>
+                    <Form.Group className="mb-3" controlId="description">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={2}
+                            placeholder="Description"
+                            defaultValue={recipe ? recipe.description : ''}
+                        />
+                    </Form.Group>
+                </Col>
+                <Col md={5}>
                     <BadgeStackFormGroup
-                        items={recipe.tags}
+                        items={recipe? recipe.tags : []}
                         label="Tags"
                         placeholder="Type a new tag and press add."
                     />
-                    <DirectionsFormGroup initDirections={recipe.directions} />
-                </>
-            ) : (
-                <>
-                    <IngredientsFormGroup />
-                    <BadgeStackFormGroup
-                        label="Tags"
-                        placeholder="Type a new tag and press add."
-                    />
-                    <DirectionsFormGroup />
-                </>
-            )}
+                </Col>
+            </Row>
+            <Row md={2} xs={1}>
+                <Col md={7}>
+                    <DirectionsFormGroup initDirections={recipe? recipe.directions : []} />
+                </Col>
+                <Col md={5}>
+                    <IngredientsFormGroup ingredients={recipe? recipe.ingredients : []}/>
+                </Col>
+            </Row>
+            <Row md={2} xs={1}>
+                <Col md={7}>
+                    <Form.Group className="mb-3" controlId="notes">
+                        <Form.Label>Notes</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={2}
+                            placeholder="Notes"
+                            defaultValue={recipe ? recipe.notes : ''}
+                        />
+                    </Form.Group>
+                </Col>
+                <Col md={5}>
+                    <Form.Group className="mb-3" controlId="uploadImage">
+                        <Form.Label>Upload image</Form.Label>
+                        <Form.Control type="file" />
+                    </Form.Group>
+                </Col>
+            </Row>
         </Form>
     )
 }
