@@ -87,7 +87,7 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
             </Row>
             <Row md={2} xs={1}>
                 <Col md={7}>
-                    <IngredientsFormGroup ingredients={recipe? recipe.ingredients : []}/>
+                    <IngredientsFormGroup initIngredients={recipe? recipe.ingredients : []}/>
                 </Col>
                 <Col md={5}>
                     <Form.Group className="mb-3" controlId="uploadImage">
