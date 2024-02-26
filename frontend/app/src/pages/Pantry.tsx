@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { PantryIngredient, pantryIngredients} from '../data/pantry';
 import { ItemCard } from '../components/ItemCard';
 import { PantryIngredientModal } from '../components/PantryIngredientModal';
@@ -13,7 +13,7 @@ export function Pantry() {
     const handleModalShow = () => setModalShow(true);
 
     return (
-        <>
+        <Container className="pb-4">
             <div className={`${styles.page_title} mt-3`}>Pantry</div>
             <div className="d-flex justify-content-center mt-2 mb-5">
                 <Button
@@ -37,6 +37,6 @@ export function Pantry() {
                     ))}
                 </div>
             </div>
-        </>
+        </Container>
     )
 }

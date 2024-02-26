@@ -1,4 +1,4 @@
-import { Card, Col, Image, Row } from 'react-bootstrap';
+import { Card, Col, Container, Image, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { recipesDetail, Recipe } from '../data/recipe_detail';
 import { RecipeDirectionsCard } from '../components/RecipeDirectionsCard';
@@ -19,7 +19,7 @@ export function RecipeDetail() {
     const recipe: Recipe = recipesDetail[id];
 
     return (
-        <>
+        <Container className="pb-4">
             <Row md={2} xs={1} className="d-flex align-items-center g-2 mt-2">
                 <Col className={`${styles.image_container}`}>
                     <Image
@@ -45,6 +45,6 @@ export function RecipeDetail() {
                     <RecipeDirectionsCard directions={recipe.directions}/>
                 </Col>
             </Row>
-        </>
+        </Container>
     )   
 }

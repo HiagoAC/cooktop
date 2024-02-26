@@ -16,7 +16,7 @@ export function Navbar() {
                     Cooktop
                 </BaseNavbar.Brand>
                 <Nav className="me-auto d-none d-lg-flex">
-                    <Nav.Link href="/">Meal Plan</Nav.Link>
+                    <Nav.Link href="/meal-plan">Meal Plan</Nav.Link>
                     <Nav.Link href="/recipes">Recipes</Nav.Link>
                     <Nav.Link href="/shopping-list">Shopping List</Nav.Link>
                     <Nav.Link href="/pantry">Pantry</Nav.Link>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { ItemCard } from '../components/ItemCard';
 import { ShoppingItemModal } from '../components/ShoppingItemModal';
 import { ShoppingItem, shoppingList} from '../data/shopping_list';
@@ -13,7 +13,7 @@ export function ShoppingList() {
     const handleModalShow = () => setModalShow(true);
 
     return (
-        <>
+        <Container className="pb-4">
             <div className={`${styles.page_title} mt-3`}>Shopping List</div>
             <div className="d-flex justify-content-center mt-2 mb-5 gap-4">
                 <Button
@@ -40,6 +40,6 @@ export function ShoppingList() {
                     ))}
                 </div>
             </div>
-        </>
+        </Container>
     )
 }

@@ -1,4 +1,4 @@
-import { Button } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { MealCard } from '../components/MealCard';
 import { mealPlan } from '../data/meal_plan';
 import { formatDate } from '../utils/dateUtils';
@@ -13,7 +13,7 @@ export function MealPlan() {
     const endDate = formatDate(endDateObject);
 
     return (
-        <>
+        <Container className="pb-4">
             <div className="page_title mt-3">
                 MealPlan {`for ${creationDate} to ${endDate}`}
             </div>
@@ -31,6 +31,6 @@ export function MealPlan() {
                     </div>
                 ))}
             </div>
-        </>
+        </Container>
     )
 }

@@ -1,4 +1,4 @@
-import { Button, Row, Col } from 'react-bootstrap';
+import { Button, Row, Col, Container } from 'react-bootstrap';
 import { recipes, RecipeListInfo } from '../data/recipes';
 import { RecipeInList } from '../components/RecipeInList';
 import styles from '../styles/Recipes.module.css';
@@ -6,7 +6,7 @@ import styles from '../styles/Recipes.module.css';
 
 export function Recipes() {
     return (
-        <>
+        <Container className="pb-4">
             <div className="page_title mt-3">Recipes</div>
             <Row className="justify-content-md-center g-6">
                 <Col className={`mt-2 mb-5 ${styles.button_col}`}>
@@ -26,6 +26,6 @@ export function Recipes() {
                     <Col key={recipe.id}><RecipeInList {...recipe} /></Col>
                 ))}
             </Row>
-        </>
+        </Container>
     )
 }

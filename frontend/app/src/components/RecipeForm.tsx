@@ -7,7 +7,7 @@ import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
 
 interface Props {
     recipe?: Recipe,
-    withUrlField: boolean
+    withUrlField?: boolean
 } 
 
 
