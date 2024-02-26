@@ -2,5 +2,5 @@
 
 .navbar {
     background-color: var(--accent-color);
-    height: 50px;
+    height: var(--nav-height);
 }
