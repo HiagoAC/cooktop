@@ -28,7 +28,7 @@ export function IngredientsFormGroup({initIngredients}: Props) {
                 addIngredient(ingredient.name, Number(ingredient.quantity), ingredient.unit);
             });
         }
-    }, []);
+    });
 
     return (
         <Form.Group className="mb-3" controlId="ingredients">

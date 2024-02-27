@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Form, InputGroup, Stack } from 'react-bootstrap';
 import { ReactElement, useEffect, useState } from 'react';
-import { Badge } from './Badge';
+import { Badge, Props as BadgeProps } from './Badge';
 import styles from '../styles/BadgeStackFormGroup.module.css';
 
 
@@ -19,7 +19,6 @@ export function BadgeStackFormGroup({items, label, placeholder}: Props) {
     const addBadge = (item: string): void => {
         const badge = <Badge
             item={item}
-            withDeleteButton={true}
             onDelete={deleteBadge}
             key={uuidv4()}
         />;
@@ -29,7 +28,8 @@ export function BadgeStackFormGroup({items, label, placeholder}: Props) {
 
     const deleteBadge = (item: string): void => {
         setAddedItems(prevBadges => {
-            return prevBadges.filter(badge => badge.props.item !== item);
+            return prevBadges.filter(
+                badge => (badge.props as BadgeProps).item !== item);
         });
     };
 
@@ -38,7 +38,7 @@ export function BadgeStackFormGroup({items, label, placeholder}: Props) {
             items.forEach(item => {
                 addBadge(item);
             })}
-    }, []);
+    });
 
     return (
         <Form.Group className="mb-3" controlId="tags">

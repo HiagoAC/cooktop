@@ -4,7 +4,7 @@ export interface Ingredient {
     unit: string;
 }
 
-export const recipeTypeLabels: { [key: string]: string } = {
+export const recipeTypeLabels: Record<string, string> = {
     'mai': 'Main Dish',
     'sid': 'Side Dish',
     'sal': 'Salad',

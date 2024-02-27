@@ -5,9 +5,13 @@ import { Recipe } from '../data/recipe_detail';
 import { Container } from 'react-bootstrap';
 
 
+interface RecipeEditState {
+    recipe: Recipe
+}
+
 export function RecipeEdit() {
     const location = useLocation();
-    const recipe: Recipe = location.state.recipe;
+    const recipe: Recipe = (location.state as RecipeEditState).recipe;
 
     return (
         <Container className="pb-4">

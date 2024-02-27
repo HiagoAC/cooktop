@@ -22,7 +22,7 @@ export function IngredientInputFields(
             setFormQuantity(Number(ingredient.quantity));
             setFormUnit(ingredient.unit);
         }
-    }, []);
+    }, [ingredient]);
 
     const handleUnitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setFormUnit(event.target.value);

@@ -28,7 +28,7 @@ export function DirectionsFormGroup({initDirections}: Props) {
                 addDirection(direction);
             });
         }
-    }, []);
+    });
 
     return (
         <Form.Group className="mb-3" controlId="directions">
