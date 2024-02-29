@@ -1,7 +1,7 @@
 import { Button, Container } from 'react-bootstrap';
 import { MealCard } from '../components/MealCard';
 import { mealPlan } from '../data/meal_plan';
-import { formatDate } from '../utils/dateUtils';
+import { formatDate } from '../utils/formatDate';
 
 
 export function MealPlan() {
