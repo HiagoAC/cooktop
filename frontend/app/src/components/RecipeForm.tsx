@@ -1,4 +1,4 @@
-import { Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { DirectionsFormGroup } from './DirectionsFormGroup';
 import { IngredientsFormGroup } from './IngredientsFormGroup';
 import { BadgeStackFormGroup } from './BadgeStackFormGroup';
@@ -19,7 +19,12 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                 withUrlField &&
                 <Form.Group className="mb-3" controlId="addFromURL">
                     <Form.Label>Add Recipe from URL</Form.Label>
-                    <Form.Control type="url" placeholder="type a URL" />
+                    <InputGroup className="mb-3">
+                        <Form.Control type="url" placeholder="type a URL" />
+                        <Button className="custom_button">
+                            {'Get Recipe'}
+                        </Button>
+                    </InputGroup>
                 </Form.Group>
             }
             <Row md={3} xs={1}>
