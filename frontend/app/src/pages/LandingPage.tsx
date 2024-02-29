@@ -2,14 +2,19 @@ import { useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { LandingPageCard } from '../components/LandingPageCard';
 import { LogInModal } from '../components/LogInModal';
+import { SignUpModal } from '../components/SignUpModal';
 import styles from '../styles/LandingPage.module.css';
 
 
 export function LandingPage() {
     const [logInModalShow, setLogInModalShow] = useState(false);
+    const [signUpModalShow, setSignUpModalShow] = useState(false);
 
     const handleLogInModalClose = () => setLogInModalShow(false);
     const handleLogInModalShow = () => setLogInModalShow(true);
+
+    const handleSignUpModalClose = () => setSignUpModalShow(false);
+    const handleSignUpModalShow = () => setSignUpModalShow(true);
 
     return (
         <div className={`${styles.main_container}`}>
@@ -31,10 +36,19 @@ export function LandingPage() {
                         >
                             {'Log In'}
                         </Button>
-                        <Button className="mx-3 mb-3 mt-auto">{'Sign Up'}</Button>
+                        <Button
+                            className="mx-3 mb-3 mt-auto"
+                            onClick={handleSignUpModalShow}
+                        >
+                            {'Sign Up'}
+                        </Button>
                         <LogInModal
                             show={logInModalShow}
                             handleClose={handleLogInModalClose}
+                        />
+                        <SignUpModal
+                            show={signUpModalShow}
+                            handleClose={handleSignUpModalClose}
                         />
                     </Col>
                 </Row>
