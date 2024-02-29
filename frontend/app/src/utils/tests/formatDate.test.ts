@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { formatDate } from '../dateUtils';
+import { formatDate } from '../formatDate';
 
 
 test('formatDate function formats date correctly', () => {
