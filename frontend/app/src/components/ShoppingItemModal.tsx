@@ -18,22 +18,20 @@ export function ShoppingItemModal(
     : Props) {
   
     return (
-        <>
-            <Modal show={show} onHide={handleClose} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>{title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <IngredientInputFields ingredient={shoppingItem? {...shoppingItem} : null}/>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button className="custom_button" onClick={handleClick}>
-                        {buttonText}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
+        <Modal show={show} onHide={handleClose} size="lg">
+            <Modal.Header closeButton>
+                <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                    <IngredientInputFields ingredient={shoppingItem? {...shoppingItem} : null}/>
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button className="custom_button" onClick={handleClick}>
+                    {buttonText}
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 }
