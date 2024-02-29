@@ -1,9 +1,16 @@
+import { useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { LandingPageCard } from '../components/LandingPageCard';
+import { LogInModal } from '../components/LogInModal';
 import styles from '../styles/LandingPage.module.css';
 
 
 export function LandingPage() {
+    const [logInModalShow, setLogInModalShow] = useState(false);
+
+    const handleLogInModalClose = () => setLogInModalShow(false);
+    const handleLogInModalShow = () => setLogInModalShow(true);
+
     return (
         <div className={`${styles.main_container}`}>
             <Container className={`${styles.top_container}`}>
@@ -18,8 +25,17 @@ export function LandingPage() {
                         xs={4}
                         className="d-flex justify-content-end flex-wrap align-items-center"
                     >
-                        <Button className="mx-3 mb-3 mt-auto">Sign In</Button>
-                        <Button className="mx-3 mb-3 mt-auto">Sign Up</Button>
+                        <Button
+                            className="mx-3 mb-3 mt-auto"
+                            onClick={handleLogInModalShow}
+                        >
+                            {'Log In'}
+                        </Button>
+                        <Button className="mx-3 mb-3 mt-auto">{'Sign Up'}</Button>
+                        <LogInModal
+                            show={logInModalShow}
+                            handleClose={handleLogInModalClose}
+                        />
                     </Col>
                 </Row>
             </Container>
