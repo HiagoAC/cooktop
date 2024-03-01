@@ -27,7 +27,10 @@ export function MealPlan() {
             <div>
                 {Object.keys(mealPlan.meals).map((day: string) => (
                     <div key={day} className="mb-3">
-                        <MealCard day={Number(day)} meal={mealPlan.meals[Number(day)]} />
+                        <MealCard
+                            day={Number(day)}
+                            meal={mealPlan.meals[Number(day)]}
+                        />
                     </div>
                 ))}
             </div>

@@ -19,31 +19,29 @@ export function PantryIngredientModal(
     : Props) {
   
     return (
-        <>
-            <Modal show={show} onHide={handleClose} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>{title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <IngredientInputFields ingredient={pantryIngredient? {...pantryIngredient} : null}/>
-                        <InputGroup className={`my-3 ${styles.expiration_field}`}>
-                            <InputGroup.Text id="expiration-date">
-                                expiration date
-                            </InputGroup.Text>
-                            <Form.Control
-                                defaultValue={pantryIngredient ? pantryIngredient.expiration : ""}
-                                type="date"
-                            />
-                        </InputGroup>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button className="custom_button" onClick={handleClick}>
-                        {buttonText}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
+        <Modal show={show} onHide={handleClose} size="lg">
+            <Modal.Header closeButton>
+                <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                    <IngredientInputFields ingredient={pantryIngredient? {...pantryIngredient} : null}/>
+                    <InputGroup className={`my-3 ${styles.expiration_field}`}>
+                        <InputGroup.Text id="expiration-date">
+                            expiration date
+                        </InputGroup.Text>
+                        <Form.Control
+                            defaultValue={pantryIngredient ? pantryIngredient.expiration : ""}
+                            type="date"
+                        />
+                    </InputGroup>
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button className="custom_button" onClick={handleClick}>
+                    {buttonText}
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 }

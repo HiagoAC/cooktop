@@ -34,7 +34,10 @@ export function ItemCard({item}: Props) {
                     </div>
                 </Col>
                 <Col className="d-flex justify-content-end">
-                    <Button className={`${styles.icon_button}`} onClick={handleModalShow}>
+                    <Button
+                        className={`${styles.icon_button}`}
+                        onClick={handleModalShow}
+                    >
                         <img
                             src={editIcon}
                             alt="edit"
@@ -48,7 +51,7 @@ export function ItemCard({item}: Props) {
                             handleClose={handleModalClose}
                             handleClick={handleModalClose}
                             pantryIngredient={item}
-                        />
+                    />
                     <Button className={`${styles.icon_button}`}>
                         <img
                             src={trashBinIcon}
