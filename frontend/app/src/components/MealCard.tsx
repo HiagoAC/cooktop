@@ -59,12 +59,15 @@ export function MealCard({day, meal}: Props) {
             <Card.Body>
                 <Row lg={3} md={2} xs={1} className="g-4">
                     <Col>
+                        <h5>{'Main Dish'}</h5>
                         <RecipeInList {...meal.main_dish}/>
                     </Col>
                     <Col>
+                        <h5>{'Side Dish'}</h5>
                         <RecipeInList {...meal.side_dish}/>
                     </Col>
                     <Col>
+                        <h5>{'Salad'}</h5>
                         <RecipeInList {...meal.salad}/>
                     </Col>
                 </Row>
