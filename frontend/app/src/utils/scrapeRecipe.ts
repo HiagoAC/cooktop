@@ -15,8 +15,8 @@ type RecipePartial = Partial<Recipe>;
 export async function scrapeRecipe(url: string): Promise<RecipePartial> {
     let recipe: RecipePartial = {};
         const response = await axios.get(url);
-        const html = response.data;
-        console.log(html)
+        const html: string = response.data;
+        console.log(html);
         // #TODO: Call endpoint for scraping Recipe.
     return recipe;
 }

@@ -20,7 +20,7 @@ export function SignUpModal({show, handleClose}: Props) {
                     <Row>
                         <Col>
                             <Form.Group className="mb-3" controlId="firstName">
-                                <Form.Label>{'FirstName'}</Form.Label>
+                                <Form.Label>{'First Name'}</Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="First Name"
@@ -29,7 +29,7 @@ export function SignUpModal({show, handleClose}: Props) {
                         </Col>
                         <Col>
                             <Form.Group className="mb-3" controlId="lastName">
-                                <Form.Label>{'LastName'}</Form.Label>
+                                <Form.Label>{'Last Name'}</Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Last Name"

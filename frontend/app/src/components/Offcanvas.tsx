@@ -27,7 +27,7 @@ export function Offcanvas() {
                     <ListGroup.Item action href="/shopping-list">Shopping List</ListGroup.Item>
                     <ListGroup.Item action href="/pantry">Pantry</ListGroup.Item>
                     <ListGroup.Item action href="about">About Cooktop</ListGroup.Item>
-                    <ListGroup.Item action href="/me">Account & Settings</ListGroup.Item>
+                    <ListGroup.Item action href="/account">Account Settings</ListGroup.Item>
                 </ListGroup>
             </BaseOffcanvas.Body>
             </BaseOffcanvas>

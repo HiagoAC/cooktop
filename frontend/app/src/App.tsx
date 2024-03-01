@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { About } from './pages/About';
 import { LandingPage } from './pages/LandingPage';
-import { Me } from './pages/Me';
+import { Account } from './pages/Account';
 import { MealPlan } from './pages/MealPlan';
 import { Recipes } from './pages/Recipes';
 import { RecipeDetail } from './pages/RecipeDetail';
@@ -39,7 +39,7 @@ function App() {
           <Route path='/recipes/*' element={<RecipeRoutes />} />
           <Route path='/shopping-list' element={<ShoppingList />} />
           <Route path='/pantry' element={<Pantry />} />
-          <Route path='/me' element={<Me />} />
+          <Route path='/account' element={<Account />} />
           <Route path='/about' element={<About />} />
         </Routes>
       </div>
