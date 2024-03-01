@@ -1,4 +1,5 @@
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { UserPreferencesFormFields } from './UserPreferencesFormFields';
 
 
 interface Props {
@@ -50,34 +51,7 @@ export function SignUpModal({show, handleClose}: Props) {
                             placeholder="Password"
                         />
                     </Form.Group>
-                    <Row>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>
-                                    {'How many times a week do you usually to cook?'}
-                                </Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    min={1}
-                                    max={7}
-                                    defaultValue={4}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>
-                                    {'How many servings do you usually cook each time?'}
-                                </Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    min={1}
-                                    defaultValue={2}
-                                />
-                            </Form.Group>
-                        </Col>
-                    </Row>
-
+                    <UserPreferencesFormFields />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
