@@ -44,12 +44,13 @@ export function MealCard({day, meal}: Props) {
                             </Button>
                             <EditMealModal
                                 recipes={{
-                                    'mainDish': meal.main_dish,
-                                    'sideDish': meal.side_dish,
-                                    'salad': meal.salad
+                                    'mai': meal.main_dish,
+                                    'sid': meal.side_dish,
+                                    'sal': meal.salad
                                 }}
                                 show={editModalShow}
                                 handleClose={handleEditModalClose}
+                                handleClick={() => {}}
                             />
                         </Col>
                     </Row>

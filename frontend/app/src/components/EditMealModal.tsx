@@ -1,5 +1,6 @@
-import { Button, Col, Modal, Row } from 'react-bootstrap';
-import { Recipe } from '../data/recipe_detail';
+import { useState } from 'react';
+import { Button, Form, Modal } from 'react-bootstrap';
+import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
 import switchIcon from '../assets/switch_icon.svg';
 
 
@@ -13,7 +14,32 @@ interface Props {
 export function EditMealModal(
     {recipes, show, handleClose, handleClick}
     : Props) {
-  
+    const [editModes, setEditModes] = useState<Record<string, boolean>>(
+        Object.fromEntries(
+            Object.keys(recipes).map((recipeType) => [recipeType, false])
+        ))
+    const [editedValues, setEditedValues] = useState<Record<string, string>>(
+            Object.fromEntries(
+            Object.keys(recipes).map((recipeType) => [recipeType, ''])
+        ))
+
+    const handleSwitchClick = (recipeType: string) => {
+        setEditModes({
+            ...editModes,
+            [recipeType]: !editModes[recipeType]
+        });
+    }
+
+    const handleChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        recipeType: string
+        ) => {
+        setEditedValues({
+            ...editedValues,
+            [recipeType]: event.target.value
+        });
+    }
+
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -24,6 +50,7 @@ export function EditMealModal(
                     <div key={recipeType} className="d-flex">
                         <Button
                             className="icon_button"
+                            onClick={() => handleSwitchClick(recipeType)}
                             >
                             <img
                                 src={switchIcon}
@@ -31,7 +58,20 @@ export function EditMealModal(
                                 className="icon"
                             />
                         </Button>
-                        <p>{recipes[recipeType].title}</p>
+                        <b className="me-2">
+                            {`${recipeTypeLabels[recipeType]}:`}
+                        </b>
+                        { editModes[recipeType]? (
+                            <Form.Control 
+                                type="text"
+                                value={editedValues[recipeType]}
+                                onChange={(e) => handleChange(
+                                    e as React.ChangeEvent<HTMLInputElement>,
+                                    recipeType)}
+                            />
+                        ) : (
+                            <span>{recipes[recipeType].title}</span>
+                        )}
                     </div>
                 ))}
             </Modal.Body>
