@@ -1,5 +1,7 @@
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { UserPreferencesFormFields } from './UserPreferencesFormFields';
+import { createUser } from '../api/usersApi';
+import { useState } from 'react';
 
 
 interface Props {
@@ -9,6 +11,21 @@ interface Props {
 
 
 export function SignUpModal({show, handleClose}: Props) {
+    const [firstName, setFirstName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+
+    const handleCreateUser = () => {
+        createUser({
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: password
+        });
+
+        handleClose();
+    };
   
     return (
         <Modal show={show} onHide={handleClose}>
@@ -24,6 +41,9 @@ export function SignUpModal({show, handleClose}: Props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="First Name"
+                                    value={firstName}
+                                    onChange={
+                                        (e) => setFirstName(e.target.value)}
                                 />
                             </Form.Group> 
                         </Col>
@@ -33,6 +53,9 @@ export function SignUpModal({show, handleClose}: Props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="Last Name"
+                                    value={lastName}
+                                    onChange={
+                                        (e) => setLastName(e.target.value)}
                                 />
                             </Form.Group> 
                         </Col>
@@ -42,6 +65,9 @@ export function SignUpModal({show, handleClose}: Props) {
                         <Form.Control
                             type="text"
                             placeholder="Email"
+                            value={email}
+                            onChange={
+                                (e) => setEmail(e.target.value)}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="password">
@@ -49,13 +75,19 @@ export function SignUpModal({show, handleClose}: Props) {
                         <Form.Control
                             type="password"
                             placeholder="Password"
+                            value={password}
+                            onChange={
+                                (e) => setPassword(e.target.value)}
                         />
                     </Form.Group>
                     <UserPreferencesFormFields />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="custom_button">
+                <Button
+                    className="custom_button"
+                    onClick={handleCreateUser}
+                >
                     {'Create Account'}
                 </Button>
             </Modal.Footer>
