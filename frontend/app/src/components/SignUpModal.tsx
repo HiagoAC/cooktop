@@ -17,7 +17,7 @@ export function SignUpModal({show, handleClose}: Props) {
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const { updateTokens } = useAuth()
+    const { logIn } = useAuth();
 
     const handleCreateUser = async () => {
         const createUserResponse = await createUser({
@@ -27,14 +27,7 @@ export function SignUpModal({show, handleClose}: Props) {
             password: password
         });
         if (createUserResponse.status === 201) {
-            const getTokensResponse = await getTokens({
-                email: email,
-                password: password});
-            console.log(getTokensResponse);
-            updateTokens(
-                getTokensResponse.access_token,
-                getTokensResponse.refresh_token
-                );
+            logIn(email, password);
         };
         handleClose();
     };

@@ -1,19 +1,20 @@
 import { createContext, useState, ReactNode, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import { getTokens } from '../api/tokensApi';
 
 export interface AuthContextType {
     accessToken: string | null;
     refreshToken: string | null;
-    updateTokens: (
-        newAccessToken: string,
-        newRefreshToken: string
+    logIn: (
+        email: string,
+        password: string
         ) => void;
 }
 
 export const AuthContext: React.Context<AuthContextType> = createContext<AuthContextType>({
     accessToken: null,
     refreshToken: null,
-    updateTokens: (_a: string, _r: string) => {}
+    logIn: (_e: string, _p: string) => {}
 });
 
 
@@ -27,17 +28,13 @@ export function AuthProvider({children}: Props) {
     const [refreshToken, setRefreshToken] = useState<string | null>(
         localStorage.getItem("refreshToken"));
 
-    const updateTokens = (
-        newRefreshToken: string,
-        newAccessToken: string)
-        : void => {
-            console.log(newAccessToken);
-            console.log(newRefreshToken);
-            setAccessToken(newAccessToken);
-            setRefreshToken(newRefreshToken);
-            console.log(accessToken);
-            console.log(refreshToken);
-      };
+    const logIn = async (email: string, password: string) => {
+        const response = await getTokens({
+            email: email,
+            password: password});
+        setAccessToken(response.access_token);
+        setRefreshToken(response.refresh_token);
+    };
 
     useEffect(() => {
         if (accessToken && refreshToken) {
@@ -55,7 +52,7 @@ export function AuthProvider({children}: Props) {
         () => ({
           accessToken,
           refreshToken,
-          updateTokens
+          logIn
         }),
         [accessToken, refreshToken]
       );
