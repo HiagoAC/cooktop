@@ -8,7 +8,6 @@ export interface UserPreferences {
     user: string;
     servings_per_meal: number;
     cookings_per_week: number;
-    
 }
 
 export const user: User = {
