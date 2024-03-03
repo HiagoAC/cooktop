@@ -14,11 +14,14 @@ from meal_plan.schemas import (
     MealPlanListSchema,
     MealPlanIn,
     MealPlanOut,
-    MealPlanPatch
+    MealPlanPatch,
+    PreferencesPatch,
+    PreferencesSchema
 )
 from recipe.models import Recipe
 
 meal_plan_router = Router()
+preferences_router = Router()
 
 
 @meal_plan_router.get('/', response=List[MealPlanListSchema],
@@ -104,3 +107,35 @@ def subtract_ingredients_from_pantry(request, meal_plan_id: int):
     meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
     meal_plan.subtract_from_pantry()
     return 204, None
+
+
+@preferences_router.get('/', response=PreferencesSchema,
+                        url_name='preferences')
+def get_preferences(request):
+    """Retrieve details of user's meal plan preferences."""
+    if Preferences.objects.filter(user=request.auth).exists():
+        return Preferences.objects.filter(user=request.auth).first()
+    raise HttpError(404, "No preferences set")
+
+
+@preferences_router.post('/', response={201: PreferencesSchema})
+def set_preferences(request, payload: PreferencesSchema):
+    """Set meal plan preferences."""
+    user = request.auth
+    data = payload.dict()
+    preferences = Preferences.objects.create(user=user, **data)
+    return preferences
+
+
+@preferences_router.patch('/', response=PreferencesSchema)
+def preferences_update(request, payload: PreferencesPatch):
+    """Update meal plan preferences."""
+    if not Preferences.objects.filter(user=request.auth).exists():
+        raise HttpError(404, "No preferences set")
+    preferences = Preferences.objects.filter(user=request.auth).first()
+    for attr, value in payload.dict(exclude_unset=True).items():
+        if attr == 'user':
+            raise HttpError(422, "user cannot be updated.")
+        setattr(preferences, attr, value)
+    preferences.save()
+    return preferences

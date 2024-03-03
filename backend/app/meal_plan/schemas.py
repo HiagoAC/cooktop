@@ -5,7 +5,7 @@ Schemas for the apis in meal_plan app.
 from ninja import ModelSchema, Schema
 from typing import Dict, List
 
-from meal_plan.models import Meal, MealPlan
+from meal_plan.models import Meal, MealPlan, Preferences
 from recipe.schemas import RecipeOut
 
 
@@ -54,3 +54,17 @@ class MealPlanOut(ModelSchema):
 class MealPlanPatch(Schema):
     """Input schema for meal_plans patch."""
     meals: Dict[int, Dict[str, int]]
+
+
+class PreferencesSchema(ModelSchema):
+    """Schema for meal plan preferences."""
+
+    class Meta:
+        model = Preferences
+        fields = ['servings_per_meal', 'cookings_per_week']
+
+
+class PreferencesPatch(Schema):
+    """Input schema for preferences patch."""
+    servings_per_meal: int | None = None
+    cookings_per_week: int | None = None
