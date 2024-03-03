@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { UserPreferencesFormFields } from './UserPreferencesFormFields';
 import { createUser } from '../api/usersApi';
-import { useState } from 'react';
+import { getTokens } from '../api/tokensApi';
+import { useAuth } from '../hooks/useAuth';
 
 
 interface Props {
@@ -15,18 +17,28 @@ export function SignUpModal({show, handleClose}: Props) {
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const { updateTokens } = useAuth()
 
-    const handleCreateUser = () => {
-        createUser({
+    const handleCreateUser = async () => {
+        const createUserResponse = await createUser({
             first_name: firstName,
             last_name: lastName,
             email: email,
             password: password
         });
-
+        if (createUserResponse.status === 201) {
+            const getTokensResponse = await getTokens({
+                email: email,
+                password: password});
+            console.log(getTokensResponse);
+            updateTokens(
+                getTokensResponse.access_token,
+                getTokensResponse.refresh_token
+                );
+        };
         handleClose();
     };
-  
+
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>

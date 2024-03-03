@@ -6,8 +6,7 @@ const usersUrl: string = baseUrl + 'users/';
 
 
 export async function createUser(data: createUserSchema): Promise<any> {
-        return await axios.post(usersUrl, data)
-        .then((response) => {
-            console.log(response);
-          });
+        const response = await axios.post(usersUrl, data);
+        console.log(response);
+        return response;        
 }

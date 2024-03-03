@@ -32,7 +32,7 @@ def meal_plan_list(request):
 
 @meal_plan_router.post('/', response={201: MealPlanOut})
 @transaction.atomic
-def create_recipe(request, payload: MealPlanIn):
+def create_meal_plan(request, payload: MealPlanIn):
     """Create a new meal plan."""
     user = request.auth
     meal_planner = MealPlanner(user=user)

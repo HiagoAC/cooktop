@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { AuthProvider  } from './context/AuthContext';
 import { About } from './pages/About';
 import { LandingPage } from './pages/LandingPage';
 import { Account } from './pages/Account';
@@ -10,6 +11,7 @@ import { RecipeAdd } from './pages/RecipeAdd';
 import { RecipeSearch } from './pages/RecipeSearch';
 import { ShoppingList } from './pages/ShoppingList';
 import { Pantry } from './pages/Pantry';
+import { PrivateRoute } from './routes/PrivateRoute';
 import { Navbar } from './components/Navbar';
 import styles from './styles/App.module.css';
 import './styles/global.css';
@@ -30,20 +32,30 @@ function RecipeRoutes() {
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Navbar />
       <div className={`${styles.main_container}`}>
         <Routes>
           <Route path='/' element={<LandingPage />} />
-          <Route path='/meal-plan' element={<MealPlan />} /> 
-          <Route path='/recipes/*' element={<RecipeRoutes />} />
-          <Route path='/shopping-list' element={<ShoppingList />} />
-          <Route path='/pantry' element={<Pantry />} />
-          <Route path='/account' element={<Account />} />
+          <Route path='/meal-plan' element={<PrivateRoute />}>
+            <Route path='/meal-plan' element={<MealPlan />} />
+          </Route> 
+          <Route path='/recipes/*' element={<PrivateRoute />}>
+            <Route path='/recipes/*' element={<RecipeRoutes />} />
+          </Route>
+          <Route path='/shopping-list' element={<PrivateRoute />}>
+            <Route path='/shopping-list' element={<ShoppingList />} />
+          </Route>
+          <Route path='/pantry' element={<PrivateRoute />}>
+            <Route path='/pantry' element={<Pantry />} />
+          </Route>
+          <Route path='/account' element={<PrivateRoute />}>
+            <Route path='/account' element={<Account />} />
+          </Route>
           <Route path='/about' element={<About />} />
         </Routes>
       </div>
-    </>
+    </AuthProvider>
   )
 }
 
