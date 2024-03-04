@@ -1,20 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import { User, UserPreferences } from '../data/user';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { UserPreferencesFormFields } from './UserPreferencesFormFields';
+import { User, UserPreferences } from '../data/user';
+import { getPreferences } from '../api/preferencesApi';
 
 
 interface Props {
-    initUser: User,
-    initUserPreferences: UserPreferences
+    initUser: User;
 }
 
-export function AccountForm({initUser, initUserPreferences}: Props) {
+export function AccountForm({initUser}: Props) {
     const [user, setUser] = useState<User>(initUser);
-    const [userPreferences, setUserPreferences] = useState<UserPreferences>(
-        initUserPreferences);
     const [passwordModalShow, setPasswordModalShow] = useState(false);
+    const [cookings, setCookings] = useState<number>(4);
+    const [servings, setServings] = useState<number>(2);
+
+    useEffect(() => {
+        getPreferences().then(res => {
+            setCookings(res.data.cookings_per_week);
+            setServings(res.data.servings_per_meal);
+        });
+    }, []);
 
     const handleFirstNameChange = (
         event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,9 +78,11 @@ export function AccountForm({initUser, initUserPreferences}: Props) {
                     </Form.Group>
                 </Col>
                 <UserPreferencesFormFields
-                    initCookings={userPreferences.cookings_per_week}
-                    initServings={userPreferences.servings_per_meal}
-                />
+                        cookings={cookings}
+                        setCookings={setCookings}
+                        servings={servings}
+                        setServings={setServings}
+                    />
             </Row>
         </Form>
     )
