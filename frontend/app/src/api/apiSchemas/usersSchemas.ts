@@ -10,3 +10,8 @@ export interface createUserSchema {
     last_name: string
 }
 
+
+export interface userUpdateSchema {
+    first_name: string,
+    last_name: string
+}

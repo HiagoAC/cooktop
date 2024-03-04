@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createUserSchema } from './apiSchemas/usersSchemas';
+import { createUserSchema, userUpdateSchema } from './apiSchemas/usersSchemas';
 import { BASE_URL } from './apiConfig';
 
 const USERS_URL: string = BASE_URL + 'users/';
@@ -13,6 +13,12 @@ export async function createUser(data: createUserSchema): Promise<any> {
 
 export async function getUser(): Promise<any> {
     const response = await axios.get(ME_URL);
+    console.log(response);
+    return response;    
+}
+
+export async function updateUser(data: userUpdateSchema): Promise<any> {
+    const response = await axios.patch(ME_URL, data);
     console.log(response);
     return response;    
 }
