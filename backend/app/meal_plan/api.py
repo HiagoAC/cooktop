@@ -128,11 +128,10 @@ def set_preferences(request, payload: PreferencesSchema):
 
 
 @preferences_router.patch('/', response=PreferencesSchema)
-def preferences_update(request, payload: PreferencesPatch):
+def update_preferences(request, payload: PreferencesPatch):
     """Update meal plan preferences."""
-    if not Preferences.objects.filter(user=request.auth).exists():
-        raise HttpError(404, "No preferences set")
-    preferences = Preferences.objects.filter(user=request.auth).first()
+    user = request.auth
+    preferences, _ = Preferences.objects.get_or_create(user=user)
     for attr, value in payload.dict(exclude_unset=True).items():
         if attr == 'user':
             raise HttpError(422, "user cannot be updated.")
