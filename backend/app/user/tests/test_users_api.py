@@ -153,3 +153,19 @@ class PrivateUsersAPITests(TestCase):
 
         self.assertEqual(self.user.first_name, payload['first_name'])
         self.assertTrue(self.user.check_password(payload['password']))
+
+    def test_update_user_email(self):
+        """Test updating user email fails."""
+        email = self.user.email
+        payload = {
+            'email': 'another_email@example.com'
+        }
+        self.client.patch(
+            ME_URL,
+            **self.headers,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.email, email)
