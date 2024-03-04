@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { UserPreferencesFormFields } from './UserPreferencesFormFields';
 import { createUser } from '../api/usersApi';
-import { getTokens } from '../api/tokensApi';
 import { useAuth } from '../hooks/useAuth';
 
 
@@ -27,7 +25,7 @@ export function SignUpModal({show, handleClose}: Props) {
             password: password
         });
         if (createUserResponse.status === 201) {
-            logIn(email, password);
+            await logIn(email, password);
         };
         handleClose();
     };
@@ -85,7 +83,6 @@ export function SignUpModal({show, handleClose}: Props) {
                                 (e) => setPassword(e.target.value)}
                         />
                     </Form.Group>
-                    <UserPreferencesFormFields />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
