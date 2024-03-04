@@ -32,7 +32,6 @@ export function AuthProvider({children}: Props) {
     const logIn = async (email: string, password: string): Promise<void> => {
             setLoading(true);
             axios.defaults.headers.common["Authorization"] = "";
-            axios.defaults.headers.common["Authorization"] = "";
             const response = await getTokens({
                 email: email,
                 password: password});
