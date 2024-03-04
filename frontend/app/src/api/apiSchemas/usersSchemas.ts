@@ -15,3 +15,8 @@ export interface userUpdateSchema {
     first_name: string,
     last_name: string
 }
+
+export interface changePasswordSchema {
+    old_password: string,
+    new_password: string
+}

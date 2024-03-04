@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { changePassword } from '../api/usersApi';
 
 
 interface Props {
@@ -10,6 +11,10 @@ interface Props {
 export function ChangePasswordModal({show, handleClose}: Props) {
     const [currentPassword, setCurrentPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
+    const [
+        changePasswordSuccess,
+        setChangePasswordSuccess
+    ] = useState<boolean | null>(null);
 
     const handleCurrentPasswordChange = (
         event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,12 +26,36 @@ export function ChangePasswordModal({show, handleClose}: Props) {
         setNewPassword(event.target.value);
     }
 
+    const handleSubmit = async () => {
+            changePassword({
+                old_password: currentPassword,
+                new_password: newPassword
+            }).then(res => {
+                if (res.status === 204) {
+                    setChangePasswordSuccess(true);
+                } else {
+                    setChangePasswordSuccess(false);
+                }
+            }).catch (_error => {
+                setChangePasswordSuccess(false);
+            })
+    }
+
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>{'Change Password'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                { changePasswordSuccess? (
+                    <Alert variant="success" className="m-4">
+                        {'Password changed!'}
+                    </Alert>
+                ) : changePasswordSuccess === false? (
+                    <Alert variant="danger" className="mb-4">
+                        {'Request failed.'}
+                    </Alert>
+                ) : (<></>)}
                 <Form className="p-3">
                     <Row>
                         <Col>
@@ -55,7 +84,10 @@ export function ChangePasswordModal({show, handleClose}: Props) {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="custom_button">
+                <Button
+                    className="custom_button"
+                    onClick={handleSubmit}
+                >
                     {'Change Password'}
                 </Button>
             </Modal.Footer>
