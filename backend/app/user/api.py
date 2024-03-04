@@ -16,6 +16,7 @@ from user.schemas import (
     UserSchemaOut,
     PatchUserSchema,
     CredentialsSchema,
+    ChangePasswordSchema,
     TokenSchema,
     RefreshSchema,
     ErrorSchema,
@@ -27,6 +28,7 @@ token_router = Router()
 create_user_res = {201: UserSchemaOut, 409: ErrorSchema, 422: ErrorSchema}
 get_user_res = {200: UserSchemaOut}
 update_user_res = {200: UserSchemaOut}
+change_password_res = {204: None, 401: ErrorSchema}
 get_tokens_res = {200: TokenSchema, 401: ErrorSchema}
 refresh_tokens_res = {200: TokenSchema, 401: ErrorSchema}
 
@@ -59,12 +61,21 @@ def update_user(request, payload: PatchUserSchema):
     """Updates user fields. Email cannot be updated."""
     user = request.auth
     for attr, value in payload.dict(exclude_unset=True).items():
-        if attr == 'password':
-            user.set_password(value)
-        else:
-            setattr(user, attr, value)
+        setattr(user, attr, value)
     user.save()
     return UserSchemaOut.from_orm(user)
+
+
+@user_router.patch('me/change_password/', response=change_password_res,
+                   url_name='change_password')
+def change_password(request, payload: ChangePasswordSchema):
+    """Changes user password."""
+    user = request.auth
+    if not user.check_password(payload.old_password):
+        return 401, {'message': 'Invalid credentials.'}
+    user.set_password(payload.new_password)
+    user.save()
+    return 204, None
 
 
 @token_router.post('/', response=get_tokens_res,

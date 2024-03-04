@@ -16,6 +16,7 @@ from user.auth_handler import JWT_SECRET, JWT_ALGO
 
 CREATE_USER_URL = reverse('api:create_user')
 ME_URL = reverse('api:user_me')
+CHANGE_PASSWORD_URL = reverse('api:change_password')
 
 
 class PublicUsersAPITests(TestCase):
@@ -103,9 +104,10 @@ class PrivateUsersAPITests(TestCase):
         self.email = 'test@example.com'
         self.first_name = 'John'
         self.last_name = 'Doe'
-        self.user = get_user_model().objects.create(
+        self.password = 'password321'
+        self.user = get_user_model().objects.create_user(
             email=self.email,
-            password='password321',
+            password=self.password,
             first_name=self.first_name,
             last_name=self.last_name
         )
@@ -137,7 +139,7 @@ class PrivateUsersAPITests(TestCase):
         """Test updating user fields."""
         payload = {
             'first_name': 'new_name',
-            'password': 'newPassword321',
+            'last_name': 'new_last_name',
         }
         response = self.client.patch(
             ME_URL,
@@ -152,7 +154,7 @@ class PrivateUsersAPITests(TestCase):
         self.user.refresh_from_db()
 
         self.assertEqual(self.user.first_name, payload['first_name'])
-        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(self.user.last_name, payload['last_name'])
 
     def test_update_user_email(self):
         """Test updating user email fails."""
@@ -169,3 +171,55 @@ class PrivateUsersAPITests(TestCase):
         self.user.refresh_from_db()
 
         self.assertEqual(self.user.email, email)
+
+    def test_update_user_password_wrong_endpoint(self):
+        """Test updating user password through update_user fails."""
+        payload = {
+            'password': 'newPass123456789'
+        }
+        self.client.patch(
+            ME_URL,
+            **self.headers,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.user.refresh_from_db()
+
+        self.assertFalse(self.user.check_password(payload['password']))
+
+    def test_update_user_password_wrong_old_password(self):
+        """Test updating user password with wrong old password."""
+        payload = {
+            'old_password': 'anotherPass',
+            'new_password': 'newPass123456789'
+        }
+        response = self.client.patch(
+            CHANGE_PASSWORD_URL,
+            **self.headers,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.user.refresh_from_db()
+
+        # 401 - UNAUTHORIZED
+        self.assertEqual(response.status_code, 401)
+        self.assertFalse(self.user.check_password(payload['new_password']))
+
+    def test_update_user_password_correct(self):
+        """Test updating user password."""
+        payload = {
+            'old_password': self.password,
+            'new_password': 'newPass123456789'
+        }
+        response = self.client.patch(
+            CHANGE_PASSWORD_URL,
+            **self.headers,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.user.refresh_from_db()
+
+        # 200 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, b'')
+        self.assertTrue(self.user.check_password(payload['new_password']))

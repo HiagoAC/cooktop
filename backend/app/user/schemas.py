@@ -25,14 +25,20 @@ class PatchUserSchema(ModelSchema):
     """Input for updating user model."""
     class Meta:
         model = get_user_model()
-        fields = ['password', 'first_name', 'last_name']
-        fields_optional = ['password', 'first_name', 'last_name']
+        fields = ['first_name', 'last_name']
+        fields_optional = ['first_name', 'last_name']
 
 
 class CredentialsSchema(Schema):
     """Input Schema for user credentials."""
     email: str
     password: str
+
+
+class ChangePasswordSchema(Schema):
+    """Input Schema for change_password."""
+    old_password: str
+    new_password: str
 
 
 class TokenSchema(Schema):
