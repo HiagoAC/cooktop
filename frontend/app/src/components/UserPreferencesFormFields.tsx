@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 
 
 interface Props {
-    initCookings?: number,
-    initServings?: number
+    cookings: number;
+    servings: number;
+    setCookings: (value: number) => void;
+    setServings: (value: number) => void;
 }
 
-export function UserPreferencesFormFields({initCookings=4, initServings=2}: Props) {
-    const [cookings, setCookings] = useState<number>(initCookings);
-    const [servings, setServings] = useState<number>(initServings);
+export function UserPreferencesFormFields(
+    {cookings, servings, setCookings, setServings}: Props) {
 
     const handleCookingsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCookings(Number(event.target.value));
