@@ -21,7 +21,7 @@ export async function getPreferences(): Promise<any> {
 
 export async function updatePreferences(
     data: preferencesPartialSchema): Promise<any> {
-    const response = await axios.post(PREFERENCES_URL, data);
+    const response = await axios.patch(PREFERENCES_URL, data);
     console.log(response);
     return response;        
 }
