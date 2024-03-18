@@ -17,19 +17,6 @@ import styles from './styles/App.module.css';
 import './styles/global.css';
 
 
-function RecipeRoutes() {
-  return (
-    <Routes>
-      <Route path='/' element={<Recipes />} />
-      <Route path='/add' element={<RecipeAdd />} />
-      <Route path='/search' element={<RecipeSearch />} />
-      <Route path='/:id' element={<RecipeDetail />} />
-      <Route path='/:id/edit' element={<RecipeEdit />} />
-    </Routes>
-  );
-}
-
-
 function App() {
   return (
     <AuthProvider>
@@ -41,7 +28,11 @@ function App() {
             <Route path='/meal-plan' element={<MealPlan />} />
           </Route> 
           <Route path='/recipes/*' element={<PrivateRoute />}>
-            <Route path='/recipes/*' element={<RecipeRoutes />} />
+            <Route path='' element={<Recipes />} />
+            <Route path='add' element={<RecipeAdd />} />
+            <Route path='search' element={<RecipeSearch />} />
+            <Route path=':id' element={<RecipeDetail />} />
+            <Route path=':id/edit' element={<RecipeEdit />} />
           </Route>
           <Route path='/shopping-list' element={<PrivateRoute />}>
             <Route path='/shopping-list' element={<ShoppingList />} />
