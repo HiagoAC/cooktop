@@ -6,13 +6,14 @@ import styles from '../styles/BadgeStackFormGroup.module.css';
 
 
 interface Props {
-    items?: string[],
-    label: string,
+    items: string[];
+    setItems: (items: string[]) => void;
+    label: string;
     placeholder: string
 }
 
 
-export function BadgeStackFormGroup({items, label, placeholder}: Props) {
+export function BadgeStackFormGroup({items, setItems, label, placeholder}: Props) {
     const [formItem, setFormItem] = useState<string>('');
     const [addedItems, setAddedItems] = useState<ReactElement[]>([]);
 
@@ -23,6 +24,7 @@ export function BadgeStackFormGroup({items, label, placeholder}: Props) {
             key={uuidv4()}
         />;
         setAddedItems(prevBadges => [...prevBadges, badge]);
+        setItems([...items, item]);
         setFormItem('');
     };
 
@@ -31,13 +33,14 @@ export function BadgeStackFormGroup({items, label, placeholder}: Props) {
             return prevBadges.filter(
                 badge => (badge.props as BadgeProps).item !== item);
         });
+        const updatedItems = items.filter(i => i !== item);
+        setItems(updatedItems);
     };
 
     useEffect(() => {
-        if (items) {
-            items.forEach(item => {
-                addBadge(item);
-            })}
+        items.forEach(item => {
+            addBadge(item);
+        })
     });
 
     return (

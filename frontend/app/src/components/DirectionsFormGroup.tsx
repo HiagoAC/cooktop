@@ -5,15 +5,16 @@ import styles from '../styles/DirectionsFormGroup.module.css';
 
 
 interface Props {
-    initDirections?: string[]
+    directions: string[];
+    setDirections: (directions: string[]) => void;
 }
 
-export function DirectionsFormGroup({initDirections}: Props) {
+export function DirectionsFormGroup({directions, setDirections}: Props) {
     const [formDirection, setFormDirection] = useState<string>('');
-    const [directions, setDirections] = useState<ReactElement[]>([]);
+    const [directionItems, setDirectionItems] = useState<ReactElement[]>([]);
 
     const addDirection = (direction: string): void => {
-        setDirections(prevDirections => [
+        setDirectionItems(prevDirections => [
             ...prevDirections,
             <ListGroup.Item key={uuidv4()}>
                 <div>Step {prevDirections.length + 1}</div>
@@ -21,10 +22,11 @@ export function DirectionsFormGroup({initDirections}: Props) {
             </ListGroup.Item>
         ]);
         setFormDirection('');
+        setDirections([...directions, direction]);
     };
     useEffect(() => {
-        if (initDirections) {
-            initDirections.forEach((direction) => {
+        if (directions) {
+            directions.forEach((direction) => {
                 addDirection(direction);
             });
         }
@@ -35,7 +37,7 @@ export function DirectionsFormGroup({initDirections}: Props) {
             <Form.Label>Directions</Form.Label>
             <Card className={`mb-2 ${styles.directions_card}`}>
             <ListGroup variant="flush">
-                {directions}
+                {directionItems}
             </ListGroup>
             </Card>
             <InputGroup>

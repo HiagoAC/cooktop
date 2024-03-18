@@ -2,30 +2,32 @@ import { v4 as uuidv4 } from 'uuid';
 import { ReactElement, useEffect, useState } from 'react';
 import { Card, Form, ListGroup } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
-import { Ingredient } from '../data/recipe_detail';
+import { Ingredient } from '../types/interfaces';
 import styles from '../styles/IngredientsFormGroup.module.css';
 
 
 interface Props {
-    initIngredients?: Ingredient[]
+    ingredients: Ingredient[];
+    setIngredients: (ingredients: Ingredient[]) => void;
 }
 
-export function IngredientsFormGroup({initIngredients}: Props) {
-    const [ingredients, setIngredients] = useState<ReactElement[]>([]);
+export function IngredientsFormGroup({ingredients, setIngredients}: Props) {
+    const [ingredientListItems, setIngredientListItems] = useState<ReactElement[]>([]);
 
-    const addIngredient = (name: string, quantity: number, unit: string): void => {
-        setIngredients(prevDirections => [
+    const addIngredient = (ingredient: Ingredient): void => {
+        setIngredientListItems(prevDirections => [
             ...prevDirections,
             <ListGroup.Item key={uuidv4()}>
-                <div>{name} - {quantity} {unit}</div>
+                <div>{ingredient.name} - {ingredient.quantity} {ingredient.unit}</div>
             </ListGroup.Item>
         ]);
+        setIngredients([...ingredients, ingredient]);
     };
 
     useEffect(() => {
-        if (initIngredients) {
-            initIngredients.forEach((ingredient) => {
-                addIngredient(ingredient.name, Number(ingredient.quantity), ingredient.unit);
+        if (ingredients) {
+            ingredients.forEach((ingredient) => {
+                addIngredient(ingredient);
             });
         }
     });
@@ -35,7 +37,7 @@ export function IngredientsFormGroup({initIngredients}: Props) {
             <Form.Label>Ingredients</Form.Label>
             <Card className={`mb-2 ${styles.ingredients_card}`}>
                 <ListGroup variant="flush">
-                    {ingredients}
+                    {ingredientListItems}
                 </ListGroup>
             </Card>
             <IngredientInputFields withAddButton={true} handleAdd={addIngredient}/>

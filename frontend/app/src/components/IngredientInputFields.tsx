@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Ingredient } from '../data/recipe_detail';
+import { Ingredient } from '../types/interfaces';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
 interface Props {
     ingredient?: Ingredient | null;
     withAddButton?: boolean;
-    handleAdd?: (name: string, quantity: number, unit: string) => void;
+    handleAdd?: (ingredient: Ingredient) => void;
 }
 
 
@@ -69,7 +69,11 @@ export function IngredientInputFields(
                 <Col md={1}>
                     <Button
                         variant="outline-secondary"
-                        onClick={() => handleAdd(formName, formQuantity, formUnit)} 
+                        onClick={() => handleAdd({
+                            name: formName,
+                            quantity: formQuantity,
+                            unit: formUnit
+                        })}
                     >
                     + 
                     </Button>
