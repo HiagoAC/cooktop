@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { UserPreferencesFormFields } from './UserPreferencesFormFields';
-import { User, UserPreferences } from '../data/user';
+import { User } from '../data/user';
 
 
 interface Props {
