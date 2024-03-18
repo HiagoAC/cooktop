@@ -2,16 +2,31 @@ import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { DirectionsFormGroup } from './DirectionsFormGroup';
 import { IngredientsFormGroup } from './IngredientsFormGroup';
 import { BadgeStackFormGroup } from './BadgeStackFormGroup';
-import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
+import { RecipeIn } from '../api/apiSchemas/recipesSchemas';
+import { recipeTypes } from '../types/constants'; 
+import { Ingredient } from '../types/interfaces';
+
+
+type RecipeFieldValueMap = {
+    [K in keyof RecipeIn]: RecipeIn[K];
+};
 
 
 interface Props {
-    recipe?: Recipe,
+    recipe: RecipeIn;
+    setRecipe: (recipe: RecipeIn) => void;
     withUrlField?: boolean
-} 
+};
 
 
-export function RecipeForm({recipe, withUrlField = true}: Props) {
+export function RecipeForm({recipe, setRecipe, withUrlField = true}: Props) {
+
+    const handleRecipeChange = <K extends keyof RecipeIn>(
+            field: K,
+            value: RecipeFieldValueMap[K]
+        ) => {
+        setRecipe({ ...recipe, [field]: value });
+    };
 
     return (
         <Form className="p-3">
@@ -34,7 +49,11 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                         <Form.Control
                             type="text"
                             placeholder="Title"
-                            defaultValue={recipe ? recipe.title : ''}
+                            value={recipe.title}
+                            onChange={
+                                (e) => (
+                                    handleRecipeChange('title', e.target.value)
+                                )}
                         />
                     </Form.Group>
                 </Col>
@@ -44,7 +63,11 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                         <InputGroup>
                             <Form.Control
                                 type="number"
-                                defaultValue={recipe ? recipe.time_minutes : '30'}
+                                value={recipe.time_minutes? recipe.time_minutes : 30}
+                                onChange={
+                                    (e) => (
+                                        handleRecipeChange('time_minutes', Number(e.target.value))
+                                    )}
                             />
                             <InputGroup.Text>minutes</InputGroup.Text>
                         </InputGroup>
@@ -55,15 +78,16 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                         <Form.Label>Type</Form.Label>
                         <Form.Select
                             aria-label="Recipe Type"
-                            defaultValue={recipe ? recipe.recipe_type : "default"}
+                            value={recipe.recipe_type}
+                            onChange={(e) => handleRecipeChange(
+                                'recipe_type', e.target.value)}
                         >
-                            <option key="default" disabled>Recipe Type</option>
-                            {['mai', 'sid', 'sal', 'des', 'sna'].map((recipe_type) => (
+                            {Object.keys(recipeTypes).map((recipe_type) => (
                                 <option
                                     key={recipe_type}
                                     value={recipe_type}
                                 >
-                                    {recipeTypeLabels[recipe_type]}
+                                    {recipeTypes[recipe_type]}
                                 </option>
                             ))}
                         </Form.Select>
@@ -78,13 +102,18 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                             as="textarea"
                             rows={2}
                             placeholder="Description"
-                            defaultValue={recipe ? recipe.description : ''}
+                            value={recipe.description? recipe.description : ''}
+                            onChange={
+                                (e) => (
+                                    handleRecipeChange('description', e.target.value)
+                                )}
                         />
                     </Form.Group>
                 </Col>
                 <Col md={5}>
                     <BadgeStackFormGroup
-                        items={recipe? recipe.tags : []}
+                        items={recipe.tags}
+                        setItems={(tags: string[]) => handleRecipeChange('tags', tags)}
                         label="Tags"
                         placeholder="Type a new tag and press add."
                     />
@@ -92,7 +121,13 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
             </Row>
             <Row md={2} xs={1}>
                 <Col md={7}>
-                    <IngredientsFormGroup initIngredients={recipe? recipe.ingredients : []}/>
+                    <IngredientsFormGroup
+                        ingredients={recipe.ingredients}
+                        setIngredients={
+                            (ingredients: Ingredient[]) => handleRecipeChange(
+                                'ingredients', ingredients)
+                        }
+                    />
                 </Col>
                 <Col md={5}>
                     <Form.Group className="mb-3" controlId="uploadImage">
@@ -103,7 +138,13 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
             </Row>
             <Row md={2} xs={1}>
                 <Col md={7}>
-                    <DirectionsFormGroup initDirections={recipe? recipe.directions : []} />
+                    <DirectionsFormGroup
+                        directions={recipe.directions}
+                        setDirections={
+                            (directions: string[]) => handleRecipeChange(
+                                'directions', directions)
+                        }
+                    />
                 </Col>
                 <Col md={5}>
                     <Form.Group className="mb-3" controlId="notes">
@@ -112,7 +153,11 @@ export function RecipeForm({recipe, withUrlField = true}: Props) {
                             as="textarea"
                             rows={2}
                             placeholder="Notes"
-                            defaultValue={recipe ? recipe.notes : ''}
+                            value={recipe.notes ? recipe.notes : ''}
+                            onChange={
+                                (e) => (
+                                    handleRecipeChange('notes', e.target.value)
+                                )}
                         />
                     </Form.Group>
                 </Col>
