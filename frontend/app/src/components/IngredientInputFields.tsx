@@ -20,7 +20,7 @@ export function IngredientInputFields(
         if (ingredient) {
             setFormName(ingredient.name);
             setFormQuantity(Number(ingredient.quantity));
-            setFormUnit(ingredient.unit);
+            setFormUnit(ingredient.display_unit);
         }
     }, [ingredient]);
 
@@ -72,7 +72,7 @@ export function IngredientInputFields(
                         onClick={() => handleAdd({
                             name: formName,
                             quantity: formQuantity,
-                            unit: formUnit
+                            display_unit: formUnit
                         })}
                     >
                     + 

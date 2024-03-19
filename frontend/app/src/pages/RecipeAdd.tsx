@@ -34,25 +34,21 @@ export function RecipeAdd() {
         });
     }
     return (
-        <>
-            <h1>HAAA</h1>
-            <Container className="pb-4">
-                <RequestAlert
-                    successCondition={createRecipeSuccess}
-                />
-                <h1>HEEEE</h1>
-                <FormCard
-                    title="Add a New Recipe"
-                    formComponent={
-                        <RecipeForm
-                            recipe={recipe}
-                            setRecipe={setRecipe}    
-                        />
-                    }
-                    buttonText="Add Recipe"
-                    handleClick={handleAddRecipe}
-                />
-            </Container>
-        </>
+        <Container className="pb-4">
+            <RequestAlert
+                successCondition={createRecipeSuccess}
+            />
+            <FormCard
+                title="Add a New Recipe"
+                formComponent={
+                    <RecipeForm
+                        recipe={recipe}
+                        setRecipe={setRecipe}    
+                    />
+                }
+                buttonText="Add Recipe"
+                handleClick={handleAddRecipe}
+            />
+        </Container>
     )
 }

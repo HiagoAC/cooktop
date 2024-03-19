@@ -18,7 +18,7 @@ export function IngredientsFormGroup({ingredients, setIngredients}: Props) {
         setIngredientListItems(prevDirections => [
             ...prevDirections,
             <ListGroup.Item key={uuidv4()}>
-                <div>{ingredient.name} - {ingredient.quantity} {ingredient.unit}</div>
+                <div>{ingredient.name} - {ingredient.quantity} {ingredient.display_unit}</div>
             </ListGroup.Item>
         ]);
         setIngredients([...ingredients, ingredient]);
