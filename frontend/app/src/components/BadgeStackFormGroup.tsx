@@ -41,7 +41,7 @@ export function BadgeStackFormGroup({items, setItems, label, placeholder}: Props
         items.forEach(item => {
             addBadge(item);
         })
-    });
+    }, []);
 
     return (
         <Form.Group className="mb-3" controlId="tags">

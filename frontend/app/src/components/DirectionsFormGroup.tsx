@@ -30,7 +30,7 @@ export function DirectionsFormGroup({directions, setDirections}: Props) {
                 addDirection(direction);
             });
         }
-    });
+    }, []);
 
     return (
         <Form.Group className="mb-3" controlId="directions">

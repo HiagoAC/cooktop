@@ -30,7 +30,7 @@ export function IngredientsFormGroup({ingredients, setIngredients}: Props) {
                 addIngredient(ingredient);
             });
         }
-    });
+    }, []);
 
     return (
         <Form.Group className="mb-3" controlId="ingredients">
