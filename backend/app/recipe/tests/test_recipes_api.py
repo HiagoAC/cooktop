@@ -78,8 +78,10 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = [
-            {'id': recipe_1.id, 'title': recipe_1.title},
-            {'id': recipe_2.id, 'title': recipe_2.title}
+            {'id': recipe_1.id, 'title': recipe_1.title, 'tags': [],
+             'image': None},
+            {'id': recipe_2.id, 'title': recipe_2.title, 'tags': [],
+             'image': None}
         ]
         self.assertEqual(content, expected)
 
@@ -101,7 +103,8 @@ class PrivateRecipesAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
 
-        expected = [{'id': recipe_1.id, 'title': recipe_1.title}]
+        expected = [{'id': recipe_1.id, 'title': recipe_1.title, 'tags': [],
+                     'image': None}]
 
         self.assertEqual(content, expected)
 
@@ -122,8 +125,10 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = [
-            {'id': recipe_1.id, 'title': recipe_1.title},
-            {'id': recipe_2.id, 'title': recipe_2.title}
+            {'id': recipe_1.id, 'title': recipe_1.title,
+             'tags': [tag_1.name, tag_2.name], 'image': None},
+            {'id': recipe_2.id, 'title': recipe_2.title,
+             'tags': [tag_1.name], 'image': None}
         ]
 
         self.assertEqual(content, expected)
@@ -134,8 +139,9 @@ class PrivateRecipesAPITests(TestCase):
         are ordered by the number of ingredients in query matched by the
         recipes.
         """
-        recipe_1 = create_recipe(user=self.user)
-        recipe_2 = create_recipe(user=self.user)
+        tags = ['tag 1', 'tag 2']
+        recipe_1 = create_recipe(user=self.user, tags=tags)
+        recipe_2 = create_recipe(user=self.user, tags=tags)
         create_recipe(user=self.user)
 
         ing_1 = 'ing 1'
@@ -154,8 +160,10 @@ class PrivateRecipesAPITests(TestCase):
 
         # recipe_2 must come before recipe_1 more ingredients in the query.
         expected = [
-            {'id': recipe_2.id, 'title': recipe_1.title},
-            {'id': recipe_1.id, 'title': recipe_1.title}
+            {'id': recipe_2.id, 'title': recipe_1.title,
+             'tags': tags, 'image': None},
+            {'id': recipe_1.id, 'title': recipe_1.title,
+             'tags': tags, 'image': None}
         ]
 
         self.assertEqual(content, expected)

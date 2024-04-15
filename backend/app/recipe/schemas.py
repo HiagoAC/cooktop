@@ -24,6 +24,15 @@ class RecipeListSchema(Schema):
     """Output schema for recipe list."""
     id: int
     title: str
+    tags: List[str]
+    image: str | None
+
+    @staticmethod
+    def resolve_tags(obj):
+        tag_names = []
+        for tag in obj.tags.all():
+            tag_names.append(tag.name)
+        return tag_names
 
 
 class RecipeIngredientSchema(ModelSchema):
