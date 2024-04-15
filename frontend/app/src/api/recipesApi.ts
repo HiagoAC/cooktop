@@ -15,3 +15,11 @@ export async function createRecipe(data: RecipeIn): Promise<any> {
     console.log(response);
     return response;        
 }
+
+export async function uploadImage(recipeId: string, img: File): Promise<any> {
+    const data = new FormData();
+    data.append('img', img);
+    const response = await axios.post(`${RECIPES_URL}${recipeId}/image`, data);
+    console.log(response);
+    return response;
+}

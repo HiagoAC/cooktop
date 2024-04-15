@@ -4,7 +4,7 @@ import { FormCard } from '../components/FormCard';
 import { RecipeForm } from '../components/RecipeForm';
 import { RequestAlert } from '../components/RequestAlert';
 import { RecipeIn } from '../api/apiSchemas/recipesSchemas';
-import { createRecipe } from '../api/recipesApi';
+import { createRecipe, uploadImage } from '../api/recipesApi';
 import { recipeTypes } from '../types/constants';
 
 
@@ -19,6 +19,7 @@ export function RecipeAdd() {
         notes: null,
         ingredients: []
     });
+    const [image, setImage] = useState<File | null>(null);
     const [
         createRecipeSuccess,
         setCreateRecipeSuccess
@@ -28,6 +29,10 @@ export function RecipeAdd() {
         createRecipe(recipe).then(res => {
             if (res.status === 201) {
                 setCreateRecipeSuccess(true);
+                if (image) {
+                    const recipeId = res.data.id;
+                    uploadImage(recipeId, image);
+                }
             } else {
                 setCreateRecipeSuccess(false);
             }
@@ -43,7 +48,8 @@ export function RecipeAdd() {
                 formComponent={
                     <RecipeForm
                         recipe={recipe}
-                        setRecipe={setRecipe}    
+                        setRecipe={setRecipe}
+                        setImage={setImage}
                     />
                 }
                 buttonText="Add Recipe"

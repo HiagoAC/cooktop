@@ -15,11 +15,12 @@ type RecipeFieldValueMap = {
 interface Props {
     recipe: RecipeIn;
     setRecipe: (recipe: RecipeIn) => void;
+    setImage: (image: File | null) => void;
     withUrlField?: boolean
 };
 
 
-export function RecipeForm({recipe, setRecipe, withUrlField = true}: Props) {
+export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: Props) {
 
     const handleRecipeChange = <K extends keyof RecipeIn>(
             field: K,
@@ -132,7 +133,15 @@ export function RecipeForm({recipe, setRecipe, withUrlField = true}: Props) {
                 <Col md={5}>
                     <Form.Group className="mb-3" controlId="uploadImage">
                         <Form.Label>Upload image</Form.Label>
-                        <Form.Control type="file" />
+                        <Form.Control
+                            type="file"
+                            onChange={
+                                (e) => {
+                                    const file = (e.target as HTMLInputElement).files?.[0];
+                                    setImage(file ? file : null);
+                                }
+                            }
+                        />
                     </Form.Group>
                 </Col>
             </Row>
