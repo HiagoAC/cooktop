@@ -24,6 +24,7 @@ class RecipeListSchema(Schema):
     """Output schema for recipe list."""
     id: int
     title: str
+    time_minutes: int | None
     tags: List[str]
     image: str | None
 

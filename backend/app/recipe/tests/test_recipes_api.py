@@ -34,6 +34,20 @@ def recipe_image_url(recipe_id):
     return reverse('api:recipe_image', args=[recipe_id])
 
 
+def expected_recipe_list_data(recipes):
+    """Return the expected data for a recipe list."""
+    expected = []
+    for recipe in recipes:
+        expected.append({
+            'id': recipe.id,
+            'title': recipe.title,
+            'time_minutes': recipe.time_minutes,
+            'tags': [tag.name for tag in recipe.tags.all()],
+            'image': recipe.image.url if recipe.image else None
+        })
+    return expected
+
+
 class PublicRecipesAPITests(TestCase):
     """Test unauthenticated requests to the recipes API."""
 
@@ -77,12 +91,7 @@ class PrivateRecipesAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
 
-        expected = [
-            {'id': recipe_1.id, 'title': recipe_1.title, 'tags': [],
-             'image': None},
-            {'id': recipe_2.id, 'title': recipe_2.title, 'tags': [],
-             'image': None}
-        ]
+        expected = expected_recipe_list_data([recipe_1, recipe_2])
         self.assertEqual(content, expected)
 
     def test_retrieve_recipe_list_another_user(self):
@@ -103,8 +112,7 @@ class PrivateRecipesAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
 
-        expected = [{'id': recipe_1.id, 'title': recipe_1.title, 'tags': [],
-                     'image': None}]
+        expected = expected_recipe_list_data([recipe_1])
 
         self.assertEqual(content, expected)
 
@@ -124,12 +132,7 @@ class PrivateRecipesAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
 
-        expected = [
-            {'id': recipe_1.id, 'title': recipe_1.title,
-             'tags': [tag_1.name, tag_2.name], 'image': None},
-            {'id': recipe_2.id, 'title': recipe_2.title,
-             'tags': [tag_1.name], 'image': None}
-        ]
+        expected = expected_recipe_list_data([recipe_1, recipe_2])
 
         self.assertEqual(content, expected)
 
@@ -159,12 +162,7 @@ class PrivateRecipesAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # recipe_2 must come before recipe_1 more ingredients in the query.
-        expected = [
-            {'id': recipe_2.id, 'title': recipe_1.title,
-             'tags': tags, 'image': None},
-            {'id': recipe_1.id, 'title': recipe_1.title,
-             'tags': tags, 'image': None}
-        ]
+        expected = expected_recipe_list_data([recipe_2, recipe_1])
 
         self.assertEqual(content, expected)
 
