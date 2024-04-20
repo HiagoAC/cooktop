@@ -26,7 +26,6 @@ class RecipeListSchema(Schema):
     title: str
     time_minutes: int | None
     tags: List[str]
-    image: str | None
 
     @staticmethod
     def resolve_tags(obj):

@@ -42,8 +42,7 @@ def expected_recipe_list_data(recipes):
             'id': recipe.id,
             'title': recipe.title,
             'time_minutes': recipe.time_minutes,
-            'tags': [tag.name for tag in recipe.tags.all()],
-            'image': recipe.image.url if recipe.image else None
+            'tags': [tag.name for tag in recipe.tags.all()]
         })
     return expected
 

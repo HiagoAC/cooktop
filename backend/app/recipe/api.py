@@ -20,6 +20,7 @@ from recipe.schemas import (
     TagListSchema
 )
 from recipe.utils import get_recipes_by_ings
+from django.http import HttpResponse
 
 tag_router = Router()
 recipe_router = Router()
@@ -126,6 +127,19 @@ def delete_recipe(request, recipe_id: int):
     recipe = get_instance_detail(recipe_id, Recipe, request.auth)
     recipe.delete()
     return 204, None
+
+
+@recipe_router.get('/{recipe_id}/image', url_name='download_recipe_image')
+def download_recipe_image(request, recipe_id: int):
+    """Download the image of a recipe."""
+    recipe = get_instance_detail(recipe_id, Recipe, request.auth)
+    if recipe.image:
+        image_data = open(recipe.image.path, 'rb').read()
+        response = HttpResponse(image_data, content_type='image/jpeg')
+        response['Content-Disposition'] = 'filename="recipe_image.jpg"'
+        return response
+    else:
+        return HttpResponse('Image not found', status=404)
 
 
 @recipe_router.post('/{recipe_id}/image', url_name='recipe_image')
