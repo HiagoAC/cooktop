@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { Recipe, recipeTypeLabels } from '../data/recipe_detail';
+import { Recipe } from '../types/interfaces';
+import { recipeTypes } from '../types/constants';
 import switchIcon from '../assets/switch_icon.svg';
 
 
@@ -59,7 +60,7 @@ export function EditMealModal(
                             />
                         </Button>
                         <b className="me-2">
-                            {`${recipeTypeLabels[recipeType]}:`}
+                            {`${recipeTypes[recipeType]}:`}
                         </b>
                         { editModes[recipeType]? (
                             <Form.Control 
