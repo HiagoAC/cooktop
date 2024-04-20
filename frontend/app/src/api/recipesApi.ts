@@ -10,10 +10,23 @@ import { BASE_URL } from './apiConfig';
 const RECIPES_URL: string = BASE_URL + 'recipes/';
 
 
+export async function getRecipes(): Promise<any> {
+    const response = await axios.get(RECIPES_URL);
+    console.log(response);
+    return response;
+}
+
 export async function createRecipe(data: RecipeIn): Promise<any> {
     const response = await axios.post(RECIPES_URL, data);
     console.log(response);
-    return response;        
+    return response;
+}
+
+export async function downloadImage(recipeId: string): Promise<any> {
+    const response = await axios.get(
+        `${RECIPES_URL}${recipeId}/image`, { responseType: 'blob' });
+    console.log(response);
+    return response;
 }
 
 export async function uploadImage(recipeId: string, img: File): Promise<any> {

@@ -3,6 +3,8 @@ import { Card } from 'react-bootstrap';
 import { BadgeStack } from './BadgeStack';
 import styles from '../styles/RecipeInList.module.css';
 import clockIcon from '../assets/clock_icon.svg';
+import { useEffect, useState } from 'react';
+import { downloadImage } from '../api/recipesApi';
 
 
 interface Props {
@@ -10,16 +12,31 @@ interface Props {
     title: string,
     time_minutes: number,
     tags: string[],
-    image: string
 }
 
 
-export function RecipeInList({ id, title, time_minutes, tags, image }:
+export function RecipeInList({ id, title, time_minutes, tags }:
     Props) {
+        const [imageSrc, setImageSrc] = useState<string>('');
+
+        useEffect(() => {
+            const fetchImage = async () => {
+                downloadImage(String(id)).then(res => {
+                    if (res.status === 200) {
+                            const url: string = URL.createObjectURL(res.data);
+                            setImageSrc(url);
+                    } else {
+                        console.log('Failed to fetch image');
+                    }
+                });
+            };
+            fetchImage();
+        }, [id]);
+
         return <Card className={`${styles.recipe_card_container}`}>
             <Card.Img
                 variant="top"
-                src={image}
+                src={imageSrc}
                 height="150px"
                 className={`${styles.card_img}`}
             />

@@ -16,3 +16,10 @@ export interface RecipeIn {
     notes: string | null;
     ingredients: Ingredient[];
 }
+
+export interface RecipeListInfo {
+    id: number;
+    title: string;
+    time_minutes: number;
+    tags: string[];
+}
