@@ -8,3 +8,15 @@ export interface Ingredient {
     quantity: number;
     display_unit: string;
 }
+
+export interface Recipe {
+    id: number;
+    title: string;
+    time_minutes: number;
+    tags: string[];
+    directions: string[];
+    description: string;
+    recipe_type: string;
+    notes: string;
+    ingredients: Ingredient[];
+}

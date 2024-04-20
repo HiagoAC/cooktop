@@ -36,3 +36,9 @@ export async function uploadImage(recipeId: string, img: File): Promise<any> {
     console.log(response);
     return response;
 }
+
+export async function getRecipeDetail(recipeId: string): Promise<any> {
+    const response = await axios.get(`${RECIPES_URL}${recipeId}`);
+    console.log(response);
+    return response;
+}
