@@ -452,6 +452,27 @@ class RecipeImageTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(path.exists(self.recipe.image.path))
 
+    def test_overwriting_image(self):
+        """Test overwriting an image with update_image is successful."""
+        # Save first image
+        image_1 = create_sample_image()
+        self.recipe.image.save('image_1', image_1)
+        self.recipe.save()
+        old_image_path = self.recipe.image.path
+
+        # Overwrite image
+        image_2 = create_sample_image()
+        response = self.client.post(
+            recipe_image_url(self.recipe.id),
+            data={'img': image_2},
+            **self.headers
+        )
+        self.recipe.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(path.exists(self.recipe.image.path))
+        self.assertNotEqual(self.recipe.image.path, old_image_path)
+
     def test_delete_image(self):
         """Test deleting a recipe image."""
         image = create_sample_image()

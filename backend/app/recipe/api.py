@@ -2,6 +2,7 @@
 API views for the recipe app.
 """
 
+from django.core.files.base import ContentFile
 from django.db import transaction
 from ninja import File, Query, Router
 from ninja.files import UploadedFile
@@ -147,7 +148,11 @@ def upload_recipe_image(
         request, recipe_id: int, img: UploadedFile = File(...)):
     """Upload an image to a recipe."""
     recipe = get_instance_detail(recipe_id, Recipe, request.auth)
-    recipe.image.save(img.name, img)
+
+    image_data = ContentFile(img.read())
+    recipe.image.save(img.name, image_data)
+    recipe.save()
+
     return {'success': True}
 
 
