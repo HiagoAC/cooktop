@@ -17,6 +17,8 @@ export interface RecipeIn {
     ingredients: Ingredient[];
 }
 
+export type RecipePatch = Partial<RecipeIn>;
+
 export interface RecipeListInfo {
     id: number;
     title: string;
