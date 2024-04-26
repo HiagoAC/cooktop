@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'meal_plan',
     'recipe',
     'user',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
