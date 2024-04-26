@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ReactElement, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Card, Form, InputGroup, ListGroup } from 'react-bootstrap';
 import styles from '../styles/DirectionsFormGroup.module.css';
 
@@ -11,33 +11,25 @@ interface Props {
 
 export function DirectionsFormGroup({directions, setDirections}: Props) {
     const [formDirection, setFormDirection] = useState<string>('');
-    const [directionItems, setDirectionItems] = useState<ReactElement[]>([]);
+    const [localDirections, setLocalDirections] = useState<string[]>(directions);
 
     const addDirection = (direction: string): void => {
-        setDirectionItems(prevDirections => [
-            ...prevDirections,
-            <ListGroup.Item key={uuidv4()}>
-                <div>Step {prevDirections.length + 1}</div>
-                <div>{direction}</div>
-            </ListGroup.Item>
-        ]);
         setFormDirection('');
-        setDirections([...directions, direction]);
+        setLocalDirections([...localDirections, direction]);
+        setDirections(localDirections);
     };
-    useEffect(() => {
-        if (directions) {
-            directions.forEach((direction) => {
-                addDirection(direction);
-            });
-        }
-    }, []);
 
     return (
         <Form.Group className="mb-3" controlId="directions">
             <Form.Label>Directions</Form.Label>
             <Card className={`mb-2 ${styles.directions_card}`}>
             <ListGroup variant="flush">
-                {directionItems}
+                {directions.map((direction, index) => (
+                    <ListGroup.Item key={uuidv4()}>
+                        <div>Step {index + 1}</div>
+                        <div>{direction}</div>
+                    </ListGroup.Item>
+                ))}
             </ListGroup>
             </Card>
             <InputGroup>
