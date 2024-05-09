@@ -32,7 +32,7 @@ export function RecipeEdit() {
         ]).then(() => {
             console.log(image?.name);
             console.log(image?.size);
-            //navigate(`/recipes/${id}`);
+            navigate(`/recipes/${id}`);
         });
     }
 
