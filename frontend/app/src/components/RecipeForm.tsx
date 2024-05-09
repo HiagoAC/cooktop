@@ -5,6 +5,7 @@ import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 import { RecipeIn } from '../api/apiSchemas/recipesSchemas';
 import { recipeTypes } from '../types/constants'; 
 import { Ingredient } from '../types/interfaces';
+import { useEffect } from 'react';
 
 
 type RecipeFieldValueMap = {
@@ -28,6 +29,12 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
         ) => {
         setRecipe({ ...recipe, [field]: value });
     };
+
+    useEffect(() => {
+        if (recipe.time_minutes === null) {
+            setRecipe({ ...recipe, ['time_minutes']: 30 });
+        }
+    }, []);
 
     return (
         <Form className="p-3">
@@ -64,7 +71,7 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
                         <InputGroup>
                             <Form.Control
                                 type="number"
-                                value={recipe.time_minutes? recipe.time_minutes : 30}
+                                value={recipe.time_minutes ? recipe.time_minutes : 30}
                                 onChange={
                                     (e) => (
                                         handleRecipeChange('time_minutes', Number(e.target.value))
@@ -83,6 +90,7 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
                             onChange={(e) => handleRecipeChange(
                                 'recipe_type', e.target.value)}
                         >
+                            <option value="" disabled>Select a type</option>
                             {Object.keys(recipeTypes).map((recipe_type) => (
                                 <option
                                     key={recipe_type}
