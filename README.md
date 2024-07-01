@@ -48,4 +48,4 @@ Once the weekly meal plan is established, Cooktop automatically generates a corr
 
 ## Progress
 
-This application is currently under development. The backend application for this first version is complete. I am now implementing the user interface. The application is expected to be released by the end of April(2024). Once it is launched, I will add the link to it here.
+This application is currently under development. The backend application for this first version is complete. I am now implementing the user interface. Once it is launched, I will add the link to it here.
