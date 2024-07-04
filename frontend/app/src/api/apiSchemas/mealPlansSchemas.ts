@@ -5,6 +5,6 @@
 
 export interface createMealPlanSchema {
     requested_ingredients: string[],
-    cookings: number,
-    servings_per_meal: number
+    cookings?: number,
+    servings_per_meal?: number
 }
