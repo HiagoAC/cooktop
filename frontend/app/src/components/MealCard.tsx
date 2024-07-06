@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { EditMealModal } from './EditMealModal';
-import { Meal } from '../data/meal_plan';
+import { Meal } from '../types/interfaces';
 import { RecipeInList } from './RecipeInList';
 import editIcon from '../assets/edit_icon.svg';
 import styles from '../styles/PantryIngredientCard.module.css';
