@@ -6,14 +6,19 @@ import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 interface Props {
     show: boolean;
     onHide: () => void;
+    refresh: () => void;
 }
 
 
-export function CreateMealPlanModal({ show, onHide }: Props) {
+export function CreateMealPlanModal({ show, onHide, refresh }: Props) {
     const [ingredients, setIngredients] = useState<string[]>([]);
 
     const handleCreateMealPlan = async () => {
-        createMealPlan({requested_ingredients: ingredients});
+        createMealPlan({requested_ingredients: ingredients}).then(res => {
+            if (res.status == 201) {
+                refresh();
+            }
+        });
         onHide();
     };
 
