@@ -4,7 +4,7 @@ Tests for the meal-plans API.
 
 import json
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.test import Client, TestCase
 from django.utils import timezone
 from django.urls import reverse
@@ -23,6 +23,7 @@ from recipe.models import Recipe
 
 
 PLAN_URL = reverse('api:meal_plans')
+CURRENT_PLAN_URL = reverse('api:current_meal_plan')
 
 
 def plan_detail_url(meal_plan_id):
@@ -180,6 +181,36 @@ class PrivateMealPlansAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
         self.assertEqual(content, expected)
+
+    def test_get_current_meal_plan(self):
+        """Test getting current meal plan."""
+        current_meal_plan = create_sample_meal_plan(user=self.user)
+        current_meal_plan.creation_date = \
+            datetime.now().date() - timedelta(days=7)
+        current_meal_plan.save()
+        old_meal_plan = create_sample_meal_plan(user=self.user)
+        old_meal_plan.creation_date = \
+            datetime.now().date() - timedelta(days=8)
+        old_meal_plan.save()
+        response = self.client.get(CURRENT_PLAN_URL, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+        expected = create_meal_plan_expected_response(current_meal_plan)
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(content, expected)
+
+    def test_get_current_meal_plan_fail(self):
+        """
+        Test getting current meal plan when latest plan is more than a week
+        old returns 204.
+        """
+        old_meal_plan = create_sample_meal_plan(user=self.user)
+        old_meal_plan.creation_date = \
+            datetime.now().date() - timedelta(days=8)
+        old_meal_plan.save()
+        response = self.client.get(CURRENT_PLAN_URL, **self.headers)
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
 
     def test_update_meal_plan(self):
         """Test updating recipes in a meal plan."""

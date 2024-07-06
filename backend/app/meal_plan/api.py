@@ -2,6 +2,7 @@
 API views for the meal_plan app.
 """
 
+from datetime import datetime, timedelta
 from django.db import transaction
 from ninja import Router
 from ninja.errors import HttpError
@@ -49,6 +50,22 @@ def create_meal_plan(request, payload: MealPlanIn):
             data['servings_per_meal'] = preferences.servings_per_meal
 
     meal_plan = meal_planner.generate_plan(**data)
+    return meal_plan
+
+
+@meal_plan_router.get('/current', response={
+                      200: MealPlanOut, 204: None},
+                      url_name='current_meal_plan')
+def get_current_meal_plan(request):
+    """Retrieve details of current meal plan which is the latest meal plan
+    that is at most a week old."""
+    user = request.auth
+    one_week_ago = datetime.now().date() - timedelta(days=7)
+    meal_plan = MealPlan.objects.filter(
+        user=user, creation_date__gte=one_week_ago).order_by(
+            '-creation_date').first()
+    if meal_plan is None:
+        return 204, None  # There are no current meal plans
     return meal_plan
 
 
