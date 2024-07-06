@@ -3,7 +3,7 @@ import { createMealPlanSchema } from './apiSchemas/mealPlansSchemas';
 import { BASE_URL } from './apiConfig';
 
 const MEAL_PLANS_URL: string = BASE_URL + 'meal-plans/';
-const CURRENT_PLAN_URL: string = MEAL_PLANS_URL + 'current/';
+const CURRENT_PLAN_URL: string = MEAL_PLANS_URL + 'current';
 
 
 export async function createMealPlan(data: createMealPlanSchema): Promise<any> {
