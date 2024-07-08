@@ -9,6 +9,12 @@ export interface Ingredient {
     display_unit: string;
 }
 
+export type ShoppingListItem {
+    name: string;
+    quantity: number;
+    unit: string;
+}
+
 export interface Recipe {
     id: number;
     title: string;
