@@ -27,10 +27,7 @@ export function ShoppingList() {
                 </Button>
                 <ShoppingItemModal
                     show={modalShow}
-                    title="Add a new item"
-                    buttonText="Save"
                     handleClose={handleModalClose}
-                    handleClick={handleModalClose}
                 />
             </div>
             <div className="d-flex justify-content-center">

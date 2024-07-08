@@ -1,35 +1,52 @@
 import { Button, Form, Modal } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
-import { ShoppingItem } from '../data/shopping_list';
+import { addItemToList } from '../api/shoppingListApi';
+import { ShoppingListItem } from '../types/interfaces';
+import { useState } from 'react';
 
 
 interface Props {
     show: boolean;
-    title: string;
-    buttonText: string;
-    shoppingItem?: ShoppingItem;
     handleClose: () => void;
-    handleClick: () => void;
 }
 
 
 export function ShoppingItemModal(
-    {show, title, buttonText, shoppingItem, handleClose, handleClick}
+    {show, handleClose}
     : Props) {
-  
+    
+    const [shoppingItem, setShoppingItem] = useState<ShoppingListItem | null>(null);
+
+
+    const addItem = () => {
+        if (!shoppingItem) {
+            return;
+        }
+        addItemToList(shoppingItem).then(res => {
+            console.log(res);
+            handleClose();
+        });
+    };
+
     return (
         <Modal show={show} onHide={handleClose} size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{title}</Modal.Title>
+                <Modal.Title>{"Add a new item"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <IngredientInputFields ingredient={shoppingItem? {...shoppingItem} : null}/>
+                    <IngredientInputFields
+                        handleChange={(ingredient) => setShoppingItem({
+                            name: ingredient.name,
+                            quantity: ingredient.quantity,
+                            unit: ingredient.display_unit
+                        })}
+                    />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="custom_button" onClick={handleClick}>
-                    {buttonText}
+                <Button className="custom_button" onClick={addItem}>
+                    {"Save"}
                 </Button>
             </Modal.Footer>
         </Modal>
