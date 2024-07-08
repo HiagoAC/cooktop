@@ -66,7 +66,7 @@ def update_user(request, payload: PatchUserSchema):
     return UserSchemaOut.from_orm(user)
 
 
-@user_router.patch('me/change_password/', response=change_password_res,
+@user_router.patch('me/change-password/', response=change_password_res,
                    url_name='change_password')
 def change_password(request, payload: ChangePasswordSchema):
     """Changes user password."""
