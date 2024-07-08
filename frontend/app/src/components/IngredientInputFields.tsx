@@ -6,11 +6,12 @@ interface Props {
     ingredient?: Ingredient | null;
     withAddButton?: boolean;
     handleAdd?: (ingredient: Ingredient) => void;
+    handleChange?: (ingredient: Ingredient) => void;
 }
 
 
 export function IngredientInputFields(
-    {ingredient, withAddButton=false, handleAdd}
+    {ingredient, withAddButton=false, handleAdd, handleChange}
     : Props) {
     const [formName, setFormName] = useState<string>('');
     const [formQuantity, setFormQuantity] = useState<number>(1);
@@ -23,6 +24,16 @@ export function IngredientInputFields(
             setFormUnit(ingredient.display_unit);
         }
     }, [ingredient]);
+
+    useEffect(() => {
+        if (handleChange) {
+            handleChange({
+                name: formName,
+                quantity: formQuantity,
+                display_unit: formUnit
+            });
+        }
+    }, [formName, formQuantity, formUnit]);
 
     const handleUnitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setFormUnit(event.target.value);
