@@ -4,6 +4,7 @@
 
 
 export interface Ingredient {
+    id: number;
     name: string;
     quantity: number;
     unit: string;
@@ -14,6 +15,7 @@ export type ShoppingListItem = Ingredient;
 export interface PantryIngredient extends Ingredient{
     expiration: string;
 }
+
 
 export interface Recipe {
     id: number;
