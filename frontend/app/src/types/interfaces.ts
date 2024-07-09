@@ -6,13 +6,13 @@
 export interface Ingredient {
     name: string;
     quantity: number;
-    display_unit: string;
+    unit: string;
 }
 
-export type ShoppingListItem {
-    name: string;
-    quantity: number;
-    unit: string;
+export type ShoppingListItem = Ingredient;
+
+export interface PantryIngredient extends Ingredient{
+    expiration: string;
 }
 
 export interface Recipe {
