@@ -1,18 +1,22 @@
 import { useState } from 'react';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import { PantryIngredientModal } from './PantryIngredientModal';
-import { PantryIngredient } from '../data/pantry';
-import { ShoppingItem } from '../data/shopping_list';
+import { PantryIngredient } from '../types/interfaces';
+import { ShoppingListItem } from '../types/interfaces';
 import editIcon from '../assets/edit_icon.svg';
 import trashBinIcon from '../assets/trash_bin_icon.svg';
 import styles from '../styles/PantryIngredientCard.module.css';
+import { ShoppingItemModal } from './ShoppingItemModal';
 
+type CardType = "PANTRY" | "SHOPPING";
 
 interface Props {
-    item: PantryIngredient | ShoppingItem;
+    item: PantryIngredient | ShoppingListItem;
+    cardType: CardType;
+    handleClick: () => void;
 }
 
-export function ItemCard({item}: Props) {
+export function ItemCard({item, cardType, handleClick}: Props) {
     const [modalShow, setModalShow] = useState(false);
 
     const handleModalClose = () => setModalShow(false);
@@ -44,14 +48,25 @@ export function ItemCard({item}: Props) {
                             className={`${styles.icon}`}
                         />
                     </Button>
-                    <PantryIngredientModal
+                    {  cardType === "PANTRY" ?
+                        (<PantryIngredientModal
                             show={modalShow}
                             title="Edit pantry entry"
                             buttonText="Save"
                             handleClose={handleModalClose}
-                            handleClick={handleModalClose}
-                            pantryIngredient={item}
-                    />
+                            handleClick={handleClick}
+                            pantryIngredient={item as PantryIngredient}
+                        />) : cardType === "SHOPPING" ? (
+                            <ShoppingItemModal
+                                show={modalShow}
+                                title="Edit shopping list item"
+                                buttonText="Save"
+                                handleClose={handleModalClose}
+                                handleClick={handleClick}
+                                shoppingListItem={item as ShoppingListItem}
+                            /> 
+                        ) : (null)
+                    }
                     <Button className={`${styles.icon_button}`}>
                         <img
                             src={trashBinIcon}
