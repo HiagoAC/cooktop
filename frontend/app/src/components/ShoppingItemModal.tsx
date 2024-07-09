@@ -1,52 +1,47 @@
 import { Button, Form, Modal } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
-import { addItemToList } from '../api/shoppingListApi';
 import { ShoppingListItem } from '../types/interfaces';
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
 
 interface Props {
     show: boolean;
+    title: string;
+    buttonText: string;
+    shoppingListItem?: ShoppingListItem;
     handleClose: () => void;
+    handleClick: (shoppingListItem: ShoppingListItem) => void;
 }
 
 
 export function ShoppingItemModal(
-    {show, handleClose}
-    : Props) {
-    
+    {show, title, buttonText, shoppingListItem, handleClose, handleClick}: Props) {
+
     const [shoppingItem, setShoppingItem] = useState<ShoppingListItem | null>(null);
 
-
-    const addItem = () => {
-        if (!shoppingItem) {
-            return;
+    useEffect(() => {
+        if (shoppingListItem) {
+            setShoppingItem(shoppingListItem);
         }
-        addItemToList(shoppingItem).then(res => {
-            console.log(res);
-            handleClose();
-        });
-    };
+    }, [shoppingListItem]);
 
     return (
         <Modal show={show} onHide={handleClose} size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{"Add a new item"}</Modal.Title>
+                <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
                     <IngredientInputFields
-                        handleChange={(ingredient) => setShoppingItem({
-                            name: ingredient.name,
-                            quantity: ingredient.quantity,
-                            unit: ingredient.display_unit
-                        })}
+                        handleChange={(ingredient) => setShoppingItem(ingredient)}
                     />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="custom_button" onClick={addItem}>
-                    {"Save"}
+                <Button
+                    className="custom_button"
+                    onClick={shoppingItem? () => handleClick(shoppingItem) : () => {}}
+                >
+                    {buttonText}
                 </Button>
             </Modal.Footer>
         </Modal>

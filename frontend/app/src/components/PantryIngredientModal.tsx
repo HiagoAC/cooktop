@@ -1,6 +1,6 @@
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
-import { PantryIngredient } from '../data/pantry';
+import { PantryIngredient } from '../types/interfaces';
 import styles from '../styles/PantryIngredientModal.module.css';
 
 
@@ -10,7 +10,7 @@ interface Props {
     buttonText: string;
     pantryIngredient?: PantryIngredient;
     handleClose: () => void;
-    handleClick: () => void;
+    handleClick: (pantryIngredient: PantryIngredient) => void;
 }
 
 
@@ -38,7 +38,9 @@ export function PantryIngredientModal(
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="custom_button" onClick={handleClick}>
+                <Button
+                    className="custom_button"
+                    onClick={pantryIngredient? () => handleClick(pantryIngredient) : () => {}}>
                     {buttonText}
                 </Button>
             </Modal.Footer>
