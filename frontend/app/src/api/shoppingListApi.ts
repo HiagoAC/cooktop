@@ -11,3 +11,9 @@ export async function addItemToList(data: ShoppingListItem): Promise<any> {
     console.log(response);
     return response;        
 }
+
+export async function getShoppingList(): Promise<any> {
+    const response = await axios.get(SHOPPING_LIST_URL);
+    console.log(response);
+    return response;
+}
