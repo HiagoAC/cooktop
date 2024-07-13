@@ -13,22 +13,18 @@ interface Props {
     handleClick: (shoppingListItem: ShoppingListItem | Omit<ShoppingListItem, 'id'>) => void;
 }
 
-
 export function ShoppingItemModal(
     {show, title, buttonText, mode, shoppingListItem, handleClose, handleClick}: Props) {
-
     const [shoppingItem, setShoppingItem] = useState<
         ShoppingListItem | Omit<ShoppingListItem, 'id'> | null>(null);
+    
+    
 
-useEffect(() => {
-        console.log('Entering use effect to set shopping item')
-        if (shoppingListItem) {
-            console.log('Setting shopping item')
-            setShoppingItem(shoppingListItem);
-            console.log(shoppingListItem);
-            console.log(shoppingItem);
-        }
-    }, [shoppingListItem]);
+    useEffect(() => {
+            if (shoppingListItem) {
+                setShoppingItem(shoppingListItem);
+            }
+        }, [shoppingListItem]);
 
     return (
         <Modal show={show} onHide={handleClose} size="lg">
