@@ -5,13 +5,14 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 interface Props {
     ingredient?: Ingredient | null;
     withAddButton?: boolean;
-    handleAdd?: (ingredient: Ingredient) => void;
-    handleChange?: (ingredient: Ingredient) => void;
+    mode: 'create' | 'edit';
+    handleAdd?: (ingredient: Ingredient | Omit<Ingredient, 'id'>) => void;
+    handleChange?: (ingredient: Ingredient | Omit<Ingredient, 'id'>) => void;
 }
 
 
 export function IngredientInputFields(
-    {ingredient, withAddButton=false, handleAdd, handleChange}
+    {ingredient, withAddButton=false, mode, handleAdd, handleChange}
     : Props) {
     const [formName, setFormName] = useState<string>('');
     const [formQuantity, setFormQuantity] = useState<number>(1);
@@ -21,17 +22,26 @@ export function IngredientInputFields(
         if (ingredient) {
             setFormName(ingredient.name);
             setFormQuantity(Number(ingredient.quantity));
-            setFormUnit(ingredient.display_unit);
+            setFormUnit(ingredient.unit);
         }
-    }, [ingredient]);
+    }, []);
 
     useEffect(() => {
         if (handleChange) {
-            handleChange({
-                name: formName,
-                quantity: formQuantity,
-                display_unit: formUnit
-            });
+            if (mode === 'edit' && ingredient) {
+                handleChange({
+                    id: ingredient.id,
+                    name: formName,
+                    quantity: formQuantity,
+                    unit: formUnit
+                });
+            } else if (mode === 'create') {
+                handleChange({
+                    name: formName,
+                    quantity: formQuantity,
+                    unit: formUnit
+                });
+            }
         }
     }, [formName, formQuantity, formUnit]);
 
@@ -83,7 +93,7 @@ export function IngredientInputFields(
                         onClick={() => handleAdd({
                             name: formName,
                             quantity: formQuantity,
-                            display_unit: formUnit
+                            unit: formUnit
                         })}
                     >
                     + 
