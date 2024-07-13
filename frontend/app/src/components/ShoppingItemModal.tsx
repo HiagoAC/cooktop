@@ -7,20 +7,26 @@ interface Props {
     show: boolean;
     title: string;
     buttonText: string;
+    mode: 'create' | 'edit';
     shoppingListItem?: ShoppingListItem;
     handleClose: () => void;
-    handleClick: (shoppingListItem: ShoppingListItem) => void;
+    handleClick: (shoppingListItem: ShoppingListItem | Omit<ShoppingListItem, 'id'>) => void;
 }
 
 
 export function ShoppingItemModal(
-    {show, title, buttonText, shoppingListItem, handleClose, handleClick}: Props) {
+    {show, title, buttonText, mode, shoppingListItem, handleClose, handleClick}: Props) {
 
-    const [shoppingItem, setShoppingItem] = useState<ShoppingListItem | null>(null);
+    const [shoppingItem, setShoppingItem] = useState<
+        ShoppingListItem | Omit<ShoppingListItem, 'id'> | null>(null);
 
-    useEffect(() => {
+useEffect(() => {
+        console.log('Entering use effect to set shopping item')
         if (shoppingListItem) {
+            console.log('Setting shopping item')
             setShoppingItem(shoppingListItem);
+            console.log(shoppingListItem);
+            console.log(shoppingItem);
         }
     }, [shoppingListItem]);
 
@@ -32,6 +38,8 @@ export function ShoppingItemModal(
             <Modal.Body>
                 <Form>
                     <IngredientInputFields
+                        ingredient={shoppingItem? shoppingItem as ShoppingListItem : null}
+                        mode={mode}
                         handleChange={(ingredient) => setShoppingItem(ingredient)}
                     />
                 </Form>

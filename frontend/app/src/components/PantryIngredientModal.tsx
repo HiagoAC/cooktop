@@ -8,14 +8,16 @@ interface Props {
     show: boolean;
     title: string;
     buttonText: string;
+    mode: 'create' | 'edit';
     pantryIngredient?: PantryIngredient;
     handleClose: () => void;
-    handleClick: (pantryIngredient: PantryIngredient) => void;
+    handleClick: (pantryIngredient: PantryIngredient | Omit<
+        PantryIngredient, 'id'>) => void;
 }
 
 
 export function PantryIngredientModal(
-    {show, title, buttonText, pantryIngredient, handleClose, handleClick}
+    {show, title, buttonText, mode, pantryIngredient, handleClose, handleClick}
     : Props) {
   
     return (
@@ -25,7 +27,10 @@ export function PantryIngredientModal(
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <IngredientInputFields ingredient={pantryIngredient? {...pantryIngredient} : null}/>
+                    <IngredientInputFields
+                        mode={mode}
+                        ingredient={pantryIngredient? {...pantryIngredient} : null}
+                    />
                     <InputGroup className={`my-3 ${styles.expiration_field}`}>
                         <InputGroup.Text id="expiration-date">
                             expiration date

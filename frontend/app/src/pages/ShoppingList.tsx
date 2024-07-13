@@ -3,8 +3,9 @@ import { Button, Container } from 'react-bootstrap';
 import { ItemCard } from '../components/ItemCard';
 import { ShoppingItemModal } from '../components/ShoppingItemModal';
 import styles from '../styles/ShoppingList.module.css';
-import { addItemToList, getShoppingList } from '../api/shoppingListApi';
+import { addItemToList, getShoppingList, updateShoppingItem } from '../api/shoppingListApi';
 import { ShoppingListItem } from '../types/interfaces';
+import { createShoppingItemSchema, updateShoppingItemSchema } from '../api/apiSchemas/shoppingListSchemas';
 
 
 export function ShoppingList() {
@@ -23,12 +24,25 @@ export function ShoppingList() {
         });
     };
 
-    const addItem = (shoppingItem: ShoppingListItem) => {
+    const addItem = (shoppingItem: createShoppingItemSchema) => {
         if (!shoppingItem) {
             return;
         }
         addItemToList(shoppingItem).then(res => {
             console.log(res);
+            loadShoppingList();
+            handleModalClose();
+        });
+    };
+
+    const updateItem = (shoppingItem: updateShoppingItemSchema | Omit<updateShoppingItemSchema, 'id'>) => {
+        if (!shoppingItem || !('id' in shoppingItem)) {
+            return;
+        }
+        console.log(shoppingItem);
+        updateShoppingItem(shoppingItem).then(res => {
+            console.log(res);
+            loadShoppingList();
             handleModalClose();
         });
     };
@@ -53,6 +67,7 @@ export function ShoppingList() {
                 <ShoppingItemModal
                     show={modalShow}
                     title={"Add a new item"}
+                    mode="create"
                     buttonText={"Save"}
                     handleClick={addItem}
                     handleClose={handleModalClose}
@@ -61,7 +76,12 @@ export function ShoppingList() {
             <div className="d-flex justify-content-center">
                 <div className={`${styles.ingredient_list_container}`}>
                     {shoppingList.map((item: ShoppingListItem) => (
-                        <ItemCard key={item.name} item={item} cardType={"SHOPPING"}/>
+                        <ItemCard
+                            key={item.name}
+                            item={item}
+                            cardType={"SHOPPING"}
+                            handleEdit={updateItem}
+                        />
                     ))}
                 </div>
             </div>

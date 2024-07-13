@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import { PantryIngredient, pantryIngredients} from '../data/pantry';
+import { pantryIngredients} from '../data/pantry';
+import { PantryIngredient } from '../types/interfaces';
 import { ItemCard } from '../components/ItemCard';
 import { PantryIngredientModal } from '../components/PantryIngredientModal';
 import styles from '../styles/Pantry.module.css';
@@ -33,7 +34,7 @@ export function Pantry() {
             <div className="d-flex justify-content-center">
                 <div className={`${styles.ingredient_list_container}`}>
                     {pantryIngredients.map((ingredient: PantryIngredient) => (
-                        <ItemCard key={ingredient.id} item={ingredient} />
+                        <ItemCard key={ingredient.name} item={ingredient} cardType={"PANTRY"}/>
                     ))}
                 </div>
             </div>
