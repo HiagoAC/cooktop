@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Container } from 'react-bootstrap';
+import { Button, Container, Modal } from 'react-bootstrap';
 import { ItemCard } from '../components/ItemCard';
 import { ShoppingItemModal } from '../components/ShoppingItemModal';
 import styles from '../styles/ShoppingList.module.css';
@@ -14,11 +14,12 @@ import { createShoppingItemSchema, updateShoppingItemSchema } from '../api/apiSc
 
 
 export function ShoppingList() {
-    const [modalShow, setModalShow] = useState(false);
+    const [addModalShow, setAddModalShow] = useState(false);
+    const [clearModalShow, setClearModalShow] = useState(false);
     const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
 
-    const handleModalClose = () => setModalShow(false);
-    const handleModalShow = () => setModalShow(true);
+    const handleModalClose = () => setAddModalShow(false);
+    const handleModalShow = () => setAddModalShow(true);
 
     const loadShoppingList = () => {
         getShoppingList().then(res => {
@@ -58,6 +59,15 @@ export function ShoppingList() {
         });
     };
 
+    const clearList = async () => {
+        await Promise.all(
+            shoppingList.map(item =>
+                deleteShoppingItem(item.id).then(
+                    res => console.log(res))));
+        loadShoppingList();
+        setClearModalShow(false);
+    }
+
     useEffect (() => {
         loadShoppingList();
     }, []);
@@ -72,11 +82,36 @@ export function ShoppingList() {
                 >
                     Add New Item
                 </Button>
-                <Button className={`${styles.custom_button}`}>
+                <Button
+                    className={`${styles.custom_button}`}
+                    onClick={() => setClearModalShow(true)}
+                >
                     Clear List
                 </Button>
+                <Modal
+                    show={clearModalShow}
+                    onHide={() => setClearModalShow(false)}
+                >
+                    <Modal.Header>
+                        <Modal.Title>Clear List</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>{'Are you sure you want to clear your shopping list?'}</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="danger"
+                            onClick={() => {setClearModalShow(false)}}
+                        >
+                            Close
+                        </Button>
+                        <Button variant="success" onClick={clearList}>
+                            Clear List
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
                 <ShoppingItemModal
-                    show={modalShow}
+                    show={addModalShow}
                     title={"Add a new item"}
                     mode="create"
                     buttonText={"Save"}
