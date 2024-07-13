@@ -9,14 +9,15 @@ import styles from '../styles/PantryIngredientCard.module.css';
 import { ShoppingItemModal } from './ShoppingItemModal';
 
 type CardType = "PANTRY" | "SHOPPING";
+type CardItem = PantryIngredient | ShoppingListItem;
 
 interface Props {
-    item: PantryIngredient | ShoppingListItem;
+    item: CardItem;
     cardType: CardType;
-    handleClick: () => void;
+    handleEdit: (cardItem: CardItem | Omit<CardItem, 'id'>) => void;
 }
 
-export function ItemCard({item, cardType, handleClick}: Props) {
+export function ItemCard({item, cardType, handleEdit}: Props) {
     const [modalShow, setModalShow] = useState(false);
 
     const handleModalClose = () => setModalShow(false);
@@ -53,16 +54,18 @@ export function ItemCard({item, cardType, handleClick}: Props) {
                             show={modalShow}
                             title="Edit pantry entry"
                             buttonText="Save"
+                            mode = "edit"
                             handleClose={handleModalClose}
-                            handleClick={handleClick}
+                            handleClick={handleEdit}
                             pantryIngredient={item as PantryIngredient}
                         />) : cardType === "SHOPPING" ? (
                             <ShoppingItemModal
                                 show={modalShow}
                                 title="Edit shopping list item"
                                 buttonText="Save"
+                                mode = "edit"
                                 handleClose={handleModalClose}
-                                handleClick={handleClick}
+                                handleClick={handleEdit}
                                 shoppingListItem={item as ShoppingListItem}
                             /> 
                         ) : (null)
