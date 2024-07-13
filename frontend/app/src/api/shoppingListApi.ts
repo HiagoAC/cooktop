@@ -25,3 +25,9 @@ export async function updateShoppingItem(data: updateShoppingItemSchema): Promis
     console.log(response);
     return response;
 }
+
+export async function deleteShoppingItem(id: number): Promise<any> {
+    const response = await axios.delete(`${SHOPPING_LIST_URL}${id}`);
+    console.log(response);
+    return response;
+}
