@@ -15,9 +15,10 @@ interface Props {
     item: CardItem;
     cardType: CardType;
     handleEdit: (cardItem: CardItem | Omit<CardItem, 'id'>) => void;
+    handleDelete: (id: number) => void;
 }
 
-export function ItemCard({item, cardType, handleEdit}: Props) {
+export function ItemCard({item, cardType, handleEdit, handleDelete}: Props) {
     const [modalShow, setModalShow] = useState(false);
 
     const handleModalClose = () => setModalShow(false);
@@ -70,7 +71,10 @@ export function ItemCard({item, cardType, handleEdit}: Props) {
                             /> 
                         ) : (null)
                     }
-                    <Button className={`${styles.icon_button}`}>
+                    <Button
+                        className={`${styles.icon_button}`}
+                        onClick={() => {handleDelete(item.id)}}
+                    >
                         <img
                             src={trashBinIcon}
                             alt="delete"

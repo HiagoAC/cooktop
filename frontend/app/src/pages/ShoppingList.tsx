@@ -3,7 +3,12 @@ import { Button, Container } from 'react-bootstrap';
 import { ItemCard } from '../components/ItemCard';
 import { ShoppingItemModal } from '../components/ShoppingItemModal';
 import styles from '../styles/ShoppingList.module.css';
-import { addItemToList, getShoppingList, updateShoppingItem } from '../api/shoppingListApi';
+import {
+    addItemToList,
+    getShoppingList,
+    updateShoppingItem,
+    deleteShoppingItem
+} from '../api/shoppingListApi';
 import { ShoppingListItem } from '../types/interfaces';
 import { createShoppingItemSchema, updateShoppingItemSchema } from '../api/apiSchemas/shoppingListSchemas';
 
@@ -39,11 +44,17 @@ export function ShoppingList() {
         if (!shoppingItem || !('id' in shoppingItem)) {
             return;
         }
-        console.log(shoppingItem);
         updateShoppingItem(shoppingItem).then(res => {
             console.log(res);
             loadShoppingList();
             handleModalClose();
+        });
+    };
+
+    const deleteItem = (id: number) => {
+        deleteShoppingItem(id).then(res => {
+            console.log(res);
+            loadShoppingList();
         });
     };
 
@@ -81,6 +92,7 @@ export function ShoppingList() {
                             item={item}
                             cardType={"SHOPPING"}
                             handleEdit={updateItem}
+                            handleDelete={deleteItem}
                         />
                     ))}
                 </div>
