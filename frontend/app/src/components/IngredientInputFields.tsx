@@ -49,7 +49,7 @@ export function IngredientInputFields(
         setFormUnit(event.target.value);
     };
 
-    const measurementUnits = ['unit', 'teaspoon', 'tablespoon', 'cup', 'g', 'ml'];
+    const measurementUnits = ['unit', 'teaspoon', 'tablespoon', 'cup', 'gram', 'ml'];
 
     return (
         <Row md={4} xs={1} className="g-1">
