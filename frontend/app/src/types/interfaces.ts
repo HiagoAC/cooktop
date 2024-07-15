@@ -13,7 +13,7 @@ export interface Ingredient {
 export type ShoppingListItem = Ingredient;
 
 export interface PantryIngredient extends Ingredient{
-    expiration: string;
+    expiration?: string;
 }
 
 
