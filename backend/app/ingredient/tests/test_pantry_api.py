@@ -8,6 +8,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from app.utils_test import auth_header, create_ing_in_pantry, create_user
+from ingredient.measurement_units import DISPLAY_UNITS
 from ingredient.models import Ingredient, IngredientInPantry
 
 
@@ -94,8 +95,8 @@ class PrivatePantryAPITests(TestCase):
         """Test getting pantry ingredient detail."""
         ing = create_ing_in_pantry(
             name='a food',
-            quantity=100,
-            measurement_unit='ml',
+            quantity=10,
+            display_unit='cup',
             expiration=datetime.now().date() + timedelta(days=5),
             user=self.user
         )
@@ -108,8 +109,8 @@ class PrivatePantryAPITests(TestCase):
         expected = {
             'id': ing.id,
             'name': ing.ingredient.name,
-            'quantity': float(ing.quantity),
-            'measurement_unit': ing.measurement_unit,
+            'quantity': float(ing.get_display_quantity()),
+            'unit': ing.display_unit,
             'expiration': ing.expiration.isoformat()
         }
 
@@ -120,7 +121,7 @@ class PrivatePantryAPITests(TestCase):
         payload = {
             'name': 'a food',
             'quantity': 100,
-            'measurement_unit': 'ml',
+            'unit': 'ml',
         }
         response = self.client.post(
             PANTRY_LIST_URL,
@@ -149,7 +150,7 @@ class PrivatePantryAPITests(TestCase):
         payload = {
             'name': ing_name,
             'quantity': 100,
-            'measurement_unit': 'ml',
+            'unit': 'ml',
         }
         response = self.client.post(
             PANTRY_LIST_URL,
@@ -168,10 +169,10 @@ class PrivatePantryAPITests(TestCase):
     def test_update_ing_in_pantry(self):
         """Test updating ingredient in pantry."""
         ing_in_pantry = create_ing_in_pantry(
-            quantity=100, measurement_unit='ml', user=self.user)
+            quantity=10, display_unit='cup', user=self.user)
         payload = {
             'quantity': 200,
-            'measurement_unit': 'g'
+            'unit': 'gram'
         }
         response = self.client.patch(
             pantry_detail_url(ing_in_pantry.id),
@@ -185,7 +186,9 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ing_in_pantry.quantity, payload['quantity'])
         self.assertEqual(
-            ing_in_pantry.measurement_unit, payload['measurement_unit'])
+            ing_in_pantry.display_unit, payload['unit'])
+        self.assertEqual(ing_in_pantry.measurement_unit,
+                         DISPLAY_UNITS[payload['unit']].get_standard_unit())
 
     def test_update_ing_in_pantry_name(self):
         """
@@ -252,7 +255,8 @@ class PrivatePantryAPITests(TestCase):
         ing_in_pantry.refresh_from_db()
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(ing_in_pantry.quantity, original_quantity)
+        self.assertEqual(
+            ing_in_pantry.get_display_quantity(), original_quantity)
 
     def test_delete_another_user_ing_in_pantry(self):
         """

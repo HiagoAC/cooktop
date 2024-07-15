@@ -9,8 +9,7 @@ from app.utils_api import get_instance_detail
 from ingredient.measurement_units import DISPLAY_UNITS
 from ingredient.api_utils import (
     get_ing_pantry_detail,
-    get_or_create_ingredient,
-    response_ing_in_pantry
+    get_or_create_ingredient
     )
 from ingredient.models import IngredientInPantry, ShoppingListItem
 from ingredient.schemas import (
@@ -53,8 +52,9 @@ def add_ing_to_pantry(request, payload: PantryDetailIn):
     ing = get_or_create_ingredient(name, user)
     ing_pantry_data['ingredient'] = ing
     ing_pantry_data['user'] = user
-    ing_pantry = IngredientInPantry.objects.create(**ing_pantry_data)
-    return 201, response_ing_in_pantry(ing_pantry)
+    ing_pantry_data['display_unit'] = ing_pantry_data.pop('unit')
+    ing_pantry = IngredientInPantry.create_with_display_unit(**ing_pantry_data)
+    return 201, ing_pantry
 
 
 @pantry_router.get('/{ing_pantry_id}', response=PantryDetailOut,
@@ -62,7 +62,7 @@ def add_ing_to_pantry(request, payload: PantryDetailIn):
 def pantry_detail(request, ing_pantry_id: int):
     """Retrieve details of an ingriendt in pantry."""
     ing_pantry = get_ing_pantry_detail(ing_pantry_id, user=request.auth)
-    return response_ing_in_pantry(ing_pantry)
+    return ing_pantry
 
 
 @pantry_router.patch('/{ing_pantry_id}', response=PantryDetailOut)
@@ -77,9 +77,18 @@ def pantry_update(request, ing_pantry_id: int, payload: PantryDetailPatch):
             ing_pantry.ingredient = ing
             ing.name = value
             ing.save()
-        setattr(ing_pantry, attr, value)
+        if attr == 'unit':
+            setattr(ing_pantry, 'display_unit', value)
+            setattr(ing_pantry, 'measurement_unit',
+                    DISPLAY_UNITS[value].get_standard_unit())
+        elif attr == 'quantity':
+            setattr(ing_pantry, 'quantity',
+                    DISPLAY_UNITS[payload.dict()['unit']]
+                    .convert_quantity(value))
+        else:
+            setattr(ing_pantry, attr, value)
     ing_pantry.save()
-    return response_ing_in_pantry(ing_pantry)
+    return ing_pantry
 
 
 @pantry_router.delete('/{ing_pantry_id}', response={204: None})

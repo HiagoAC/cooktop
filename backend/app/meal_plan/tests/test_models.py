@@ -69,7 +69,7 @@ class MealModelTests(TestCase):
             )
         original_quantity = 100
         ing_pantry = create_ing_in_pantry(
-            name=ing_name, quantity=100, measurement_unit='g', user=self.user)
+            name=ing_name, quantity=100, display_unit='gram', user=self.user)
 
         for _ in range(2):
             meal.subtract_from_pantry(servings_per_meal=1)
@@ -153,7 +153,7 @@ class MealPlanModelTests(TestCase):
             user=self.user, recipe_type=Recipe.RecipeTypes.SIDE_DISH)
         # Ingredient in pantry. Quantity in pantry enough
         ing_1 = create_ing_in_pantry(
-            name='ing 1', quantity=100, measurement_unit='ml', user=self.user)
+            name='ing 1', quantity=100, display_unit='ml', user=self.user)
         rec1_ing1 = create_recipe_ing(
             recipe=main_dish,
             name=ing_1.ingredient.name,
@@ -198,7 +198,7 @@ class MealPlanModelTests(TestCase):
             user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
         # Ingredient in pantry. Quantity in pantry not enough (2 servings=102)
         ing_pantry = create_ing_in_pantry(
-            name='ing', quantity=50, measurement_unit='ml', user=self.user)
+            name='ing', quantity=50, display_unit='ml', user=self.user)
         ing_pantry_id = ing_pantry.id
         create_recipe_ing(
             recipe=main_dish,

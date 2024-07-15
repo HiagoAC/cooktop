@@ -27,14 +27,3 @@ def get_or_create_ingredient(ing_name, user):
         ing.added_by = user
         ing.save()
     return ing
-
-
-def response_ing_in_pantry(ing_pantry):
-    """Response of an ingredient in pantry."""
-    return {
-        'id': ing_pantry.id,
-        'name': ing_pantry.ingredient.name,
-        'quantity': ing_pantry.quantity,
-        'measurement_unit': ing_pantry.measurement_unit,
-        'expiration': ing_pantry.expiration
-    }

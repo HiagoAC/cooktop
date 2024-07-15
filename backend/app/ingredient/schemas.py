@@ -16,7 +16,7 @@ class PantryDetailIn(Schema):
     """Input schema for pantry_detail."""
     name: str
     quantity: NonNegativeFloat
-    measurement_unit: str
+    unit: str
     expiration: date | None = None
 
 
@@ -24,13 +24,25 @@ class PantryDetailPatch(Schema):
     """Input schema for pantry_detail patch."""
     name: str | None = None
     quantity: NonNegativeFloat | None = None
-    measurement_unit: str | None = None
+    unit: str | None = None
     expiration: date | None = None
 
 
 class PantryDetailOut(PantryDetailIn):
     """Output schema for pantry_detail."""
     id: int
+
+    @staticmethod
+    def resolve_name(obj):
+        return obj.ingredient.name
+
+    @staticmethod
+    def resolve_quantity(obj):
+        return obj.get_display_quantity()
+
+    @staticmethod
+    def resolve_unit(obj):
+        return obj.display_unit
 
 
 class ShoppingListItemIn(Schema):

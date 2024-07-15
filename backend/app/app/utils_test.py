@@ -51,14 +51,14 @@ def create_sample_image():
 
 
 def create_ing_in_pantry(user, name='food name', quantity=100,
-                         measurement_unit='ml', expiration=None):
+                         display_unit='cup', expiration=None):
     """Returns an instance of IngredientInPantry."""
     ingredient, _ = Ingredient.objects.get_or_create(name=name)
-    ing_in_pantry = IngredientInPantry.objects.create(
+    ing_in_pantry = IngredientInPantry.create_with_display_unit(
         user=user,
         ingredient=ingredient,
         quantity=quantity,
-        measurement_unit=measurement_unit,
+        display_unit=display_unit,
         expiration=expiration
     )
     return ing_in_pantry

@@ -61,7 +61,7 @@ class IngredientInPantryModelTests(TestCase):
         create_ing_in_pantry(user=self.user)
         with self.assertRaises(IntegrityError):
             create_ing_in_pantry(
-                user=self.user, quantity=200, measurement_unit='g')
+                user=self.user, quantity=200, display_unit='gram')
 
     def test_delete_ing_in_pantry_with_unused_ingredient(self):
         """
@@ -108,8 +108,13 @@ class IngredientInPantryModelTests(TestCase):
         Test that subtract_quantity succeeds in subtracting from quantity.
         """
         original_quantity = 100
-        ing_in_pantry = create_ing_in_pantry(
-            user=self.user, quantity=original_quantity)
+        ingredient, _ = Ingredient.objects.get_or_create(name='a food')
+        ing_in_pantry = IngredientInPantry.objects.create(
+            user=self.user,
+            ingredient=ingredient,
+            quantity=original_quantity,
+            measurement_unit='ml'
+        )
         sub_quantity = 50
         ing_in_pantry.subtract_quantity(
             sub_quantity, ing_in_pantry.measurement_unit)
@@ -133,7 +138,9 @@ class IngredientInPantryModelTests(TestCase):
         """
         Test that subtracting when quantity is not set raises a ValueError.
         """
-        ing_in_pantry = create_ing_in_pantry(user=self.user, quantity=None)
+        ingredient, _ = Ingredient.objects.get_or_create(name='a food')
+        ing_in_pantry = IngredientInPantry.objects.create(
+            user=self.user, ingredient=ingredient)
         with self.assertRaises(ValueError):
             ing_in_pantry.subtract_quantity(50, 'ml')
 
@@ -143,7 +150,7 @@ class IngredientInPantryModelTests(TestCase):
         ValueError.
         """
         ing_in_pantry = create_ing_in_pantry(
-            user=self.user, measurement_unit='g')
+            user=self.user, display_unit='gram')
         with self.assertRaises(ValueError):
             ing_in_pantry.subtract_quantity(50, 'ml')
 

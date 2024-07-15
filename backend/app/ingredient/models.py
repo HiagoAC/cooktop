@@ -144,7 +144,7 @@ class IngredientInPantry(IngredientManagementBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     expiration = models.DateField(null=True, default=None)
     quantity = models.DecimalField(
-        max_digits=6, decimal_places=2, null=True, default=None)
+        max_digits=9, decimal_places=2, null=True, default=None)
 
     class Meta:
         constraints = [
