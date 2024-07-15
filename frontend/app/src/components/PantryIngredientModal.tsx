@@ -1,6 +1,7 @@
+import {useEffect, useState} from 'react';
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import { IngredientInputFields } from './IngredientInputFields';
-import { PantryIngredient } from '../types/interfaces';
+import { Ingredient, PantryIngredient } from '../types/interfaces';
 import styles from '../styles/PantryIngredientModal.module.css';
 
 
@@ -9,7 +10,7 @@ interface Props {
     title: string;
     buttonText: string;
     mode: 'create' | 'edit';
-    pantryIngredient?: PantryIngredient;
+    pantryIngredientInit?: PantryIngredient;
     handleClose: () => void;
     handleClick: (pantryIngredient: PantryIngredient | Omit<
         PantryIngredient, 'id'>) => void;
@@ -17,8 +18,20 @@ interface Props {
 
 
 export function PantryIngredientModal(
-    {show, title, buttonText, mode, pantryIngredient, handleClose, handleClick}
+    {show, title, buttonText, mode, pantryIngredientInit, handleClose, handleClick}
     : Props) {
+    const [ingredient, setIngredient] = useState<
+        Ingredient | Omit<Ingredient, 'id'> | null>(null);
+    const [expiration, setExpiration] = useState<string>("");
+    
+    useEffect(() => {
+        if (pantryIngredientInit) {
+            setIngredient({...pantryIngredientInit});
+        }
+        if (pantryIngredientInit?.expiration) {
+            setExpiration(pantryIngredientInit.expiration);
+        }
+    }, [pantryIngredientInit]);
   
     return (
         <Modal show={show} onHide={handleClose} size="lg">
@@ -29,14 +42,16 @@ export function PantryIngredientModal(
                 <Form>
                     <IngredientInputFields
                         mode={mode}
-                        ingredient={pantryIngredient? {...pantryIngredient} : null}
+                        ingredient={ingredient? ingredient as Ingredient : null}
+                        handleChange={(ing) => setIngredient(ing)}
                     />
                     <InputGroup className={`my-3 ${styles.expiration_field}`}>
                         <InputGroup.Text id="expiration-date">
                             expiration date
                         </InputGroup.Text>
                         <Form.Control
-                            defaultValue={pantryIngredient ? pantryIngredient.expiration : ""}
+                            defaultValue={expiration ? expiration : ""}
+                            onChange={(e) => setExpiration(e.target.value)}
                             type="date"
                         />
                     </InputGroup>
@@ -45,7 +60,10 @@ export function PantryIngredientModal(
             <Modal.Footer>
                 <Button
                     className="custom_button"
-                    onClick={pantryIngredient? () => handleClick(pantryIngredient) : () => {}}>
+                    onClick={ingredient? () => handleClick({
+                            ...ingredient,
+                            expiration: expiration
+                        }) : () => {}}>
                     {buttonText}
                 </Button>
             </Modal.Footer>

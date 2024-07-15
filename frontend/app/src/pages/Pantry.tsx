@@ -4,6 +4,8 @@ import { pantryIngredients} from '../data/pantry';
 import { PantryIngredient } from '../types/interfaces';
 import { ItemCard } from '../components/ItemCard';
 import { PantryIngredientModal } from '../components/PantryIngredientModal';
+import { addItemToPantry } from '../api/pantryApi';
+import { createPantryItemSchema } from '../api/apiSchemas/pantrySchemas';
 import styles from '../styles/Pantry.module.css';
 
 
@@ -12,6 +14,18 @@ export function Pantry() {
 
     const handleModalClose = () => setModalShow(false);
     const handleModalShow = () => setModalShow(true);
+
+    const addItem = (pantryItem: Omit<PantryIngredient, 'id'>) => {
+        console.log('Got here ...')
+        if (!pantryItem) {
+            console.log('but...')
+            return;
+        }
+        addItemToPantry({...pantryItem}).then(res => {
+            console.log(res);
+            handleModalClose();
+        });
+    }
 
     return (
         <Container className="pb-4">
@@ -25,10 +39,11 @@ export function Pantry() {
                 </Button>
                 <PantryIngredientModal
                     show={modalShow}
+                    mode={'create'}
                     title="Add a new item"
                     buttonText="Save"
+                    handleClick={addItem}
                     handleClose={handleModalClose}
-                    handleClick={handleModalClose}
                 />
             </div>
             <div className="d-flex justify-content-center">
