@@ -1,24 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import { pantryIngredients} from '../data/pantry';
 import { PantryIngredient } from '../types/interfaces';
 import { ItemCard } from '../components/ItemCard';
 import { PantryIngredientModal } from '../components/PantryIngredientModal';
-import { addItemToPantry } from '../api/pantryApi';
-import { createPantryItemSchema } from '../api/apiSchemas/pantrySchemas';
+import { addItemToPantry, getPantry } from '../api/pantryApi';
 import styles from '../styles/Pantry.module.css';
 
 
 export function Pantry() {
     const [modalShow, setModalShow] = useState(false);
+    const [pantryIngredients, setPantry] = useState<PantryIngredient[]>([]);
 
     const handleModalClose = () => setModalShow(false);
     const handleModalShow = () => setModalShow(true);
 
+    const loadPantry = () => {
+        getPantry().then(res => {
+            console.log(res)
+            if (res.status == 200) {
+                setPantry(res.data);
+            }
+        });
+    };
+
     const addItem = (pantryItem: Omit<PantryIngredient, 'id'>) => {
-        console.log('Got here ...')
         if (!pantryItem) {
-            console.log('but...')
             return;
         }
         addItemToPantry({...pantryItem}).then(res => {
@@ -26,6 +32,10 @@ export function Pantry() {
             handleModalClose();
         });
     }
+
+    useEffect (() => {
+        loadPantry();
+    }, []);
 
     return (
         <Container className="pb-4">
@@ -49,7 +59,13 @@ export function Pantry() {
             <div className="d-flex justify-content-center">
                 <div className={`${styles.ingredient_list_container}`}>
                     {pantryIngredients.map((ingredient: PantryIngredient) => (
-                        <ItemCard key={ingredient.name} item={ingredient} cardType={"PANTRY"}/>
+                        <ItemCard
+                            key={ingredient.name}
+                            item={ingredient}
+                            cardType={"PANTRY"}
+                            handleEdit={() => {}}
+                            handleDelete={() => {}}
+                        />
                     ))}
                 </div>
             </div>
