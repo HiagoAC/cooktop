@@ -15,3 +15,9 @@ export async function getPantry(): Promise<any> {
     console.log(response);
     return response;
 }
+
+export async function deletePantryIngredient(id: number): Promise<any> {
+    const response = await axios.delete(PANTRY_URL + id);
+    console.log(response);
+    return response;
+}
