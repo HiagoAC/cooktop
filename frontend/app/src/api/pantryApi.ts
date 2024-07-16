@@ -16,7 +16,13 @@ export async function getPantry(): Promise<any> {
     return response;
 }
 
-export async function deletePantryIngredient(id: number): Promise<any> {
+export async function updatePantryItem(data: createPantryItemSchema): Promise<any> {
+    const response = await axios.patch(`${PANTRY_URL}${data.id}`, data);
+    console.log(response);
+    return response;
+}
+
+export async function deletePantryItem(id: number): Promise<any> {
     const response = await axios.delete(PANTRY_URL + id);
     console.log(response);
     return response;
