@@ -9,3 +9,9 @@ export async function addItemToPantry(data: createPantryItemSchema): Promise<any
     console.log(response);
     return response;
 }
+
+export async function getPantry(): Promise<any> {
+    const response = await axios.get(PANTRY_URL);
+    console.log(response);
+    return response;
+}
