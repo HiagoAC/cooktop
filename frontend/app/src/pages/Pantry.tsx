@@ -3,7 +3,11 @@ import { Button, Container } from 'react-bootstrap';
 import { PantryIngredient } from '../types/interfaces';
 import { ItemCard } from '../components/ItemCard';
 import { PantryIngredientModal } from '../components/PantryIngredientModal';
-import { addItemToPantry, getPantry } from '../api/pantryApi';
+import {
+    addItemToPantry,
+    getPantry,
+    deletePantryIngredient
+} from '../api/pantryApi';
 import styles from '../styles/Pantry.module.css';
 
 
@@ -31,7 +35,14 @@ export function Pantry() {
             console.log(res);
             handleModalClose();
         });
-    }
+    };
+
+    const deleteItem = (id: number) => {
+        deletePantryIngredient(id).then(res => {
+            console.log(res);
+            loadPantry();
+        });
+    };
 
     useEffect (() => {
         loadPantry();
@@ -64,7 +75,7 @@ export function Pantry() {
                             item={ingredient}
                             cardType={"PANTRY"}
                             handleEdit={() => {}}
-                            handleDelete={() => {}}
+                            handleDelete={deleteItem}
                         />
                     ))}
                 </div>
