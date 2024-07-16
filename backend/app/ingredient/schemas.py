@@ -6,12 +6,6 @@ from ninja import Schema
 from pydantic import NonNegativeFloat
 
 
-class PantryListSchema(Schema):
-    """Output schema for pantry_list."""
-    id: int
-    name: str
-
-
 class PantryDetailIn(Schema):
     """Input schema for pantry_detail."""
     name: str

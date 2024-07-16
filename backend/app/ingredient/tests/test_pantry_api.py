@@ -10,6 +10,7 @@ from django.urls import reverse
 from app.utils_test import auth_header, create_ing_in_pantry, create_user
 from ingredient.measurement_units import DISPLAY_UNITS
 from ingredient.models import Ingredient, IngredientInPantry
+from ingredient.schemas import PantryDetailOut
 
 
 PANTRY_LIST_URL = reverse('api:pantry_list')
@@ -69,8 +70,8 @@ class PrivatePantryAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         expected = [
-            {'id': ing_1.id, 'name': ing_1.ingredient.name},
-            {'id': ing_2.id, 'name': ing_2.ingredient.name}
+            PantryDetailOut.from_orm(ing_1).dict(),
+            PantryDetailOut.from_orm(ing_2).dict()
         ]
         self.assertEqual(content, expected)
 
@@ -88,7 +89,7 @@ class PrivatePantryAPITests(TestCase):
         # 200 - OK
         self.assertEqual(response.status_code, 200)
 
-        expected = [{'id': ing.id, 'name': ing.ingredient.name},]
+        expected = [PantryDetailOut.from_orm(ing).dict(),]
         self.assertEqual(content, expected)
 
     def test_get_pantry_detail(self):

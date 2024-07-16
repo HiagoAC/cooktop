@@ -13,7 +13,6 @@ from ingredient.api_utils import (
     )
 from ingredient.models import IngredientInPantry, ShoppingListItem
 from ingredient.schemas import (
-    PantryListSchema,
     PantryDetailIn,
     PantryDetailOut,
     PantryDetailPatch,
@@ -26,7 +25,7 @@ pantry_router = Router()
 shopping_list_router = Router()
 
 
-@pantry_router.get('/', response=List[PantryListSchema],
+@pantry_router.get('/', response=List[PantryDetailOut],
                    url_name='pantry_list')
 def pantry_list(request):
     """Retrieve all user's ingredients in pantry."""
@@ -34,13 +33,7 @@ def pantry_list(request):
     queryset = (IngredientInPantry.objects
                 .filter(user=user)
                 .order_by('ingredient__name'))
-    response = list()
-    for ing_pantry in queryset:
-        response.append({
-            'id': ing_pantry.id,
-            'name': ing_pantry.ingredient.name
-        })
-    return response
+    return queryset
 
 
 @pantry_router.post('/', response={201: PantryDetailOut})
