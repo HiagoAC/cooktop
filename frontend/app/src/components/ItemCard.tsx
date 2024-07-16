@@ -58,7 +58,7 @@ export function ItemCard({item, cardType, handleEdit, handleDelete}: Props) {
                             mode = "edit"
                             handleClose={handleModalClose}
                             handleClick={handleEdit}
-                            pantryIngredient={item as PantryIngredient}
+                            pantryIngredientInit={item as PantryIngredient}
                         />) : cardType === "SHOPPING" ? (
                             <ShoppingItemModal
                                 show={modalShow}

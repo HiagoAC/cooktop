@@ -6,13 +6,14 @@ import { PantryIngredientModal } from '../components/PantryIngredientModal';
 import {
     addItemToPantry,
     getPantry,
-    deletePantryIngredient
+    updatePantryItem,
+    deletePantryItem
 } from '../api/pantryApi';
 import styles from '../styles/Pantry.module.css';
 
 
 export function Pantry() {
-    const [modalShow, setModalShow] = useState(false);
+    const [modalShow, setModalShow] = useState<boolean>(false);
     const [pantryIngredients, setPantry] = useState<PantryIngredient[]>([]);
 
     const handleModalClose = () => setModalShow(false);
@@ -33,12 +34,25 @@ export function Pantry() {
         }
         addItemToPantry({...pantryItem}).then(res => {
             console.log(res);
+            loadPantry();
+            handleModalClose();
+        });
+    };
+
+    const updateItem = (pantryItem: Omit<PantryIngredient, 'id'>) => {
+        if (!pantryItem) {
+            return;
+        }
+        updatePantryItem({...pantryItem}).then(res => {
+            console.log(res);
+            loadPantry();
+            // handleModalClose not working in pantry or shopping list. fix that.
             handleModalClose();
         });
     };
 
     const deleteItem = (id: number) => {
-        deletePantryIngredient(id).then(res => {
+        deletePantryItem(id).then(res => {
             console.log(res);
             loadPantry();
         });
@@ -74,7 +88,7 @@ export function Pantry() {
                             key={ingredient.name}
                             item={ingredient}
                             cardType={"PANTRY"}
-                            handleEdit={() => {}}
+                            handleEdit={updateItem}
                             handleDelete={deleteItem}
                         />
                     ))}
