@@ -17,8 +17,15 @@ export function ShoppingItemModal(
     {show, title, buttonText, mode, shoppingListItem, handleClose, handleClick}: Props) {
     const [shoppingItem, setShoppingItem] = useState<
         ShoppingListItem | Omit<ShoppingListItem, 'id'> | null>(null);
-    
-    
+
+    const handleButtonClick = () => {
+        if (shoppingItem) {
+            handleClick({
+                ...shoppingItem
+            });
+        }
+        handleClose();
+    };
 
     useEffect(() => {
             if (shoppingListItem) {
@@ -43,8 +50,7 @@ export function ShoppingItemModal(
             <Modal.Footer>
                 <Button
                     className="custom_button"
-                    onClick={shoppingItem? () => handleClick(shoppingItem) : () => {}}
-                >
+                    onClick={handleButtonClick}>
                     {buttonText}
                 </Button>
             </Modal.Footer>

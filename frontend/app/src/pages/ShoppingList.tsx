@@ -18,9 +18,6 @@ export function ShoppingList() {
     const [clearModalShow, setClearModalShow] = useState(false);
     const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
 
-    const handleModalClose = () => setAddModalShow(false);
-    const handleModalShow = () => setAddModalShow(true);
-
     const loadShoppingList = () => {
         getShoppingList().then(res => {
             console.log(res)
@@ -37,7 +34,6 @@ export function ShoppingList() {
         addItemToList(shoppingItem).then(res => {
             console.log(res);
             loadShoppingList();
-            handleModalClose();
         });
     };
 
@@ -48,7 +44,6 @@ export function ShoppingList() {
         updateShoppingItem(shoppingItem).then(res => {
             console.log(res);
             loadShoppingList();
-            handleModalClose();
         });
     };
 
@@ -78,7 +73,7 @@ export function ShoppingList() {
             <div className="d-flex justify-content-center mt-2 mb-5 gap-4">
                 <Button
                     className={`${styles.custom_button}`}
-                    onClick={handleModalShow}
+                    onClick={() => setAddModalShow(true)}
                 >
                     Add New Item
                 </Button>
@@ -116,7 +111,7 @@ export function ShoppingList() {
                     mode="create"
                     buttonText={"Save"}
                     handleClick={addItem}
-                    handleClose={handleModalClose}
+                    handleClose={() => setAddModalShow(false)}
                 />
             </div>
             <div className="d-flex justify-content-center">

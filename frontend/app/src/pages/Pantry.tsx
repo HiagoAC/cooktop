@@ -16,9 +16,6 @@ export function Pantry() {
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [pantryIngredients, setPantry] = useState<PantryIngredient[]>([]);
 
-    const handleModalClose = () => setModalShow(false);
-    const handleModalShow = () => setModalShow(true);
-
     const loadPantry = () => {
         getPantry().then(res => {
             console.log(res)
@@ -35,7 +32,6 @@ export function Pantry() {
         addItemToPantry({...pantryItem}).then(res => {
             console.log(res);
             loadPantry();
-            handleModalClose();
         });
     };
 
@@ -46,8 +42,6 @@ export function Pantry() {
         updatePantryItem({...pantryItem}).then(res => {
             console.log(res);
             loadPantry();
-            // handleModalClose not working in pantry or shopping list. fix that.
-            handleModalClose();
         });
     };
 
@@ -68,7 +62,7 @@ export function Pantry() {
             <div className="d-flex justify-content-center mt-2 mb-5">
                 <Button
                     className={`${styles.custom_button}`}
-                    onClick={handleModalShow}
+                    onClick={() => setModalShow(true)}
                 >
                     Add New Item
                 </Button>
@@ -78,7 +72,7 @@ export function Pantry() {
                     title="Add a new item"
                     buttonText="Save"
                     handleClick={addItem}
-                    handleClose={handleModalClose}
+                    handleClose={() => setModalShow(false)}
                 />
             </div>
             <div className="d-flex justify-content-center">

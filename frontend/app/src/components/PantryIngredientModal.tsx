@@ -23,6 +23,16 @@ export function PantryIngredientModal(
     const [ingredient, setIngredient] = useState<
         Ingredient | Omit<Ingredient, 'id'> | null>(null);
     const [expiration, setExpiration] = useState<string>("");
+
+    const handleButtonClick = () => {
+        if (ingredient) {
+            handleClick({
+                ...ingredient,
+                expiration: expiration
+            });
+        }
+        handleClose();
+    };
     
     useEffect(() => {
         if (pantryIngredientInit) {
@@ -60,10 +70,7 @@ export function PantryIngredientModal(
             <Modal.Footer>
                 <Button
                     className="custom_button"
-                    onClick={ingredient? () => handleClick({
-                            ...ingredient,
-                            expiration: expiration
-                        }) : () => {}}>
+                    onClick={handleButtonClick}>
                     {buttonText}
                 </Button>
             </Modal.Footer>
