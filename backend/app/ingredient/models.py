@@ -80,14 +80,24 @@ class IngredientManagementBase(models.Model):
         if quantity_to_add < 0:
             raise ValueError("This method should be called with a positive\
                               value for quantity.")
-        if self.measurement_unit == unit:
-            self.quantity = self.quantity + quantity_to_add
-        else:
+        try:
+            if self.measurement_unit == unit:
+                self.quantity = self.quantity + quantity_to_add
+            elif self.measurement_unit == DISPLAY_UNITS[
+                    unit].get_standard_unit():
+                converted_quantity = DISPLAY_UNITS[unit].convert_quantity(
+                    quantity_to_add)
+                self.quantity = self.quantity + converted_quantity
+            else:
+                unit_name = MeasurementUnits(self.measurement_unit).label
+                raise ValueError(f'Cannot add quantity with different '
+                                 f'measurement units. Convert the add '
+                                 f'quantity to {unit_name}'
+                                 f'({self.measurement_unit})')
+        except KeyError:
             unit_name = MeasurementUnits(self.measurement_unit).label
-            raise ValueError(f'Cannot add quantity with different '
-                             f'measurement units. Convert the add '
-                             f'quantity to {unit_name}'
-                             f'({self.measurement_unit})')
+            raise ValueError(f'Invalid measurement unit: {unit_name}')
+
         self.save()
         return self.quantity
 

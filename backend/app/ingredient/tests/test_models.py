@@ -12,8 +12,12 @@ from app.utils_test import (
     create_shopping_list_item,
     create_user
 )
-from ingredient.measurement_units import MeasurementUnits
-from ingredient.models import Ingredient, IngredientInPantry, RecipeIngredient
+from ingredient.measurement_units import DISPLAY_UNITS, MeasurementUnits
+from ingredient.models import (
+    Ingredient,
+    IngredientInPantry,
+    RecipeIngredient
+)
 from recipe.models import Recipe
 
 User = get_user_model()
@@ -62,6 +66,56 @@ class IngredientInPantryModelTests(TestCase):
         with self.assertRaises(IntegrityError):
             create_ing_in_pantry(
                 user=self.user, quantity=200, display_unit='gram')
+
+    def test_add_quantity_measurement_unit(self):
+        """
+        Test adding to quantity with ingredient's measurement unit with
+        add_quantity.
+        """
+        original_quantity = 100
+        ingredient, _ = Ingredient.objects.get_or_create(name='a food')
+        ing_pantry = IngredientInPantry.objects.create(
+            user=self.user,
+            ingredient=ingredient,
+            quantity=original_quantity,
+            measurement_unit=MeasurementUnits.GRAM
+        )
+        add_quantity = 50
+        ing_pantry.add_quantity(add_quantity, ing_pantry.measurement_unit)
+
+        self.assertEqual(
+            ing_pantry.quantity, original_quantity + add_quantity)
+
+    def test_add_quantity_with_convertable_unit(self):
+        """
+        Test adding to quantity with a convertable unit.
+        """
+        original_quantity = 100
+        ingredient, _ = Ingredient.objects.get_or_create(name='a food')
+        ing_pantry = IngredientInPantry.objects.create(
+            user=self.user,
+            ingredient=ingredient,
+            quantity=original_quantity,
+            measurement_unit='ml'
+        )
+        add_quantity = 2
+        ing_pantry.add_quantity(add_quantity, 'cup')
+        add_quantity_ml = DISPLAY_UNITS['cup'].convert_quantity(add_quantity)
+
+        self.assertEqual(
+            ing_pantry.quantity, original_quantity + add_quantity_ml)
+
+    def test_add_quantity_with_wrong_unit(self):
+        """
+        Test adding to quantity with a wrong unit raises a ValueError.
+        """
+        ing_pantry = create_ing_in_pantry(
+            user=self.user,
+            display_unit='gram',
+            quantity=100
+        )
+        with self.assertRaises(ValueError):
+            ing_pantry.add_quantity(50, 'ml')
 
     def test_delete_ing_in_pantry_with_unused_ingredient(self):
         """
