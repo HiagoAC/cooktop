@@ -131,6 +131,35 @@ class PrivatePantryAPITests(TestCase):
         for key, value in payload.items():
             self.assertEqual(value, content[key])
 
+    def test_add_to_shopping_list_with_existing_item(self):
+        """
+        Test adding to the shopping list with an item that already exists
+        correctly adds to quantity and does not create a new item.
+        """
+        name = 'a food'
+        item = create_shopping_list_item(user=self.user, name=name)
+        payload = {
+            'name': name,
+            'quantity': '2.00',
+            'unit': 'cup',
+        }
+        final_quantity = item.get_display_quantity() + \
+            Decimal(payload['quantity'])
+        response = self.client.post(
+            SHOPPING_LIST_URL,
+            data=json.dumps(payload),
+            content_type='application/json',
+            **self.headers,
+        )
+        content = json.loads(response.content.decode('utf-8'))
+
+        # 201 - CREATED
+        self.assertEqual(response.status_code, 201)
+        self.assertIn('id', content)
+        self.assertEqual(ShoppingListItem.objects.filter(
+            ingredient__name=name, user=self.user).count(), 1)
+        self.assertEqual(final_quantity, content['quantity'])
+
     def test_update_shopping_item(self):
         """Test updating shopping list item."""
         item = create_shopping_list_item(

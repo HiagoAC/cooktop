@@ -120,7 +120,12 @@ def add_item_to_shopping_list(request, payload: ShoppingListItemIn):
     item_data['ingredient'] = ing
     item_data['user'] = user
     item_data['display_unit'] = item_data.pop('unit')
-    item = ShoppingListItem.create_with_display_unit(**item_data)
+    # check if item already exists in shopping list
+    if ShoppingListItem.objects.filter(ingredient=ing, user=user).exists():
+        item = ShoppingListItem.objects.get(ingredient=ing, user=user)
+        item.add_quantity(item_data['quantity'], item_data['display_unit'])
+    else:
+        item = ShoppingListItem.create_with_display_unit(**item_data)
     return 201, item
 
 
