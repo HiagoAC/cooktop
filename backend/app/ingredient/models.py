@@ -2,6 +2,7 @@
 Ingredient app models.
 """
 
+from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -71,9 +72,7 @@ class IngredientManagementBase(models.Model):
     def add_quantity(self, quantity_to_add, unit):
         """
         Add quantity of ingredient.
-        - ValueError is raised if this method is called with a measurement
-        unit different from the one of the object or if the quantity of the
-        object has not been set.
+        - ValueError is raised if this method is called with an invalid unit.
         """
         if self.quantity is None:
             raise ValueError("Quantity not set for this ingredient.")
@@ -82,18 +81,18 @@ class IngredientManagementBase(models.Model):
                               value for quantity.")
         try:
             if self.measurement_unit == unit:
-                self.quantity = self.quantity + quantity_to_add
+                self.quantity = self.quantity + Decimal(quantity_to_add)
             elif self.measurement_unit == DISPLAY_UNITS[
                     unit].get_standard_unit():
                 converted_quantity = DISPLAY_UNITS[unit].convert_quantity(
                     quantity_to_add)
-                self.quantity = self.quantity + converted_quantity
+                self.quantity = self.quantity + Decimal(converted_quantity)
             else:
                 unit_name = MeasurementUnits(self.measurement_unit).label
-                raise ValueError(f'Cannot add quantity with different '
-                                 f'measurement units. Convert the add '
-                                 f'quantity to {unit_name}'
-                                 f'({self.measurement_unit})')
+                raise ValueError(f'Cannot add quantity for '
+                                 f'{self.ingredient.name} with {unit} as '
+                                 f'unit. Unit should be convertable to '
+                                 f'{self.measurement_unit}')
         except KeyError:
             unit_name = MeasurementUnits(self.measurement_unit).label
             raise ValueError(f'Invalid measurement unit: {unit_name}')
@@ -127,20 +126,29 @@ class IngredientManagementBase(models.Model):
         Subtract quantity of ingredient.
         - If subtracted quantity is greater or equal to the ingredient's
         quantity the instance is deleted.
-        - ValueError is raised if this method is called with a measurement
-        unit different from the one of the object or if the quantity of the
-        object has not been set.
+        - ValueError is raised if this method is called with an invalid unit.
         """
         if self.quantity is None:
             raise ValueError("Quantity not set for this ingredient.")
-        if self.measurement_unit == sub_unit:
-            self.quantity = self.quantity - sub_quantity
-        else:
+        if sub_quantity < 0:
+            raise ValueError("This method should be called with a positive\
+                              value for quantity to subtract.")
+        try:
+            if self.measurement_unit == sub_unit:
+                self.quantity = self.quantity - Decimal(sub_quantity)
+            elif self.measurement_unit == DISPLAY_UNITS[
+                    sub_unit].get_standard_unit():
+                converted_quantity = DISPLAY_UNITS[sub_unit].convert_quantity(
+                    sub_quantity)
+                self.quantity = self.quantity - Decimal(converted_quantity)
+            else:
+                unit_name = MeasurementUnits(self.measurement_unit).label
+                raise ValueError(f'Cannot subtract quantity with {sub_unit} as'
+                                 f' unit. Unit should be convertable to '
+                                 f'{self.measurement_unit}')
+        except KeyError:
             unit_name = MeasurementUnits(self.measurement_unit).label
-            raise ValueError(f'Cannot subtract quantity with different '
-                             f'measurement units. Convert the subtract '
-                             f'quantity to {unit_name}'
-                             f'({self.measurement_unit})')
+            raise ValueError(f'Invalid measurement unit: {unit_name}')
         if self.quantity <= 0:
             self.delete()
         else:

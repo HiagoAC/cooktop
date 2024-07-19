@@ -198,6 +198,25 @@ class IngredientInPantryModelTests(TestCase):
         with self.assertRaises(ValueError):
             ing_in_pantry.subtract_quantity(50, 'ml')
 
+    def test_subtract_with_convertable_unit(self):
+        """
+        Test that subtracting with a convertable unit works.
+        """
+        original_quantity = 1000
+        ingredient, _ = Ingredient.objects.get_or_create(name='a food')
+        ing_in_pantry = IngredientInPantry.objects.create(
+            user=self.user,
+            ingredient=ingredient,
+            quantity=original_quantity,
+            measurement_unit='ml'
+        )
+        sub_quantity = 2
+        ing_in_pantry.subtract_quantity(sub_quantity, 'cup')
+        sub_quantity_ml = DISPLAY_UNITS['cup'].convert_quantity(sub_quantity)
+
+        self.assertEqual(
+            ing_in_pantry.quantity, original_quantity - sub_quantity_ml)
+
     def test_subtract_with_wrong_unit(self):
         """
         Test that calling subtract_quantity with a mismatched unit raises a
