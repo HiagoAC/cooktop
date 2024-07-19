@@ -35,7 +35,7 @@ export function Pantry() {
         });
     };
 
-    const updateItem = (pantryItem: Omit<PantryIngredient, 'id'>) => {
+    const updateItem = (pantryItem: PantryIngredient) => {
         if (!pantryItem) {
             return;
         }

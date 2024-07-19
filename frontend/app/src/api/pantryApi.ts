@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { createPantryItemSchema } from './apiSchemas/pantrySchemas';
+import {
+    createPantryItemSchema,
+    subtractFromPantrySchema,
+    updatePantryItemSchema
+} from './apiSchemas/pantrySchemas';
 import { BASE_URL } from './apiConfig';
 
 const PANTRY_URL: string = BASE_URL + 'pantry/';
@@ -16,7 +20,8 @@ export async function getPantry(): Promise<any> {
     return response;
 }
 
-export async function updatePantryItem(data: createPantryItemSchema): Promise<any> {
+export async function updatePantryItem(
+        data: updatePantryItemSchema): Promise<any> {
     const response = await axios.patch(`${PANTRY_URL}${data.id}`, data);
     console.log(response);
     return response;
@@ -24,6 +29,14 @@ export async function updatePantryItem(data: createPantryItemSchema): Promise<an
 
 export async function deletePantryItem(id: number): Promise<any> {
     const response = await axios.delete(PANTRY_URL + id);
+    console.log(response);
+    return response;
+}
+
+export async function subtractFromPantry(
+    ing_name: string, data: subtractFromPantrySchema): Promise<any> {
+    const response = await axios.patch(
+        `${PANTRY_URL}${ing_name}/subtract/`, data);
     console.log(response);
     return response;
 }
