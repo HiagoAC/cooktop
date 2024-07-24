@@ -35,11 +35,13 @@ def set_recipe_ingredients(recipe, recipe_ings):
     RecipeIngredient.objects.filter(recipe=recipe).delete()
     for recipe_ing_data in recipe_ings:
         name = recipe_ing_data.pop('name')
+        display_unit = recipe_ing_data.pop('unit')
         ingredient = get_or_create_ingredient(name, recipe.user)
 
         RecipeIngredient.create_with_display_unit(
             recipe=recipe,
             ingredient=ingredient,
+            display_unit=display_unit,
             **recipe_ing_data
         )
 

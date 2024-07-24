@@ -37,10 +37,12 @@ class RecipeListSchema(Schema):
 
 class RecipeIngredientSchema(ModelSchema):
     name: str
+    unit: str
 
     class Config:
         model = RecipeIngredient
-        model_exclude = ['id', 'recipe', 'ingredient', 'measurement_unit']
+        model_exclude = [
+            'id', 'recipe', 'ingredient', 'measurement_unit', 'display_unit']
 
 
 class RecipeIn(ModelSchema):
@@ -77,7 +79,7 @@ class RecipeOut(ModelSchema):
             ings_data.append({
                 'name': recipe_ing.ingredient.name,
                 'quantity': recipe_ing.get_display_quantity(),
-                'display_unit': recipe_ing.display_unit
+                'unit': recipe_ing.display_unit
             })
         return ings_data
 

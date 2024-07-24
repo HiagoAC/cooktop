@@ -223,9 +223,9 @@ class PrivateRecipesAPITests(TestCase):
         new_ing_name = 'new ingredient'
         recipe_ings = [
             {'name': existing_ing.name, 'quantity': '2.00',
-             'display_unit': 'cup'},
+             'unit': 'cup'},
             {'name': new_ing_name, 'quantity': '100.00',
-             'display_unit': 'ml'}
+             'unit': 'ml'}
         ]
         payload = {
             'title': 'a title',
@@ -267,9 +267,9 @@ class PrivateRecipesAPITests(TestCase):
                                   quantity=quantity)
         recipe_ings = [
             {'name': ing_1.ingredient.name, 'quantity': quantity,
-             'display_unit': ing_1.display_unit},
+             'unit': ing_1.display_unit},
             {'name': ing_2.ingredient.name, 'quantity': quantity,
-             'display_unit': ing_2.display_unit}
+             'unit': ing_2.display_unit}
         ]
 
         response = self.client.get(
@@ -327,11 +327,11 @@ class PrivateRecipesAPITests(TestCase):
         removed_ing_name = 'removed ing'
         create_recipe_ing(recipe=recipe, name=removed_ing_name)
         new_ing = {'name': 'ing 3 new', 'quantity': '20.00',
-                   'display_unit': 'ml'}
+                   'unit': 'ml'}
         new_data = {
             'ingredients': [
                 {'name': updated_ing_name, 'quantity': '10.00',
-                 'display_unit': 'unit'},
+                 'unit': 'unit'},
                 new_ing
             ]}
         response = self.client.patch(
@@ -353,7 +353,7 @@ class PrivateRecipesAPITests(TestCase):
             Decimal(new_data['ingredients'][0]['quantity'])
         )
         self.assertEqual(updated_ing.display_unit,
-                         new_data['ingredients'][0]['display_unit'])
+                         new_data['ingredients'][0]['unit'])
         # removed ingredient
         self.assertFalse(RecipeIngredient.objects.filter(
             recipe=recipe, ingredient__name=removed_ing_name).exists())
