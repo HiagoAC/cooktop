@@ -55,14 +55,15 @@ export function MealPlan() {
                 >
                     {'Make New Plan'}
                 </Button>
-                <Button
+                {mealPlan && <Button
                     className="custom_button"
                     onClick={() => setUpdateAlertShow(true)}
                 >
                     {'Update Pantry & Shopping List'}
-                </Button>
+                </Button>}
                 <UpdateListsFromMealPlanModal
                     show={updateAlertShow}
+                    mealPlan={mealPlan!}
                     onHide={() => setUpdateAlertShow(false)}
                 />
                 <CreateMealPlanModal

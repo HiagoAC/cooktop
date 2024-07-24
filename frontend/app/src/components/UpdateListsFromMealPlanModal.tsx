@@ -1,12 +1,23 @@
 import { Modal, Button } from 'react-bootstrap';
+import { MealPlan } from '../types/interfaces';
+import {
+    subtractIngredientsFromPantry,
+    addIngredientsToShoppingList
+} from '../api/mealPlansApi';
 
 interface Props {
     show: boolean;
+    mealPlan: MealPlan;
     onHide: () => void;
 }
 
 
-export function UpdateListsFromMealPlanModal({ show, onHide }: Props) {
+export function UpdateListsFromMealPlanModal({ show, mealPlan, onHide }: Props) {
+    const updateLists = () => {
+        subtractIngredientsFromPantry(mealPlan.id);
+        addIngredientsToShoppingList(mealPlan.id);
+    };
+
     return (
         <Modal show={show} onHide={onHide} bg="warning">
             <Modal.Header>
@@ -19,7 +30,7 @@ export function UpdateListsFromMealPlanModal({ show, onHide }: Props) {
             </Modal.Body>
             <Modal.Footer className="d-flex justify-content-end">
                 <Button
-                    onClick={onHide}
+                    onClick={updateLists}
                     variant="success"
                 >
                     {'Yes'}

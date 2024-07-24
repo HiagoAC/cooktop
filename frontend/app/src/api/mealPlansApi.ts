@@ -17,3 +17,15 @@ export async function getMealPlan(): Promise<any> {
     console.log(response);
     return response;
 }
+
+export async function subtractIngredientsFromPantry(id: number): Promise<any> {
+    const response = await axios.post(MEAL_PLANS_URL + id + '/subtract-from-pantry');
+    console.log(response);
+    return response;
+}
+
+export async function addIngredientsToShoppingList(id: number): Promise<any> {
+    const response = await axios.post(MEAL_PLANS_URL + id + '/add-to-shopping-list');
+    console.log(response);
+    return response;
+}

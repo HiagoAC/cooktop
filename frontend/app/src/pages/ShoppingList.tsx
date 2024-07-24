@@ -55,6 +55,7 @@ export function ShoppingList() {
     };
 
     const clearList = async () => {
+        // Add prompt to add items to pantry
         await Promise.all(
             shoppingList.map(item =>
                 deleteShoppingItem(item.id).then(
