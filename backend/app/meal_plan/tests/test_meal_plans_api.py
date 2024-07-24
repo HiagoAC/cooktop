@@ -36,6 +36,11 @@ def plan_subtract_url(meal_plan_id):
     return reverse('api:meal_plan_subtract', args=[meal_plan_id])
 
 
+def plan_add_url(meal_plan_id):
+    """Return a meal_plan add_to_shopping_list URL."""
+    return reverse('api:meal_plan_add', args=[meal_plan_id])
+
+
 def create_meal_plan_expected_response(meal_plan: MealPlan):
     """
     Return a dictionary in the format of the expected response for
@@ -380,3 +385,18 @@ class PrivateMealPlansAPITests(TestCase):
         # 401 - UNAUTHORIZED
         self.assertEqual(response.status_code, 401)
         mock_subtract_from_meal_plan.assert_not_called()
+
+    @patch('meal_plan.api.MealPlan.add_to_shopping_list')
+    def test_add_ingredients_to_shopping_list(
+            self, mock_add_to_shopping_list):
+        """
+        Test endpoint to add ingredients of all meals in meal plan to shopping
+        list.
+        """
+        meal_plan = MealPlan.objects.create(user=self.user)
+        response = self.client.post(
+            plan_add_url(meal_plan.id), **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        mock_add_to_shopping_list.assert_called_once()

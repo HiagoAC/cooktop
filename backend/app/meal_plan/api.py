@@ -126,6 +126,19 @@ def subtract_ingredients_from_pantry(request, meal_plan_id: int):
     return 204, None
 
 
+@meal_plan_router.post('/{meal_plan_id}/add-to-shopping-list',
+                       response={204: None}, url_name='meal_plan_add')
+@transaction.atomic
+def add_ingredients_to_shopping_list(request, meal_plan_id: int):
+    """
+    Add ingredients of all meals in meal plan to shopping list if they have
+    not been added yet.
+    """
+    meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
+    meal_plan.add_to_shopping_list()
+    return 204, None
+
+
 @preferences_router.get('/', response=PreferencesSchema,
                         url_name='preferences')
 def get_preferences(request):
