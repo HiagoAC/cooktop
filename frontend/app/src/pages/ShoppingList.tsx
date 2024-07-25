@@ -7,7 +7,9 @@ import {
     addItemToList,
     getShoppingList,
     updateShoppingItem,
-    deleteShoppingItem
+    deleteShoppingItem,
+    clearList,
+    addShoppingItemsToPantry
 } from '../api/shoppingListApi';
 import { ShoppingListItem } from '../types/interfaces';
 import { createShoppingItemSchema, updateShoppingItemSchema } from '../api/apiSchemas/shoppingListSchemas';
@@ -54,14 +56,23 @@ export function ShoppingList() {
         });
     };
 
-    const clearList = async () => {
-        // Add prompt to add items to pantry
-        await Promise.all(
-            shoppingList.map(item =>
-                deleteShoppingItem(item.id).then(
-                    res => console.log(res))));
-        loadShoppingList();
-        setClearModalShow(false);
+    const addToPantryAndClearList = async () => {
+        addShoppingItemsToPantry().then(res => {
+            console.log(res);
+            clearList().then(res => {
+                console.log(res);
+                loadShoppingList();
+                setClearModalShow(false);
+            });
+        });
+    }
+
+    const clearListOnly = async () => {
+        clearList().then(res => {
+            console.log(res);
+            loadShoppingList();
+            setClearModalShow(false);
+        })
     }
 
     useEffect (() => {
@@ -101,8 +112,11 @@ export function ShoppingList() {
                         >
                             Close
                         </Button>
-                        <Button variant="success" onClick={clearList}>
-                            Clear List
+                        <Button variant="warning" onClick={addToPantryAndClearList}>
+                            Add Shopping List Items to Pantry and Clear List
+                        </Button>
+                        <Button variant="success" onClick={clearListOnly}>
+                            Clear List Only
                         </Button>
                     </Modal.Footer>
                 </Modal>

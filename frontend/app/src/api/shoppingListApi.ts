@@ -6,6 +6,8 @@ import {
 import { BASE_URL } from './apiConfig';
 
 const SHOPPING_LIST_URL: string = BASE_URL + 'shopping-list/';
+const CLEAR_SHOPPING_LIST_URL: string = SHOPPING_LIST_URL + 'clear-list';
+const ADD_TO_PANTRY_URL: string = SHOPPING_LIST_URL + 'add-list-to-pantry';
 
 export async function addItemToList(data: createShoppingItemSchema): Promise<any> {
     console.log(data)
@@ -28,6 +30,18 @@ export async function updateShoppingItem(data: updateShoppingItemSchema): Promis
 
 export async function deleteShoppingItem(id: number): Promise<any> {
     const response = await axios.delete(`${SHOPPING_LIST_URL}${id}`);
+    console.log(response);
+    return response;
+}
+
+export async function clearList(): Promise<any> {
+    const response = await axios.delete(CLEAR_SHOPPING_LIST_URL);
+    console.log(response);
+    return response;
+}
+
+export async function addShoppingItemsToPantry(): Promise<any> {
+    const response = await axios.post(ADD_TO_PANTRY_URL);
     console.log(response);
     return response;
 }
