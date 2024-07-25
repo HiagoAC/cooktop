@@ -7,11 +7,18 @@ import json
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from app.utils_test import auth_header, create_shopping_list_item, create_user
-from ingredient.models import Ingredient, ShoppingListItem
+from app.utils_test import (
+    auth_header,
+    create_ing_in_pantry,
+    create_shopping_list_item,
+    create_user
+)
+from ingredient.models import Ingredient, IngredientInPantry, ShoppingListItem
 from ingredient.schemas import ShoppingListItemOut
 
 SHOPPING_LIST_URL = reverse('api:shopping_list')
+ADD_LIST_TO_PANTRY_URL = reverse('api:add_list_to_pantry')
+CLEAR_LIST_URL = reverse('api:clear_shopping_list')
 
 
 def shopping_item_detail_url(item_id):
@@ -56,6 +63,48 @@ class PrivatePantryAPITests(TestCase):
         self.user = create_user()
         self.headers = auth_header(self.user)
         self.client = Client()
+
+    def test_add_items_to_pantry(self):
+        """Test adding shopping list items to pantry."""
+        original_quantity = 100
+        pantry_item = create_ing_in_pantry(
+            user=self.user,
+            name='food 0',
+            quantity=original_quantity,
+            display_unit='cup'
+        )
+        items = []
+        add_quantity = 50
+        for i in range(2):
+            items.append(create_shopping_list_item(
+                    user=self.user,
+                    name=f'food {i}',
+                    display_unit='cup',
+                    quantity=add_quantity
+                ))
+        response = self.client.post(ADD_LIST_TO_PANTRY_URL, **self.headers)
+
+        pantry_item.refresh_from_db()
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(pantry_item.get_display_quantity(),
+                         original_quantity + add_quantity)
+        self.assertEqual(IngredientInPantry.objects.get(
+            user=self.user, ingredient__name='food 1')
+            .get_display_quantity(), add_quantity)
+
+    def test_clear_list(self):
+        """Test clearing shopping list."""
+        items = []
+        for i in range(2):
+            items.append(create_shopping_list_item(
+                user=self.user, name=f'food {i}'))
+        response = self.client.delete(CLEAR_LIST_URL, **self.headers)
+
+        # 204 - NO CONTENT
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(
+            ShoppingListItem.objects.filter(user=self.user).exists())
 
     def test_retrieve_shopping_list(self):
         """Test retrieving user's shopping list."""

@@ -102,6 +102,41 @@ def shopping_list(request):
     return list(queryset)
 
 
+@shopping_list_router.post('/add-list-to-pantry', response={200: None},
+                           url_name='add_list_to_pantry')
+def add_list_to_pantry(request):
+    """Add all items in shopping list to pantry."""
+    user = request.auth
+    shopping_list = ShoppingListItem.objects.filter(user=user)
+    for item in shopping_list:
+        if IngredientInPantry.objects.filter(
+                user=user, ingredient=item.ingredient).exists():
+            ing_pantry = IngredientInPantry.objects.get(
+                user=user, ingredient=item.ingredient)
+            ing_pantry.add_quantity(item.quantity, item.measurement_unit)
+        else:
+            ing_pantry = IngredientInPantry.objects.create(
+                user=user,
+                ingredient=item.ingredient,
+                quantity=item.quantity,
+                measurement_unit=item.measurement_unit,
+                display_unit=item.display_unit
+            )
+        ing_pantry.save()
+    return 200, None
+
+
+@shopping_list_router.delete('/clear-list', response={204: None},
+                             url_name='clear_shopping_list')
+def clear_shopping_list(request):
+    """Delete all items in shopping list."""
+    user = request.auth
+    shopping_list = ShoppingListItem.objects.filter(user=user)
+    for item in shopping_list:
+        item.delete()
+    return 204, None
+
+
 @shopping_list_router.get('/{item_id}', response=ShoppingListItemOut,
                           url_name='shopping_item_detail')
 def shopping_item_detail(request, item_id: int):
