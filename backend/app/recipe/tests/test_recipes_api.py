@@ -135,6 +135,30 @@ class PrivateRecipesAPITests(TestCase):
 
         self.assertEqual(content, expected)
 
+    def test_filter_recipes_by_type(self):
+        """Test filtering recipes by type."""
+        recipe_1 = create_recipe(
+            title='a',
+            user=self.user,
+            recipe_type=Recipe.RecipeTypes.MAIN_DISH
+        )
+        recipe_2 = create_recipe(
+            title='b',
+            user=self.user,
+            recipe_type=Recipe.RecipeTypes.MAIN_DISH
+        )
+        create_recipe(
+            user=self.user, recipe_type=Recipe.RecipeTypes.SALAD)
+
+        params = {'recipe_type': Recipe.RecipeTypes.MAIN_DISH}
+        response = self.client.get(RECIPE_URL, params, **self.headers)
+        content = json.loads(response.content.decode('utf-8'))
+        expected = expected_recipe_list_data([recipe_1, recipe_2])
+
+        # 200 - OK
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(content, expected)
+
     def test_filter_recipes_ingredients(self):
         """
         Test recipes can be filtered by ingredient's names and that recipes

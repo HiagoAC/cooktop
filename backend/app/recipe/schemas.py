@@ -101,6 +101,7 @@ class RecipePatch(ModelSchema):
 class RecipeFilter(FilterSchema):
     """Schema for recipe filters."""
     tags: str | None = None
+    recipe_type: str | None = None
 
     def filter_tags(self, value: str) -> Q:
         if not value:
