@@ -50,3 +50,9 @@ export interface MealPlan {
     creation_date: string;
     meals: Record<number, Meal>;
 }
+
+export interface User {
+    email: string;
+    first_name: string;
+    last_name: string;
+}

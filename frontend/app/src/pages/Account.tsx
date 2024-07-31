@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { getUser, updateUser } from '../api/usersApi';
 import { FormCard } from '../components/FormCard';
 import { AccountForm } from '../components/AccountForm';
-import { User } from '../data/user';
+import { User } from '../types/interfaces';
 import { getPreferences, updatePreferences } from '../api/preferencesApi';
 
 

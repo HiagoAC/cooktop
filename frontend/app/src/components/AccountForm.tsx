@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { UserPreferencesFormFields } from './UserPreferencesFormFields';
-import { User } from '../data/user';
+import { User } from '../types/interfaces';
 
 
 interface Props {
