@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { Button, Card, Stack } from 'react-bootstrap';
-import { Ingredient } from '../data/recipe_detail';
+import { Ingredient } from '../types/interfaces';
 import plusCircleIcon from '../assets/plus_circle_icon.svg';
 import minusCircleIcon from '../assets/minus_circle_icon.svg';
 import styles from '../styles/RecipeIngredientList.module.css'
