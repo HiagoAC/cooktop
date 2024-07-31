@@ -1,7 +1,7 @@
 import { Button, Card } from 'react-bootstrap';
 import { BadgeStack } from './BadgeStack';
 import { Recipe } from '../types/interfaces';
-import { recipeTypes } from '../types/constants';
+import { recipeTypeLabels } from '../types/constants';
 import styles from '../styles/RecipeInfoCard.module.css';
 import editIcon from '../assets/edit_icon.svg';
 import { Link } from 'react-router-dom';
@@ -34,7 +34,7 @@ export function RecipeInfoCard({id, recipe}: Props) {
                     />
                 </Button>
                 <span>
-                    {recipeTypes[recipe.recipe_type]} &middot; {recipe.time_minutes} minutes
+                    {recipeTypeLabels[recipe.recipe_type]} &middot; {recipe.time_minutes} minutes
                 </span>
             </Card.Subtitle>
             <Card.Body>

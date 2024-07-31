@@ -5,7 +5,7 @@ import { RecipeForm } from '../components/RecipeForm';
 import { RequestAlert } from '../components/RequestAlert';
 import { RecipeIn } from '../api/apiSchemas/recipesSchemas';
 import { createRecipe, uploadImage } from '../api/recipesApi';
-import { recipeTypes } from '../types/constants';
+import { recipeTypeLabels } from '../types/constants';
 
 
 export function RecipeAdd() {
@@ -15,7 +15,7 @@ export function RecipeAdd() {
         tags: [],
         directions: [],
         description: null,
-        recipe_type: recipeTypes['mai'],
+        recipe_type: recipeTypeLabels['mai'],
         notes: null,
         ingredients: []
     });

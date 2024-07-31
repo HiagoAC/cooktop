@@ -3,7 +3,7 @@ import { DirectionsFormGroup } from './DirectionsFormGroup';
 import { IngredientsFormGroup } from './IngredientsFormGroup';
 import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 import { RecipeIn } from '../api/apiSchemas/recipesSchemas';
-import { recipeTypes } from '../types/constants'; 
+import { recipeTypeLabels } from '../types/constants'; 
 import { Ingredient } from '../types/interfaces';
 import { useEffect } from 'react';
 
@@ -91,12 +91,12 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
                                 'recipe_type', e.target.value)}
                         >
                             <option value="" disabled>Select a type</option>
-                            {Object.keys(recipeTypes).map((recipe_type) => (
+                            {Object.keys(recipeTypeLabels).map((recipe_type) => (
                                 <option
                                     key={recipe_type}
                                     value={recipe_type}
                                 >
-                                    {recipeTypes[recipe_type]}
+                                    {recipeTypeLabels[recipe_type]}
                                 </option>
                             ))}
                         </Form.Select>
