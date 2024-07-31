@@ -83,21 +83,22 @@ def meal_plan_update(request, meal_plan_id: int, payload: MealPlanPatch):
     """Update recipes in a meal plan."""
     user = request.auth
     recipe_types = {
-        'main_dish': Recipe.RecipeTypes.MAIN_DISH,
-        'side_dish': Recipe.RecipeTypes.SIDE_DISH,
-        'salad': Recipe.RecipeTypes.SALAD
+        Recipe.RecipeTypes.MAIN_DISH: 'main_dish',
+        Recipe.RecipeTypes.SIDE_DISH: 'side_dish',
+        Recipe.RecipeTypes.SALAD: 'salad'
     }
     meal_plan = get_instance_detail(meal_plan_id, MealPlan, request.auth)
     for day, meal in payload.dict()['meals'].items():
         for recipe_type, recipe_id in meal.items():
             if Meal.objects.filter(meal_plan=meal_plan, day=day).exists():
-                meal_in_plan = Meal.objects.filter(day=day).first()
+                meal_in_plan = Meal.objects.filter(
+                    meal_plan=meal_plan, day=day).first()
                 recipe = get_instance_detail(recipe_id, Recipe, user)
-                if recipe.recipe_type != recipe_types[recipe_type]:
+                if recipe.recipe_type != recipe_type:
                     raise HttpError(422, "Wrong recipe type.")
                 setattr(
                     meal_in_plan,
-                    recipe_type,
+                    recipe_types[recipe_type],
                     recipe
                 )
                 meal_in_plan.save()

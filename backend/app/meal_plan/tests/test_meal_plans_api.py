@@ -220,9 +220,9 @@ class PrivateMealPlansAPITests(TestCase):
     def test_update_meal_plan(self):
         """Test updating recipes in a meal plan."""
         meal_plan = create_sample_meal_plan(user=self.user, cookings=3)
+        day, recipe_type = 2, Recipe.RecipeTypes.MAIN_DISH
         new_recipe = create_recipe(
-            user=self.user, recipe_type=Recipe.RecipeTypes.MAIN_DISH)
-        day, recipe_type = 2, 'main_dish'
+            user=self.user, recipe_type=recipe_type)
         new_data = {'meals': {str(day): {recipe_type: new_recipe.id}}}
         response = self.client.patch(
             plan_detail_url(meal_plan.id),
@@ -235,7 +235,7 @@ class PrivateMealPlansAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         recipe_in_meal = getattr(
             Meal.objects.filter(
-                meal_plan=meal_plan, day=day).first(), recipe_type)
+                meal_plan=meal_plan, day=day).first(), 'main_dish')
         self.assertEqual(recipe_in_meal, new_recipe)
 
     def test_update_meal_plan_invalid_meal(self):
