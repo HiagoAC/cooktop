@@ -5,18 +5,29 @@ import { Meal } from '../types/interfaces';
 import { RecipeInList } from './RecipeInList';
 import editIcon from '../assets/edit_icon.svg';
 import styles from '../styles/PantryIngredientCard.module.css';
+import { updateMealPlan } from '../api/mealPlansApi';
+import { updateMealPlanSchema } from '../api/apiSchemas/mealPlansSchemas';
 
 
 interface Props {
+    mealPlanId: number;
     day: number;
     meal: Meal;
 }
 
-export function MealCard({day, meal}: Props) {
+export function MealCard({mealPlanId, day, meal}: Props) {
     const [editModalShow, setEditModalShow] = useState(false);
 
     const handleEditModalClose = () => setEditModalShow(false);
     const handleEditModalShow = () => setEditModalShow(true);
+
+    const handleEditClick = (updateMealPlanData: updateMealPlanSchema) => {
+        updateMealPlan(mealPlanId, updateMealPlanData).then(res => {
+            if (res.status == 200) {
+                handleEditModalClose();
+            }
+        });
+    }
 
     return (
         <Card>
@@ -43,14 +54,15 @@ export function MealCard({day, meal}: Props) {
                                 />
                             </Button>
                             <EditMealModal
+                                day={day}
                                 recipes={{
-                                    'mai': meal.main_dish,
-                                    'sid': meal.side_dish,
-                                    'sal': meal.salad
+                                    'main_dish': meal.main_dish,
+                                    'side_dish': meal.side_dish,
+                                    'salad': meal.salad
                                 }}
                                 show={editModalShow}
                                 handleClose={handleEditModalClose}
-                                handleClick={() => {}}
+                                handleClick={handleEditClick}
                             />
                         </Col>
                     </Row>

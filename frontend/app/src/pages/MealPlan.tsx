@@ -76,6 +76,7 @@ export function MealPlan() {
                 {mealPlan && Object.keys(mealPlan.meals).map((day: string) => (
                     <div key={day} className="mb-3">
                         <MealCard
+                            mealPlanId={mealPlan.id}
                             day={Number(day)}
                             meal={mealPlan.meals[Number(day)]}
                         />

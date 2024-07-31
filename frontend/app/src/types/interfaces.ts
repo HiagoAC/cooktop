@@ -29,6 +29,15 @@ export interface Recipe {
     ingredients: Ingredient[];
 }
 
+
+export interface RecipeList {
+    id: number;
+    title: string;
+    time_minutes: number;
+    tags: string[];
+}
+
+
 export interface Meal {
     main_dish: Recipe;
     side_dish: Recipe;

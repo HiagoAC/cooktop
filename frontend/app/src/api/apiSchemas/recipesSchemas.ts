@@ -3,7 +3,7 @@
  */
 
 import { Ingredient } from '../../types/interfaces';
-import { recipeTypes } from '../../types/constants';
+import { recipeTypeLabels } from '../../types/constants';
 
 
 export interface RecipeIn {
@@ -12,7 +12,7 @@ export interface RecipeIn {
     tags: string[];
     directions: string[];
     description: string | null;
-    recipe_type: keyof typeof recipeTypes;
+    recipe_type: keyof typeof recipeTypeLabels;
     notes: string | null;
     ingredients: Ingredient[];
 }
@@ -24,4 +24,10 @@ export interface RecipeListInfo {
     title: string;
     time_minutes: number;
     tags: string[];
+}
+
+export interface RecipeFilters {
+    ingredients?: string[];
+    tags?: string[];
+    recipe_type?: keyof typeof recipeTypeLabels;
 }

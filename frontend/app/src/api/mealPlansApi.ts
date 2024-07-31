@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createMealPlanSchema } from './apiSchemas/mealPlansSchemas';
+import { createMealPlanSchema, updateMealPlanSchema } from './apiSchemas/mealPlansSchemas';
 import { BASE_URL } from './apiConfig';
 
 const MEAL_PLANS_URL: string = BASE_URL + 'meal-plans/';
@@ -17,6 +17,13 @@ export async function getMealPlan(): Promise<any> {
     console.log(response);
     return response;
 }
+
+export async function updateMealPlan(id: number, data: updateMealPlanSchema): Promise<any> {
+    const response = await axios.patch(MEAL_PLANS_URL + id, data);
+    console.log(response);
+    return response;
+}
+
 
 export async function subtractIngredientsFromPantry(id: number): Promise<any> {
     const response = await axios.post(MEAL_PLANS_URL + id + '/subtract-from-pantry');

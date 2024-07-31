@@ -3,15 +3,19 @@
  */
 
 import axios from 'axios';
-import { RecipeIn, RecipePatch } from './apiSchemas/recipesSchemas';
+import { RecipeFilters, RecipeIn, RecipePatch } from './apiSchemas/recipesSchemas';
 import { BASE_URL } from './apiConfig';
 
 
 const RECIPES_URL: string = BASE_URL + 'recipes/';
 
 
-export async function getRecipes(): Promise<any> {
-    const response = await axios.get(RECIPES_URL);
+export async function getRecipes(
+        filters?: RecipeFilters): Promise<any> {
+    const params = {
+        ...filters,
+    }
+    const response = await axios.get(RECIPES_URL, {params});
     console.log(response);
     return response;
 }

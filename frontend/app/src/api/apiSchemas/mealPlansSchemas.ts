@@ -8,3 +8,8 @@ export interface createMealPlanSchema {
     cookings?: number,
     servings_per_meal?: number
 }
+
+
+export interface updateMealPlanSchema {
+    meals: Record<number, Record<string, number>>
+}

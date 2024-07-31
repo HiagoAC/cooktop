@@ -1,28 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { Recipe } from '../types/interfaces';
-import { recipeTypes } from '../types/constants';
+import { Recipe, RecipeList } from '../types/interfaces';
+import { recipeTypes, recipeTypeLabels } from '../types/constants';
 import switchIcon from '../assets/switch_icon.svg';
+import { getRecipes } from '../api/recipesApi';
+import { Record } from 'react-bootstrap-icons';
+import { updateMealPlanSchema } from '../api/apiSchemas/mealPlansSchemas';
 
 
 interface Props {
+    day: number;
     recipes: Record<string, Recipe>;
     show: boolean;
     handleClose: () => void;
-    handleClick: () => void;
+    handleClick: (updateMealPlanData: updateMealPlanSchema) => void;
 }
 
 export function EditMealModal(
-    {recipes, show, handleClose, handleClick}
+    {day, recipes, show, handleClose, handleClick}
     : Props) {
     const [editModes, setEditModes] = useState<Record<string, boolean>>(
         Object.fromEntries(
             Object.keys(recipes).map((recipeType) => [recipeType, false])
-        ))
-    const [editedValues, setEditedValues] = useState<Record<string, string>>(
+        ));
+    const [mealRecipeIds, setMealRecipeIds] = useState<Record<string, number>>(
             Object.fromEntries(
-            Object.keys(recipes).map((recipeType) => [recipeType, ''])
-        ))
+            Object.keys(recipes).map(
+                (recipeType) => [recipeTypes[recipeType], recipes[recipeType].id])));
+    const [recipeLists, setRecipeLists] = useState<Record<string, RecipeList[]>>({});
+
+    const getRecipeList = (recipeType: string) => {
+        getRecipes({recipe_type: recipeTypes[recipeType]})
+            .then((res) => {
+                setRecipeLists(prevValues => ({
+                    ...prevValues,
+                    [recipeType]: res.data
+                }));
+            });
+    }
 
     const handleSwitchClick = (recipeType: string) => {
         setEditModes({
@@ -31,15 +46,25 @@ export function EditMealModal(
         });
     }
 
-    const handleChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        recipeType: string
-        ) => {
-        setEditedValues({
-            ...editedValues,
-            [recipeType]: event.target.value
-        });
+    const handleChange = (new_recipe_id: number, recipeType: string) => {
+        setMealRecipeIds(prevValues => ({
+            ...prevValues,
+            [recipeTypes[recipeType]]: new_recipe_id
+        }));
     }
+
+    const handleSaveClick = () => {
+        const meals: Record<number, Record<string, number>> = {
+            [day]: mealRecipeIds
+        };
+        handleClick({meals});
+    };
+
+    useEffect(() => {
+        Object.keys(recipes).map((recipeType) => {
+            getRecipeList(recipeType);
+        });
+    }, []);
 
     return (
         <Modal show={show} onHide={handleClose}>
@@ -60,16 +85,20 @@ export function EditMealModal(
                             />
                         </Button>
                         <b className="me-2">
-                            {`${recipeTypes[recipeType]}:`}
+                            {`${recipeTypeLabels[recipeTypes[recipeType]]}:`}
                         </b>
                         { editModes[recipeType]? (
-                            <Form.Control 
-                                type="text"
-                                value={editedValues[recipeType]}
-                                onChange={(e) => handleChange(
-                                    e as React.ChangeEvent<HTMLInputElement>,
-                                    recipeType)}
-                            />
+                            <Form.Select
+                                aria-label="Select Recipe"
+                                onChange={(e) => handleChange(Number(e.target.value), recipeType)}
+                            >
+                                <option value="" disabled>{recipes[recipeType].title}</option>
+                                {recipeLists[recipeType]?.map((recipe) => (
+                                    <option key={recipe.id} value={recipe.id}>
+                                        {recipe.title}
+                                    </option>
+                                ))}
+                            </Form.Select>
                         ) : (
                             <span>{recipes[recipeType].title}</span>
                         )}
@@ -79,7 +108,7 @@ export function EditMealModal(
             <Modal.Footer>
                 <Button
                     className="custom_button"
-                    onClick={handleClick}
+                    onClick={() => handleSaveClick()}
                 >
                     {'Save'}
                 </Button>
