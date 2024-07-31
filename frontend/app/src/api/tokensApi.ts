@@ -9,3 +9,8 @@ export async function getTokens(data: getTokensSchema): Promise<Tokens> {
     const response = await axios.post(tokensUrl, data);
 	return response.data;
 }
+
+export async function refreshTokens(refreshToken: string): Promise<Tokens> {
+    const response = await axios.post(tokensUrl + 'refresh/', {refresh_token: refreshToken});
+    return response.data;
+}

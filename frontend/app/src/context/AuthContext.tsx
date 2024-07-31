@@ -1,6 +1,6 @@
 import { createContext, useState, ReactNode, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { getTokens } from '../api/tokensApi';
+import { getTokens, refreshTokens } from '../api/tokensApi';
 
 export interface AuthContextType {
     accessToken: string | null;
@@ -39,6 +39,25 @@ export function AuthProvider({children}: Props) {
             setRefreshToken(response.refresh_token);
     };
 
+    const handleRefreshTokens = async () => {
+        if (refreshToken) {
+            try {
+                refreshTokens(refreshToken).then((res) => {
+                    setAccessToken(res.access_token);
+                    setRefreshToken(res.refresh_token);
+                });
+
+            } catch (error) {
+                console.error('Failed to refresh token', error);
+                setAccessToken(null);
+                setRefreshToken(null);
+                delete axios.defaults.headers.common["Authorization"];
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+            }
+        }
+    };
+
     useEffect(() => {
         const updateTokens = async () => {
             try {
@@ -55,6 +74,23 @@ export function AuthProvider({children}: Props) {
                 setLoading(false);
         }}
         updateTokens();
+
+        // Potential access token expiration
+        const interceptor = axios.interceptors.response.use(
+            response => response,
+            async error => {
+                if (error.response?.status === 401 && !error.config._retry) {
+                    error.config._retry = true;
+                    await handleRefreshTokens();
+                    return axios(error.config);
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        return () => {
+            axios.interceptors.response.eject(interceptor);
+        };
     }, [accessToken, refreshToken]);
 
     const contextValue = useMemo(
