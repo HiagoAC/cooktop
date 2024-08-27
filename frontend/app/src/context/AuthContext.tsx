@@ -1,6 +1,8 @@
 import { createContext, useState, ReactNode, useEffect, useMemo } from 'react';
-import axios from 'axios';
-import { getTokens, refreshTokens } from '../api/tokensApi';
+import { getAxiosInstance } from '../utils/customAxios';
+import { getTokens } from '../api/tokensApi';
+
+const axios = getAxiosInstance();
 
 export interface AuthContextType {
     accessToken: string | null;
@@ -9,12 +11,14 @@ export interface AuthContextType {
         email: string,
         password: string
         ) => Promise<void>;
+    logOut: () => Promise<void>;
 }
 
 export const AuthContext: React.Context<AuthContextType> = createContext<AuthContextType>({
     accessToken: null,
     refreshToken: null,
     logIn: async (_e: string, _p: string) => {},
+    logOut: async () => {},
 });
 
 
@@ -39,24 +43,13 @@ export function AuthProvider({children}: Props) {
             setRefreshToken(response.refresh_token);
     };
 
-    const handleRefreshTokens = async () => {
-        if (refreshToken) {
-            try {
-                refreshTokens(refreshToken).then((res) => {
-                    setAccessToken(res.access_token);
-                    setRefreshToken(res.refresh_token);
-                });
-
-            } catch (error) {
-                console.error('Failed to refresh token', error);
-                setAccessToken(null);
-                setRefreshToken(null);
-                delete axios.defaults.headers.common["Authorization"];
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-            }
-        }
-    };
+    const logOut = async (): Promise<void> => {
+        setAccessToken(null);
+        setRefreshToken(null);
+        delete axios.defaults.headers.common["Authorization"];
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+    }
 
     useEffect(() => {
         const updateTokens = async () => {
@@ -66,41 +59,24 @@ export function AuthProvider({children}: Props) {
                     localStorage.setItem('accessToken', accessToken);
                     localStorage.setItem('refreshToken', refreshToken);
                 } else {
-                    delete axios.defaults.headers.common["Authorization"];
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
+                    logOut();
                 }
             } finally {
                 setLoading(false);
         }}
         updateTokens();
 
-        // Potential access token expiration
-        const interceptor = axios.interceptors.response.use(
-            response => response,
-            async error => {
-                if (error.response?.status === 401 && !error.config._retry) {
-                    error.config._retry = true;
-                    await handleRefreshTokens();
-                    return axios(error.config);
-                }
-                return Promise.reject(error);
-            }
-        );
-
-        return () => {
-            axios.interceptors.response.eject(interceptor);
-        };
     }, [accessToken, refreshToken]);
 
     const contextValue = useMemo(
         () => ({
-          accessToken,
-          refreshToken,
-          logIn,
+            accessToken: localStorage.getItem("accessToken"),
+            refreshToken: localStorage.getItem("refreshToken"),
+            logIn,
+            logOut,
         }),
         [accessToken, refreshToken]
-      );
+    );
 
     return (
         <AuthContext.Provider value={contextValue}>
