@@ -59,7 +59,7 @@ class AuthHandler(HttpBearer):
         """
         access_payload = {
             'email': email,
-            'exp': time.time() + timedelta(minutes=10).total_seconds(),
+            'exp': time.time() + timedelta(minutes=120).total_seconds(),
             'sub': 'access_token',
         }
         refresh_payload = {

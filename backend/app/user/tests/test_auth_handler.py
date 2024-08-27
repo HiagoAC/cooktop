@@ -46,7 +46,7 @@ class AuthHandlerTests(TestCase):
         """
         payload = {
             'email': 'thisUserDoesNotExist@email.com',
-            'exp': time.time() + timedelta(minutes=10).total_seconds(),
+            'exp': time.time() + timedelta(minutes=120).total_seconds(),
             'sub': 'access_token',
         }
         token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
