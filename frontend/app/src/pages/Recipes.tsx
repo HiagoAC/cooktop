@@ -21,7 +21,7 @@ export function Recipes() {
         };
         fetchRecipes();
     }, []);
-    
+
     return (
         <Container className="pb-4">
             <div className="page_title mt-3">Recipes</div>

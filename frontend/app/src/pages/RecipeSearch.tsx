@@ -10,6 +10,7 @@ export function RecipeSearch() {
                 title="Search for Recipes"
                 formComponent={<SearchForm />}
                 buttonText="Search"
+                handleClick={() => {}}
             />
         </Container>
     )
