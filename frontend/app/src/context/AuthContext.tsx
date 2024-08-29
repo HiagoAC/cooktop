@@ -1,8 +1,10 @@
 import { createContext, useState, ReactNode, useEffect, useMemo } from 'react';
-import { getAxiosInstance } from '../utils/customAxios';
+import axios from 'axios';
 import { getTokens } from '../api/tokensApi';
 
-const axios = getAxiosInstance();
+// Use customAxios.ts instead of axios once it is fixed
+// import { getAxiosInstance } from '../utils/customAxios'; 
+//const axios = getAxiosInstance();
 
 export interface AuthContextType {
     accessToken: string | null;
