@@ -8,12 +8,12 @@ import { recipeTypeLabels } from '../../types/constants';
 
 export interface RecipeIn {
     title: string;
-    time_minutes: number | null;
+    time_minutes?: number;
     tags: string[];
     directions: string[];
-    description: string | null;
+    description?: string;
     recipe_type: keyof typeof recipeTypeLabels;
-    notes: string | null;
+    notes?: string;
     ingredients: Ingredient[];
 }
 
