@@ -9,8 +9,6 @@ EXPOSE 5173
 RUN npm update && \
     npm install --ignore-scripts -g vite@latest && \
     npm install --ignore-scripts && \
-    npm install bootstrap react-router-dom react-bootstrap axios uuid && \
-    npm install @types/react --save-dev && \
     useradd --system nonroot && \
     mkdir -p /home/nonroot && \
     chmod -R 755 /home/nonroot && \
