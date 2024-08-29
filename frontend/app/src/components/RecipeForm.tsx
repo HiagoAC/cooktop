@@ -90,7 +90,7 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
                             onChange={(e) => handleRecipeChange(
                                 'recipe_type', e.target.value)}
                         >
-                            <option value="" disabled>Select a type</option>
+                            <option value="" key="standard"></option>
                             {Object.keys(recipeTypeLabels).map((recipe_type) => (
                                 <option
                                     key={recipe_type}
