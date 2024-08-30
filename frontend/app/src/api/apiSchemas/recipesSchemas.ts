@@ -14,7 +14,7 @@ export interface RecipeIn {
     description?: string;
     recipe_type: keyof typeof recipeTypeLabels;
     notes?: string;
-    ingredients: Ingredient[];
+    ingredients: Ingredient[] | Omit<Ingredient, 'id'>[];
 }
 
 export type RecipePatch = Partial<RecipeIn>;

@@ -5,7 +5,7 @@ import { BadgeStackFormGroup } from './BadgeStackFormGroup';
 import { RecipeIn } from '../api/apiSchemas/recipesSchemas';
 import { recipeTypeLabels } from '../types/constants'; 
 import { Ingredient } from '../types/interfaces';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 
 type RecipeFieldValueMap = {
@@ -22,6 +22,7 @@ interface Props {
 
 
 export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: Props) {
+    const [ingredients, setIngredients] = useState<Ingredient[] | Omit<Ingredient, 'id'>[]>(recipe.ingredients);
 
     const handleRecipeChange = <K extends keyof RecipeIn>(
             field: K,
@@ -35,6 +36,10 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
             setRecipe({ ...recipe, ['time_minutes']: 30 });
         }
     }, []);
+
+    useEffect(() => {
+        setRecipe({ ...recipe, ['ingredients']: ingredients });
+    }, [ingredients]);
 
     return (
         <Form className="p-3">
@@ -131,11 +136,8 @@ export function RecipeForm({recipe, setRecipe, setImage, withUrlField = true}: P
             <Row md={2} xs={1}>
                 <Col md={7}>
                     <IngredientsFormGroup
-                        ingredients={recipe.ingredients}
-                        setIngredients={
-                            (ingredients: Ingredient[]) => handleRecipeChange(
-                                'ingredients', ingredients)
-                        }
+                        ingredients={ingredients}
+                        setIngredients={setIngredients}
                     />
                 </Col>
                 <Col md={5}>
