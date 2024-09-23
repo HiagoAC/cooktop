@@ -61,7 +61,7 @@ export function EditMealModal(
     };
 
     useEffect(() => {
-        Object.keys(recipes).map((recipeType) => {
+        Object.keys(recipes).forEach((recipeType) => {
             getRecipeList(recipeType);
         });
     }, []);
