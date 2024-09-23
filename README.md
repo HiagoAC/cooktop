@@ -44,6 +44,14 @@ Once the weekly meal plan is established, Cooktop automatically generates a corr
 - Containerization: Docker
 - CI/CD: GitHub Actions
 
+## Preview
+
+![Login Screen](frontend/app/src/assets/screenshots/login_page.png)
+![Meal Plan Screen](frontend/app/src/assets/screenshots/meal_plan_page.png)
+![Recipes Screen](frontend/app/src/assets/screenshots/recipes_page.png)
+![Pantry Screen](frontend/app/src/assets/screenshots/pantry_page.png)
+![Shopping List Screen](frontend/app/src/assets/screenshots/shopping_list_page.png)
+
 ## Progress
 
 This application is currently under development. The backend application for this first version is complete. I am now implementing the user interface. Once it is launched, I will add the link to it here.
