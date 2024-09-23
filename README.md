@@ -12,9 +12,7 @@ Cooktop is a meal planning tool developed to make everyday cooking cheaper, fast
 
 ### Managing Recipes
 
-With Cooktop you can keep your favorite recipes in your personal account. You can choose to add recipes manually or you can add recipes you found online automatically. You just have to enter the URL of the recipe.
-
-Then, you can query for recipes based on ingredients, cooking time, tags, etc. It is also possible to delete or edit your recipes at anytime.
+With Cooktop you can keep your favorite recipes in your personal account. You can query for recipes based on ingredients, cooking time, tags, etc. It is also possible to delete or edit your recipes at anytime.
 
 ### Managing Pantry
 
